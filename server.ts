@@ -11,7 +11,7 @@ import cors from 'cors';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
+const PORT = process.env.PORT || 10000;
 
 // Allow CORS and Iframe embedding for the widget
 app.use(cors({
