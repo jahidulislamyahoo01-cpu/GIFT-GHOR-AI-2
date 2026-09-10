@@ -94,6 +94,7 @@ interface SystemDB {
     parsedItemsCount: number;
     uploadedAt: string;
     summary: string;
+    rawContent?: string;
   }>;
   faqs: Array<{
     id: string;
@@ -402,98 +403,26 @@ const DEFAULT_DB: SystemDB = {
     {
       id: 'faq-1',
       question: 'ডেলিভারি চার্জ কত এবং কতদিন সময় লাগে?',
-      answer: 'ঢাকার ভিতরে ডেলিভারি চার্জ মাত্র ৮০ টাকা (২৪ থেকে ৪৮ ঘণ্টার মধ্যে ডেলিভারি)। ঢাকার বাইরে ডেলিভারি চার্জ ১৩০ টাকা (২ থেকে ৪ দিনের মধ্যে ডেলিভারি)। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি সুবিধা রয়েছে।',
+      answer: 'ঢাকার ভিতরে ডেলিভারি চার্জ ৭০ টাকা (২৪ থেকে ৪৮ ঘণ্টার মধ্যে ডেলিভারি)। ঢাকার বাইরে ডেলিভারি চার্জ ১৩০ টাকা (২ থেকে ৪ দিনের মধ্যে ডেলিভারি)। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি সুবিধা রয়েছে।',
       category: 'delivery',
       updatedAt: new Date().toISOString(),
     },
     {
       id: 'faq-2',
       question: 'অর্ডার কনফার্ম করতে কি কি তথ্য লাগে?',
-      answer: 'অর্ডার করতে আপনার পূর্ণ নাম, সম্পূর্ণ ঠিকানা (জেলা ও থানা সহ), সচল মোবাইল নম্বর এবং আপনি কোন প্রোডাক্টটি কাস্টমাইজ করতে চান তা লিখে আমাদের চ্যাটে পাঠালেই হবে। আমাদের টিম আপনার সাথে ফোনে যোগাযোগ করবে।',
+      answer: 'অর্ডার করতে আপনার পূর্ণ নাম, সম্পূর্ণ ঠিকানা (জেলা ও থানা সহ), সচল মোবাইল নম্বর এবং আপনি কোন প্রোডাক্টটি নিতে চান তা লিখে আমাদের চ্যাটে পাঠালেই হবে।',
       category: 'order',
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: 'faq-3',
-      question: 'কাস্টমাইজেশনের জন্য ছবি ও নাম কিভাবে দিব?',
-      answer: 'চ্যাটে মেসেজ পাঠানোর পর অথবা অর্ডার নোটের সাথে ছবি শেয়ার করতে পারেন। এছাড়াও আমাদের অফিসিয়াল হোয়াটসঅ্যাপ নম্বরে অর্ডার আইডি উল্লেখ করে হাই-রেজুলেশন ছবি পাঠাতে পারেন। প্রিন্ট করার আগে আমরা ডিজিটাল ড্রাফট দেখাই।',
-      category: 'customization',
       updatedAt: new Date().toISOString(),
     },
     {
       id: 'faq-4',
       question: 'অগ্রিম কোনো টাকা দিতে হবে কি?',
-      answer: 'আমাদের অধিকাংশ নিয়মিত প্রোডাক্টে কোনো প্রকার অগ্রিম ছাড়াই সম্পূর্ণ ক্যাশ অন ডেলিভারিতে নিতে পারবেন। তবে নাম ও ছবি খোদাই করা বিশেষ কাস্টমাইজড আইটেমে শুধুমাত্র ডেলিভারি চার্জ অগ্রিম বিকাশ/নগদে প্রযোজ্য হতে পারে।',
+      answer: 'আমাদের সকল প্রোডাক্ট কোনো প্রকার অগ্রিম ছাড়াই সম্পূর্ণ ক্যাশ অন ডেলিভারিতে নিতে পারবেন।',
       category: 'payment',
       updatedAt: new Date().toISOString(),
     },
   ],
-  sessions: {
-    'session-demo-1': {
-      id: 'session-demo-1',
-      customerName: 'তানভীর আহমেদ',
-      customerPhone: '01712345678',
-      customerAddress: 'হাউজ ২৪, রোড ৭, ধানমন্ডি, ঢাকা',
-      unreadCount: 0,
-      lastActivity: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-      status: 'active',
-      mode: 'ai',
-      messages: [
-        {
-          id: 'msg-1',
-          sessionId: 'session-demo-1',
-          sender: 'bot',
-          text: 'আসসালামু আলাইকুম! Gift Ghor (giftghor.world)-এ আপনাকে স্বাগতম। কাস্টমাইজড গিফট ও অর্ডার সংক্রান্ত যে কোনো তথ্যের জন্য আমরা প্রস্তুত। কিভাবে সাহায্য করতে পারি?',
-          timestamp: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
-        },
-        {
-          id: 'msg-2',
-          sessionId: 'session-demo-1',
-          sender: 'user',
-          text: 'আমি কাঠের এনগ্রেভড ফ্রেমটা অর্ডার করতে চাই। ঢাকার মধ্যে ডেলিভারি চার্জ কত?',
-          timestamp: new Date(Date.now() - 1000 * 60 * 18).toISOString(),
-        },
-        {
-          id: 'msg-3',
-          sessionId: 'session-demo-1',
-          sender: 'bot',
-          text: 'জি! আমাদের Custom Engraved Wooden Photo Frame (৫x৭ ইঞ্চি)-এর অফার মূল্য মাত্র ৫৫০ টাকা। ঢাকার ভেতর ডেলিভারি চার্জ ৮০ টাকা এবং ২৪-৪৮ ঘণ্টার মধ্যে পেয়ে যাবেন (ক্যাশ অন ডেলিভারি উপলব্ধ)।\n\nঅর্ডারটি বুক করতে অনুগ্রহ করে আপনার পূর্ণ নাম, সম্পূর্ণ ঠিকানা এবং মোবাইল নম্বরটি শেয়ার করুন।',
-          timestamp: new Date(Date.now() - 1000 * 60 * 17).toISOString(),
-        },
-        {
-          id: 'msg-4',
-          sessionId: 'session-demo-1',
-          sender: 'user',
-          text: 'নাম: তানভীর আহমেদ\nঠিকানা: হাউজ ২৪, রোড ৭, ধানমন্ডি, ঢাকা\nফোন: 01712345678',
-          timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-        },
-        {
-          id: 'msg-5',
-          sessionId: 'session-demo-1',
-          sender: 'bot',
-          text: 'ধন্যবাদ তানভীর ভাই! আপনার তথ্য সংরক্ষিত হয়েছে।\n📦 প্রোডাক্ট: Custom Engraved Wooden Photo Frame\n💰 মূল্য: ৫৫০ টাকা + ৮০ টাকা ডেলিভারি = ৬৩০ টাকা\n📍 ডেলিভারি ঠিকানা: হাউজ ২৪, রোড ৭, ধানমন্ডি, ঢাকা\n📞 যোগাযোগ: 01712345678\n\nআমাদের কাস্টমার কেয়ার থেকে দ্রুতই কল করে আপনার ছবি ও মেসেজ কনফার্ম করা হবে। আর কিছু জানতে চান?',
-          timestamp: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-          orderData: {
-            customerName: 'তানভীর আহমেদ',
-            customerPhone: '01712345678',
-            customerAddress: 'হাউজ ২৪, রোড ৭, ধানমন্ডি, ঢাকা',
-            productDetails: 'Custom Engraved Wooden Photo Frame (৫x৭ ইঞ্চি) - 550 BDT',
-            orderStatus: 'confirmed',
-            collectedAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-          },
-        },
-      ],
-      orderExtracted: {
-        customerName: 'তানভীর আহমেদ',
-        customerPhone: '01712345678',
-        customerAddress: 'হাউজ ২৪, রোড ৭, ধানমন্ডি, ঢাকা',
-        productDetails: 'Custom Engraved Wooden Photo Frame (৫x৭ ইঞ্চি) - 550 BDT',
-        notes: 'Dhanmondi COD order',
-        orderStatus: 'confirmed',
-        collectedAt: new Date(Date.now() - 1000 * 60 * 15).toISOString(),
-      },
-    },
-  },
+  sessions: {},
   lastTrainedAt: new Date().toISOString(),
   trainingVersion: 1,
 };
@@ -579,6 +508,9 @@ ${faqsList}
 
 CRAWLED KNOWLEDGE & STORE POLICIES (FROM WEBSITE):
 ${crawledSummary}
+
+UPLOADED TEXT/FILE KNOWLEDGE:
+${db.uploadedFiles.filter(f => f.rawContent).map(f => `Source: ${f.fileName}\n${f.rawContent}`).join('\n\n')}
 
 STEP-BY-STEP ORDER COLLECTION PROTOCOL:
 When a customer shows interest in buying, ordering, or inquiring about purchasing an item:
@@ -843,7 +775,8 @@ const generateFallbackReply = (userInput: string, db: SystemDB) => {
   } else if (lower.includes('অর্ডার') || lower.includes('order') || lower.includes('কিনব') || userInput.includes('🎁')) {
     return `অর্ডার করতে অনুগ্রহ করে আপনার: \n১. পূর্ণ নাম\n২. সম্পূর্ণ ঠিকানা\n৩. মোবাইল নম্বর\n৪. প্রোডাক্টের নাম/ছবি\n\nলিখে পাঠান।`;
   } else if (lower.includes('প্রোডাক্ট') || lower.includes('product') || lower.includes('ক্যাটালগ') || userInput.includes('🛍️')) {
-    return `আমাদের বর্তমান জনপ্রিয় প্রোডাক্টসমূহ:\n• 2in1 Trifold Wallet (৳550)\n• Premium Curved Flap Shoulder Bag (৳1150)\n• Shoulder Crossbody Bucket Bag (৳650)\n• Cute Bear Mini Ladies Wallet (৳390)\n\nকোনটি অর্ডার করতে চান?`;
+    const topProducts = db.products.slice(0, 4).map((p: any) => `• ${p.title} (৳${p.price})`).join('\n');
+    return `আমাদের বর্তমান জনপ্রিয় প্রোডাক্টসমূহ:\n${topProducts}\n\nকোনটি অর্ডার করতে চান?`;
   } else {
     return `জি! Gift Ghor-এ আপনাকে ধন্যবাদ। আমরা সুন্দর সুন্দর লেডিজ ব্যাগ ও মানিব্যাগ বিক্রি করি। বিস্তারিত জানতে আপনার পছন্দের প্রোডাক্টটির নাম বলুন।`;
   }
@@ -1143,6 +1076,14 @@ app.delete('/api/admin/faqs/:id', adminAuthMiddleware, (req, res) => {
 });
 
 // Crawler: Real website parsing using cheerio
+
+app.delete('/api/admin/uploaded-files/:id', adminAuthMiddleware, (req, res) => {
+  const { id } = req.params;
+  DB.uploadedFiles = DB.uploadedFiles.filter((f) => f.id !== id);
+  saveDB(DB);
+  res.json({ success: true, uploadedFiles: DB.uploadedFiles });
+});
+
 app.post('/api/admin/crawler/start', adminAuthMiddleware, async (req, res) => {
   const { url } = req.body;
   const targetUrl = url || 'https://giftghor.world';
@@ -1215,6 +1156,7 @@ app.post('/api/admin/upload-knowledge', adminAuthMiddleware, (req, res) => {
     parsedItemsCount: parsedCount,
     uploadedAt: new Date().toISOString(),
     summary,
+    rawContent,
   };
 
   DB.uploadedFiles.unshift(newFile);
