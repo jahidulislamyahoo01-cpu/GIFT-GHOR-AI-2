@@ -174,6 +174,12 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
           sessionId,
           text: messageText,
           sender: 'user',
+          pageContext: {
+            url: window.location.href,
+            title: document.title,
+            // Extract some text from the body to give context on what the user is looking at (limit to 1000 chars to avoid huge payloads)
+            content: document.body.innerText.substring(0, 1000)
+          }
         }),
       });
 

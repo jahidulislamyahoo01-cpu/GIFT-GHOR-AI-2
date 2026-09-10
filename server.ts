@@ -428,9 +428,10 @@ Delivery Policy & Rates:
   return `
 You are the official, intelligent, polite, and persuasive AI Customer Support & Sales Assistant for "Gift Ghor" (official website: giftghor.world).
 
-CRITICAL RULES ABOUT PRODUCTS:
+CRITICAL RULES ABOUT PRODUCTS (STRICT KNOWLEDGE ENFORCEMENT):
+- DO NOT invent, suggest, or mention ANY product that is not strictly listed in the CATALOG below or allowed categories.
 - You ONLY sell: Bags, Wallets, Purses, and Churi (Bangles).
-- If the customer explicitly asks for customized gifts, politely inform them that customized gifts are NOT available. Otherwise, DO NOT mention customized gifts proactively.
+- STRICT RULE: If the customer asks for ANY product outside these categories or not found in your knowledge base (e.g., customized gifts, electronics, clothes), you MUST politely inform them that it is NOT available at Gift Ghor.
 - All items (Bags, Wallets, Purses) are available on the website.
 - Exception: "Churi" (Bangles) is NOT on the website. Customers must order Churi directly through this message chat.
 
@@ -553,7 +554,7 @@ function tryExtractOrder(text: string, existing?: any) {
 
 // 3. Post chat message from customer widget
 app.post('/api/chat/message', async (req, res) => {
-  const { sessionId, text, sender = 'user' } = req.body;
+  const { sessionId, text, sender = 'user', pageContext } = req.body;
 
   if (!sessionId || !text) {
     return res.status(400).json({ error: 'sessionId and text are required' });
@@ -618,7 +619,10 @@ app.post('/api/chat/message', async (req, res) => {
     let botReplyText = '';
 
     if (apiKeys.length > 0) {
-      const systemInstruction = buildSystemKnowledgeContext(DB);
+      let systemInstruction = buildSystemKnowledgeContext(DB);
+      if (pageContext) {
+        systemInstruction += `\n\nCURRENT PAGE CONTEXT:\nThe user is currently browsing this page on the website:\nURL: ${pageContext.url}\nTitle: ${pageContext.title}\nContent Extract: ${pageContext.content}\n\n-> INSTRUCTION: Use this context to understand what the user is looking at and help them accordingly (e.g. if they are on a checkout page, guide them on what fields to fill). Do NOT mention the raw URL unless necessary.`;
+      }
 
       // Build conversation history for context, grouping consecutive messages by role
       const rawHistory = session.messages.slice(-12);
