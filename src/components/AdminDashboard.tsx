@@ -515,25 +515,33 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-sans text-[#262626]">
       {/* Top Banner & Header */}
-      <header className="bg-white border-b border-[#ECECEC] sticky top-0 z-30 px-6 py-3.5 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-[#FDF7EE] border border-[#ECA548]/40 flex items-center justify-center text-[#ECA548] font-bold shadow-xs">
-            <Shield className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="font-bold text-base text-[#262626]">Gift Ghor Control Center</h1>
-              <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#FDF7EE] text-[#ECA548] border border-[#ECA548]/30">
-                PROD-SECURE
-              </span>
+      <header className="bg-white border-b border-[#ECECEC] sticky top-0 z-30 px-4 md:px-6 py-3.5 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0">
+        <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto justify-between md:justify-start">
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="w-10 h-10 rounded-xl bg-[#FDF7EE] border border-[#ECA548]/40 flex items-center justify-center text-[#ECA548] font-bold shadow-xs shrink-0">
+              <Shield className="w-5 h-5" />
             </div>
-            <p className="text-xs text-gray-500">
-              Isolated Backend • gemini-2.5-flash AI Engine • giftghor.world
-            </p>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="font-bold text-sm md:text-base text-[#262626] line-clamp-1">Gift Ghor Control Center</h1>
+                <span className="hidden sm:inline-block px-2 py-0.5 rounded-full text-[10px] md:text-[11px] font-semibold bg-[#FDF7EE] text-[#ECA548] border border-[#ECA548]/30 shrink-0">
+                  PROD-SECURE
+                </span>
+              </div>
+              <p className="text-[10px] md:text-xs text-gray-500 hidden sm:block line-clamp-1">
+                Isolated Backend • gemini-2.5-flash AI Engine • giftghor.world
+              </p>
+            </div>
           </div>
+          <button
+            onClick={handleLogout}
+            title="Logout"
+            className="md:hidden p-2 rounded-xl text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors shrink-0"
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
         </div>
-
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 md:gap-3 w-full md:w-auto">
           {/* Quick sync button */}
           <button
             onClick={handleSyncAndRetrain}
@@ -565,11 +573,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
       </header>
 
       {/* Main Container */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         {/* Sidebar Nav */}
-        <aside className="w-64 bg-white border-r border-[#ECECEC] p-4 flex flex-col justify-between shrink-0">
-          <div className="space-y-1">
-            <div className="text-[11px] font-bold text-gray-400 uppercase tracking-wider px-3 mb-2">
+        <aside className="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-[#ECECEC] p-3 md:p-4 flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto shrink-0 justify-start md:justify-between gap-2 md:gap-0 scrollbar-hide">
+          <div className="flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-1 w-full shrink-0">
+            <div className="hidden md:block text-[11px] font-bold text-gray-400 uppercase tracking-wider px-3 mb-2">
               Management
             </div>
 
@@ -667,7 +675,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
 
           {/* Bottom stats snapshot */}
           {stats && (
-            <div className="bg-[#F8F9FA] rounded-2xl p-3 border border-[#ECECEC] space-y-2">
+            
+            <div className="hidden md:block bg-[#F8F9FA] rounded-2xl p-3 border border-[#ECECEC] space-y-2">
               <div className="flex items-center justify-between text-[11px] text-gray-500">
                 <span>Total Conversations:</span>
                 <span className="font-bold text-[#262626]">{stats.totalSessions}</span>
@@ -685,7 +694,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
         </aside>
 
         {/* Dynamic Tab Body */}
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-3 md:p-6">
           {/* Toast feedback */}
           {toastMessage && (
             <div className="fixed top-18 right-8 z-50 bg-[#262626] text-white text-xs px-4 py-2.5 rounded-xl shadow-2xl flex items-center gap-2 animate-fadeIn border border-white/20">
@@ -696,9 +705,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
 
           {/* ----------------- TAB 1: LIVE CHAT INBOX ----------------- */}
           {activeTab === 'inbox' && (
-            <div className="h-[calc(100vh-8rem)] flex gap-5">
+            <div className="h-[calc(100vh-10rem)] md:h-[calc(100vh-8rem)] flex flex-col md:flex-row gap-3 md:gap-5">
               {/* Session list */}
-              <div className="w-80 bg-white rounded-2xl border border-[#ECECEC] flex flex-col overflow-hidden shrink-0 shadow-xs">
+              <div className="w-full md:w-80 md:h-full bg-white rounded-2xl border border-[#ECECEC] flex flex-col overflow-hidden shrink-0 shadow-xs max-h-[40vh] md:max-h-full">
                 <div className="p-3.5 border-b border-[#ECECEC] bg-[#FDF7EE]/40 flex items-center justify-between">
                   <span className="text-xs font-bold text-[#262626]">
                     Customer Sessions ({sessionList.length})
@@ -937,7 +946,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
           {activeTab === 'knowledge' && (
             <div className="space-y-6 max-w-5xl">
               {/* Top Banner with Re-train button */}
-              <div className="bg-[#FDF7EE] rounded-2xl border border-[#ECA548]/30 p-5 flex items-center justify-between">
+              <div className="bg-[#FDF7EE] rounded-2xl border border-[#ECA548]/30 p-4 md:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0">
                 <div>
                   <h2 className="font-bold text-base text-[#262626] flex items-center gap-2">
                     <Sparkles className="w-5 h-5 text-[#ECA548]" />
@@ -977,7 +986,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                   Crawls product URLs, sitemaps, and landing pages on <code className="font-mono text-gray-700">giftghor.world</code>, indexing titles, BDT prices, descriptions, and stock status.
                 </p>
 
-                <form onSubmit={handleStartCrawl} className="flex gap-2 mb-4">
+                <form onSubmit={handleStartCrawl} className="flex flex-col md:flex-row gap-2 mb-4">
                   <input
                     type="url"
                     value={crawlUrl}
