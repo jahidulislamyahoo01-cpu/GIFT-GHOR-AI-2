@@ -105,7 +105,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
   };
 
   // Fetch full admin state
-  const loadAdminState = async (token = authToken) => {
+  const loadAdminState = async (token = authToken, isInitial = false, isPolling = false) => {
     if (!token) return;
     try {
       const res = await fetch('/api/admin/state', {
@@ -118,16 +118,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
       }
       const data = await res.json();
       setStats(data.stats);
-      setBranding(data.branding);
-      setDeliveryPolicy(data.deliveryPolicy);
-      setProducts(data.products || []);
-      setCrawledPages(data.crawledPages || []);
-      setUploadedFiles(data.uploadedFiles || []);
-      setFaqs(data.faqs || []);
       setSessions(data.sessions || {});
+      
+      // Do not overwrite user input fields during background polling
+      if (!isPolling) {
+        setBranding(data.branding);
+        setDeliveryPolicy(data.deliveryPolicy);
+        setProducts(data.products || []);
+        setCrawledPages(data.crawledPages || []);
+        setUploadedFiles(data.uploadedFiles || []);
+        setFaqs(data.faqs || []);
+      }
 
-      // Auto-select first session if none selected
-      if (!selectedSessionId) {
+      // Auto-select first session on initial load
+      if (isInitial) {
         const sessionKeys = Object.keys(data.sessions || {});
         if (sessionKeys.length > 0) {
           setSelectedSessionId(sessionKeys[0]);
@@ -140,10 +144,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
 
   useEffect(() => {
     if (authToken) {
-      loadAdminState();
+      loadAdminState(authToken, true);
       // Poll chat sessions every 5s for live incoming messages
       const interval = setInterval(() => {
-        loadAdminState();
+        loadAdminState(authToken, false, true);
       }, 5000);
       return () => clearInterval(interval);
     }
