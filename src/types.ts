@@ -64,6 +64,7 @@ export interface BrandingSettings {
   welcomeMessage: string;
   quickReplies: string[];
   showOnlineStatus: boolean;
+  fontFamily?: string;
 }
 
 export interface OrderDetails {

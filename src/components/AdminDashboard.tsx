@@ -707,7 +707,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
           {activeTab === 'inbox' && (
             <div className="h-[calc(100vh-10rem)] md:h-[calc(100vh-8rem)] flex flex-col md:flex-row gap-3 md:gap-5">
               {/* Session list */}
-              <div className="w-full md:w-80 md:h-full bg-white rounded-2xl border border-[#ECECEC] flex flex-col overflow-hidden shrink-0 shadow-xs max-h-[40vh] md:max-h-full">
+              <div className={`w-full md:w-80 md:h-full bg-white rounded-2xl border border-[#ECECEC] flex-col overflow-hidden shrink-0 shadow-xs md:max-h-full ${selectedSessionId ? 'hidden md:flex' : 'flex'}`}>
                 <div className="p-3.5 border-b border-[#ECECEC] bg-[#FDF7EE]/40 flex items-center justify-between">
                   <span className="text-xs font-bold text-[#262626]">
                     Customer Sessions ({sessionList.length})
@@ -791,10 +791,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
 
               {/* Chat View & Takeover Area */}
               {currentSession ? (
-                <div className="flex-1 bg-white rounded-2xl border border-[#ECECEC] flex flex-col overflow-hidden shadow-xs">
+                <div className={`flex-1 bg-white rounded-2xl border border-[#ECECEC] flex-col overflow-hidden shadow-xs ${!selectedSessionId ? 'hidden md:flex' : 'flex'}`}>
                   {/* Top Bar of active chat */}
                   <div className="px-5 py-3 border-b border-[#ECECEC] flex items-center justify-between bg-white">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 md:gap-3">
+                      <button onClick={() => setSelectedSessionId(null)} className="md:hidden p-1.5 mr-1 text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg shrink-0 transition-colors">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                      </button>
                       <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center font-bold text-gray-600">
                         <User className="w-4 h-4" />
                       </div>
@@ -821,14 +824,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
 
                     {/* Mode Toggle: AI vs Manual Takeover */}
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-medium text-gray-500">Response Mode:</span>
+                      <span className="text-xs font-medium text-gray-500 hidden sm:inline">Response Mode:</span>
                       {currentSession.mode === 'admin_takeover' ? (
                         <button
                           onClick={() => handleToggleTakeover(currentSession.id, 'ai')}
                           className="px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100 transition-all flex items-center gap-1.5"
                         >
                           <Sparkles className="w-3.5 h-3.5" />
-                          <span>Hand Over to AI</span>
+                          <span className="hidden sm:inline">Hand Over to AI</span><span className="sm:hidden">Hand Over</span>
                         </button>
                       ) : (
                         <button
@@ -836,7 +839,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                           className="px-3 py-1.5 rounded-xl text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-300 hover:bg-indigo-100 transition-all flex items-center gap-1.5"
                         >
                           <User className="w-3.5 h-3.5" />
-                          <span>Take Over Chat</span>
+                          <span className="hidden sm:inline">Take Over Chat</span><span className="sm:hidden">Take Over</span>
                         </button>
                       )}
                     </div>
@@ -844,8 +847,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
 
                   {/* Order Lead Summary if detected */}
                   {currentSession.orderExtracted && currentSession.orderExtracted.customerPhone && (
-                    <div className="bg-emerald-50/60 px-5 py-2.5 border-b border-emerald-100 flex items-center justify-between text-xs text-emerald-950">
-                      <div className="flex items-center gap-4">
+                    <div className="bg-emerald-50/60 px-4 md:px-5 py-2.5 md:py-2.5 border-b border-emerald-100 flex flex-col md:flex-row items-start md:items-center justify-between text-xs text-emerald-950 gap-2 md:gap-0">
+                      <div className="flex flex-col md:flex-row items-start md:items-center gap-1 md:gap-4">
                         <span className="font-bold flex items-center gap-1 text-emerald-700">
                           <CheckCircle2 className="w-4 h-4" /> Captured Order Lead:
                         </span>
@@ -930,7 +933,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                       style={{ backgroundColor: '#ECA548' }}
                     >
                       <Send className="w-3.5 h-3.5" />
-                      <span>Send Reply</span>
+                      <span className="hidden md:inline">Send Reply</span><span className="md:hidden">Send</span>
                     </button>
                   </div>
                 </div>
@@ -1123,7 +1126,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                       key={f.id}
                       className="p-3 rounded-xl border border-[#ECECEC] bg-[#FDF7EE]/30 flex items-center justify-between"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2 md:gap-3">
+                      <button onClick={() => setSelectedSessionId(null)} className="md:hidden p-1.5 mr-1 text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg shrink-0 transition-colors">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                      </button>
                         <FileText className="w-5 h-5 text-[#ECA548]" />
                         <div>
                           <p className="font-bold text-xs text-[#262626]">{f.fileName}</p>
@@ -1427,6 +1433,66 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                   <p className="text-[11px] text-gray-400 mt-1">
                     Leave blank to use the official Gift Ghor gift-box icon.
                   </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                      Primary Theme Color
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={branding.primaryColor || '#ECA548'}
+                        onChange={(e) => setBranding({ ...branding, primaryColor: e.target.value })}
+                        className="w-10 h-10 rounded cursor-pointer border-0 p-0"
+                      />
+                      <input
+                        type="text"
+                        value={branding.primaryColor || '#ECA548'}
+                        onChange={(e) => setBranding({ ...branding, primaryColor: e.target.value })}
+                        className="w-full text-xs bg-gray-50 border border-[#ECECEC] rounded-xl px-3 py-2 text-[#262626]"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                      Header Text Color
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="color"
+                        value={branding.headerTextColor || '#262626'}
+                        onChange={(e) => setBranding({ ...branding, headerTextColor: e.target.value })}
+                        className="w-10 h-10 rounded cursor-pointer border-0 p-0"
+                      />
+                      <input
+                        type="text"
+                        value={branding.headerTextColor || '#262626'}
+                        onChange={(e) => setBranding({ ...branding, headerTextColor: e.target.value })}
+                        className="w-full text-xs bg-gray-50 border border-[#ECECEC] rounded-xl px-3 py-2 text-[#262626]"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1">
+                    Widget Font Family
+                  </label>
+                  <select
+                    value={branding.fontFamily || 'sans-serif'}
+                    onChange={(e) => setBranding({ ...branding, fontFamily: e.target.value })}
+                    className="w-full text-xs bg-gray-50 border border-[#ECECEC] rounded-xl px-4 py-2.5 text-[#262626]"
+                  >
+                    <option value="sans-serif">System Default (Sans-serif)</option>
+                    <option value="'Inter', sans-serif">Inter</option>
+                    <option value="'Roboto', sans-serif">Roboto</option>
+                    <option value="'Poppins', sans-serif">Poppins</option>
+                    <option value="'Noto Sans Bengali', sans-serif">Noto Sans Bengali</option>
+                    <option value="'Playfair Display', serif">Playfair Display (Serif)</option>
+                    <option value="monospace">Monospace</option>
+                  </select>
                 </div>
 
                 <div>

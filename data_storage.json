@@ -7,7 +7,7 @@
     "logoUrl": "https://cdn-icons-png.flaticon.com/512/3063/3063822.png",
     "primaryColor": "#ECA548",
     "headerTextColor": "#262626",
-    "welcomeMessage": "আসসালামু আলাইকুম! Gift Ghor (giftghor.world)-এ আপনাকে স্বাগতম। কাস্টমাইজড গিফট ও অর্ডার সংক্রান্ত যে কোনো তথ্যের জন্য আমরা প্রস্তুত। কিভাবে সাহায্য করতে পারি?",
+    "welcomeMessage": "আসসালামু আলাইকুম আপু/ভাইয়া, আপনাকে কীভাবে সাহায্য করতে পারি?",
     "quickReplies": [
       "অর্ডার করতে চাই 🎁",
       "ডেলিভারি চার্জ কত? 🚚",
@@ -24,7 +24,7 @@
     "deliveryTimeOutside": "২-৪ কার্যদিবসের মধ্যে",
     "advancePaymentRequired": false,
     "advancePaymentNote": "সারা বাংলাদেশে ক্যাশ অন ডেলিভারি (COD) সুবিধা আছে। পার্সেল হাতে পেয়ে মূল্য পরিশোধ করতে পারবেন।",
-    "returnPolicyText": "কাস্টমাইজড প্রোডাক্টের ক্ষেত্রে আনবক্সিং ভিডিও সহ ২৪ ঘণ্টার মধ্যে আমাদের জানালে সম্পূর্ণ বিনামূল্যে রিপ্লেসমেন্ট দেওয়া হবে।",
+    "returnPolicyText": "add(\"light\") Category List All products All categoryHand BagPurseFemale walletENProductsCategoriesENQUICK LINKSabout usprivacy policyterms and conditionsreturn and cancellation policyCONTACT USMogBaza... (auto-updated from giftghor.world)",
     "specialNotice": "ঈদ ও ভালোবাসা দিবস উপলক্ষে সকল অর্ডারে আকর্ষণীয় ফ্রি গিফট কার্ড ও রিবন প্যাকেজিং!"
   },
   "products": [
@@ -158,6 +158,72 @@
       "itemsFound": 6,
       "crawledAt": "2026-09-09T16:41:51.935Z",
       "contentSummary": "Customers can send photos via WhatsApp or website upload. Clear high-resolution photo recommended. Digital preview shown before final crafting."
+    },
+    {
+      "id": "homepage",
+      "url": "https://giftghor.world/",
+      "title": "GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 2579,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-10T12:07:21.236Z",
+      "contentSummary": "Title: GIFT GHOR\nDescription: \"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\"\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploa... (auto-updated from giftghor.world)"
+    },
+    {
+      "id": "checkout",
+      "url": "https://giftghor.world/checkout",
+      "title": "GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 2383,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-10T12:27:47.502Z",
+      "contentSummary": "Title: GIFT GHOR\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"email\":\"info@giftghor.world\",\"contactPoint\":{\"@type\":\"ContactPoint\",\"telepho... (auto-updated from giftghor.world)"
+    },
+    {
+      "id": "217915?selected_category=21791",
+      "url": "https://giftghor.world/categories/217915?selected_category=217915&category_id=217915",
+      "title": "217915 - GIFT GHOR | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 2351,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-10T12:27:47.706Z",
+      "contentSummary": "Title: 217915 - GIFT GHOR | GIFT GHOR\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"email\":\"info@giftghor.world\",\"contactPoint\":{\"@type\":\"C... (auto-updated from giftghor.world)"
+    },
+    {
+      "id": "204464?selected_category=20446",
+      "url": "https://giftghor.world/categories/204464?selected_category=204464&category_id=204464",
+      "title": "204464 - GIFT GHOR | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 2347,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-10T12:27:47.832Z",
+      "contentSummary": "Title: 204464 - GIFT GHOR | GIFT GHOR\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"email\":\"info@giftghor.world\",\"contactPoint\":{\"@type\":\"C... (auto-updated from giftghor.world)"
+    },
+    {
+      "id": "204461?selected_category=20446",
+      "url": "https://giftghor.world/categories/204461?selected_category=204461&category_id=204461",
+      "title": "204461 - GIFT GHOR | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 2351,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-10T12:27:47.919Z",
+      "contentSummary": "Title: 204461 - GIFT GHOR | GIFT GHOR\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"email\":\"info@giftghor.world\",\"contactPoint\":{\"@type\":\"C... (auto-updated from giftghor.world)"
+    },
+    {
+      "id": "about-us",
+      "url": "https://giftghor.world/about-us",
+      "title": "About Us - GIFT GHOR | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 3899,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-10T12:27:48.044Z",
+      "contentSummary": "Title: About Us - GIFT GHOR | GIFT GHOR\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"email\":\"info@giftghor.world\",\"contactPoint\":{\"@type\":... (auto-updated from giftghor.world)"
     }
   ],
   "uploadedFiles": [

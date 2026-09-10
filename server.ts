@@ -13,7 +13,7 @@ import axios from 'axios';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = Number(process.env.PORT) || 10000;
 
 // Allow CORS and Iframe embedding for the widget
 app.use(cors({
@@ -49,6 +49,7 @@ interface SystemDB {
     welcomeMessage: string;
     quickReplies: string[];
     showOnlineStatus: boolean;
+    fontFamily?: string;
   };
   deliveryPolicy: {
     insideDhakaCost: number;
@@ -83,6 +84,7 @@ interface SystemDB {
     itemsFound: number;
     crawledAt: string;
     contentSummary: string;
+    rawText?: string;
   }>;
   uploadedFiles: Array<{
     id: string;
@@ -143,13 +145,14 @@ const DEFAULT_DB: SystemDB = {
     logoUrl: 'https://cdn-icons-png.flaticon.com/512/3063/3063822.png',
     primaryColor: '#ECA548',
     headerTextColor: '#262626',
-    welcomeMessage: 'আসসালামু আলাইকুম! Gift Ghor (giftghor.world)-এ আপনাকে স্বাগতম। প্রোডাক্ট বা অর্ডার সংক্রান্ত যে কোনো তথ্যের জন্য আমরা প্রস্তুত। কিভাবে সাহায্য করতে পারি?',
+    welcomeMessage: 'আসসালামু আলাইকুম আপু/ভাইয়া, আপনাকে কীভাবে সাহায্য করতে পারি?',
     quickReplies: [
       'অর্ডার করতে চাই 🎁',
       'ডেলিভারি চার্জ কত? 🚚',
       'প্রোডাক্ট ক্যাটালগ 🛍️'
     ],
     showOnlineStatus: true,
+    fontFamily: 'sans-serif',
   },
   deliveryPolicy: {
     insideDhakaCost: 70,
@@ -427,7 +430,7 @@ You are the official, intelligent, polite, and persuasive AI Customer Support & 
 
 CRITICAL RULES ABOUT PRODUCTS:
 - You ONLY sell: Bags, Wallets, Purses, and Churi (Bangles).
-- NEVER say you sell customized gifts. Customized gifts are NOT available.
+- If the customer explicitly asks for customized gifts, politely inform them that customized gifts are NOT available. Otherwise, DO NOT mention customized gifts proactively.
 - All items (Bags, Wallets, Purses) are available on the website.
 - Exception: "Churi" (Bangles) is NOT on the website. Customers must order Churi directly through this message chat.
 
@@ -499,6 +502,7 @@ app.get('/api/public/branding', (req, res) => {
     welcomeMessage: DB.branding.welcomeMessage,
     quickReplies: DB.branding.quickReplies,
     showOnlineStatus: DB.branding.showOnlineStatus,
+    fontFamily: DB.branding.fontFamily || 'sans-serif',
     deliveryRates: {
       insideDhakaCost: DB.deliveryPolicy.insideDhakaCost,
       outsideDhakaCost: DB.deliveryPolicy.outsideDhakaCost,
@@ -1057,66 +1061,75 @@ app.post('/api/admin/sync-and-train', adminAuthMiddleware, (req, res) => {
 // Auto Web Crawler Job (Updates Knowledge twice a day)
 // -------------------------------------------------------------
 async function crawlGiftGhor() {
-  console.log('[Crawler] Starting auto-crawl of giftghor.world...');
-  try {
-    const response = await axios.get('https://giftghor.world/', { timeout: 15000 });
-    const $ = cheerio.load(response.data);
-    
-    // Extract metadata
-    const title = $('title').text() || 'Gift Ghor';
-    const metaDescription = $('meta[name="description"]').attr('content') || '';
-    
-    // Extract text from next data
-    let jsonText = '';
-    $('script').each((i, el) => {
-      const scriptContent = $(el).html() || '';
-      if (scriptContent.includes('self.__next_f.push')) {
-        jsonText += scriptContent.replace(/[^a-zA-Z0-9\u0980-\u09FF\s\.\,\:\-]/g, ' ') + ' ';
+  console.log('[Crawler] Starting auto-crawl of giftghor.world and subpages...');
+  const urls = [
+    'https://giftghor.world/',
+    'https://giftghor.world/checkout',
+    'https://giftghor.world/categories/217915?selected_category=217915&category_id=217915',
+    'https://giftghor.world/categories/204464?selected_category=204464&category_id=204464',
+    'https://giftghor.world/categories/204461?selected_category=204461&category_id=204461',
+    'https://giftghor.world/about-us'
+  ];
+
+  for (const url of urls) {
+    try {
+      const response = await axios.get(url, { timeout: 15000 });
+      const $ = cheerio.load(response.data);
+      
+      const title = $('title').text() || 'Gift Ghor';
+      const metaDescription = $('meta[name="description"]').attr('content') || '';
+      
+      let jsonText = '';
+      $('script').each((i, el) => {
+        const scriptContent = $(el).html() || '';
+        if (scriptContent.includes('self.__next_f.push')) {
+          jsonText += scriptContent.replace(/[^a-zA-Z0-9ঀ-৿s\.\,\:\-]/g, ' ') + ' ';
+        }
+      });
+
+      const bodyText = $('body').text().replace(/\s+/g, ' ').trim();
+      
+      const combinedContent = `Title: ${title}\nDescription: ${metaDescription}\nText: ${bodyText}\nInternal Data: ${jsonText.substring(0, 5000)}`;
+
+      const id = url === 'https://giftghor.world/' ? 'homepage' : (url.split('/').pop()?.substring(0, 30) || url.substring(0, 30));
+      const existingIndex = DB.crawledPages.findIndex((c: any) => c.id === id || c.url === url);
+      const crawledData = {
+        id: id,
+        url: url,
+        title: title,
+        pageType: 'page' as const,
+        status: 'success' as const,
+        wordCount: combinedContent.split(' ').length,
+        itemsFound: 1,
+        crawledAt: new Date().toISOString(),
+        contentSummary: combinedContent.substring(0, 2000) + '... (auto-updated from giftghor.world)'
+      };
+
+      if (existingIndex >= 0) {
+        DB.crawledPages[existingIndex] = crawledData;
+      } else {
+        DB.crawledPages.push(crawledData);
       }
-    });
-
-    // Extract visible body text (headings, paragraphs)
-    const bodyText = $('body').text().replace(/\s+/g, ' ').trim();
-    
-    const combinedContent = `Title: ${title}\nDescription: ${metaDescription}\nText: ${bodyText}\nInternal Data: ${jsonText.substring(0, 5000)}`;
-
-    const existingIndex = DB.crawledPages.findIndex(c => c.id === 'homepage');
-    const crawledData = {
-      id: 'homepage',
-      url: 'https://giftghor.world/',
-      title: title,
-      pageType: 'page' as const,
-      status: 'success' as const,
-      wordCount: combinedContent.split(' ').length,
-      itemsFound: 1,
-      crawledAt: new Date().toISOString(),
-      contentSummary: combinedContent.substring(0, 2000) + '... (auto-updated from giftghor.world)'
-    };
-
-    if (existingIndex >= 0) {
-      DB.crawledPages[existingIndex] = crawledData;
-    } else {
-      DB.crawledPages.push(crawledData);
-    }
-    
-    // Also try to find return policy and delivery text
-    const lowerBody = (bodyText + ' ' + jsonText).toLowerCase();
-    if (lowerBody.includes('return') || lowerBody.includes('রিটার্ন')) {
-      const sentences = (bodyText + ' ' + jsonText).split(/(?<=[.।])/);
-      const returnSentences = sentences.filter(s => s.toLowerCase().includes('return') || s.includes('রিটার্ন'));
-      if (returnSentences.length > 0) {
-         const foundText = returnSentences.join(' ').replace(/\s+/g, ' ').substring(0, 200);
-         if (foundText.length > 10) {
-             DB.deliveryPolicy.returnPolicyText = foundText + '... (auto-updated from giftghor.world)';
-         }
+      
+      if (url === 'https://giftghor.world/') {
+        const lowerBody = (bodyText + ' ' + jsonText).toLowerCase();
+        if (lowerBody.includes('return') || lowerBody.includes('রিটার্ন')) {
+          const sentences = (bodyText + ' ' + jsonText).split(/(?<=[.।])/);
+          const returnSentences = sentences.filter(s => s.toLowerCase().includes('return') || s.includes('রিটার্ন'));
+          if (returnSentences.length > 0) {
+             const foundText = returnSentences.join(' ').replace(/\s+/g, ' ').substring(0, 200);
+             if (foundText.length > 10) {
+                 DB.deliveryPolicy.returnPolicyText = foundText + '... (auto-updated from giftghor.world)';
+             }
+          }
+        }
       }
+      console.log(`[Crawler] Successfully updated knowledge base from ${url}`);
+    } catch (err) {
+      console.error(`[Crawler] Failed to crawl ${url}:`, err);
     }
-
-    saveDB(DB);
-    console.log('[Crawler] Successfully updated knowledge base from giftghor.world');
-  } catch (err) {
-    console.error('[Crawler] Failed to crawl giftghor.world:', err);
   }
+  saveDB(DB);
 }
 
 // Run crawler on startup, then every 12 hours

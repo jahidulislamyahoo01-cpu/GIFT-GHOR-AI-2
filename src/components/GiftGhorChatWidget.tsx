@@ -43,6 +43,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
   const [isTyping, setIsTyping] = useState(false);
   const [showTeaser, setShowTeaser] = useState(false);
   const [branding, setBranding] = useState({
+    fontFamily: 'sans-serif',
     storeName: 'Gift Ghor',
     widgetTitle: 'Gift Ghor Assistant',
     widgetSubtitle: 'Online | Instant replies in বাংলা & English',
@@ -221,7 +222,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
   };
 
   return (
-    <div id="giftghor-support-root" className="relative z-50 font-sans">
+    <div id="giftghor-support-root" className="relative z-50 font-sans" style={{ fontFamily: branding.fontFamily }}>
       {/* Floating launcher trigger button */}
       {!standalone && (
         <div className={`fixed flex flex-col items-end gap-3 z-50 ${isIframeEmbed ? 'bottom-0 right-0' : 'bottom-6 right-6'}`}>
@@ -277,7 +278,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
             }}
             aria-label="Open Gift Ghor Customer Support Chat"
             className="w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-white transition-shadow hover:shadow-[#ECA548]/30"
-            style={{ backgroundColor: '#ECA548' }}
+            style={{ backgroundColor: branding.primaryColor }}
           >
             <AnimatePresence mode="wait">
               {isOpen ? (
@@ -326,7 +327,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
             {/* Header */}
             <div
               className="px-4 py-3.5 flex items-center justify-between border-b border-[#ECECEC] bg-white"
-              style={{ borderTop: '4px solid #ECA548' }}
+              style={{ borderTop: `4px solid ${branding.primaryColor}` }}
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-[#FDF7EE] border border-[#ECA548]/30 flex items-center justify-center shrink-0">
@@ -342,7 +343,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <h3 className="font-bold text-sm text-[#262626] tracking-tight">
+                    <h3 className="font-bold text-sm tracking-tight" style={{ color: branding.headerTextColor }}>
                       {branding.widgetTitle}
                     </h3>
                     <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#FDF7EE] text-[#ECA548] border border-[#ECA548]/20">
@@ -505,7 +506,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                 id="giftghor-chat-send-btn"
                 disabled={!inputVal.trim() || isTyping}
                 className="w-10 h-10 rounded-xl flex items-center justify-center text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
-                style={{ backgroundColor: '#ECA548' }}
+                style={{ backgroundColor: branding.primaryColor }}
               >
                 <Send className="w-4 h-4" />
               </button>
