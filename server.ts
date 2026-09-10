@@ -593,11 +593,16 @@ app.post('/api/chat/message', async (req, res) => {
   }
 
   try {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const envKeys = Object.keys(process.env).filter(k => k.startsWith('GEMINI_API_KEY'));
+    let apiKeys: string[] = [];
+    envKeys.forEach(key => {
+      const val = process.env[key];
+      if (val) apiKeys.push(...val.split(',').map(k => k.trim()));
+    });
+    apiKeys = [...new Set(apiKeys)].filter(k => k && k !== 'MY_GEMINI_API_KEY');
     let botReplyText = '';
 
-    if (apiKey && apiKey !== 'MY_GEMINI_API_KEY') {
-      const ai = new GoogleGenAI({ apiKey });
+    if (apiKeys.length > 0) {
       const systemInstruction = buildSystemKnowledgeContext(DB);
 
       // Build conversation history for context, grouping consecutive messages by role
@@ -613,17 +618,25 @@ app.post('/api/chat/message', async (req, res) => {
         }
       }
 
-      // Generate content
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.6-flash',
-        contents: chatHistory,
-        config: {
-          systemInstruction,
-          temperature: 0.7,
-        },
-      });
+      for (const apiKey of apiKeys) {
+        try {
+          const ai = new GoogleGenAI({ apiKey });
+          // Generate content
+          const response = await ai.models.generateContent({
+            model: 'gemini-3.6-flash',
+            contents: chatHistory,
+            config: {
+              systemInstruction,
+              temperature: 0.7,
+            },
+          });
 
-      botReplyText = response.text || '';
+          botReplyText = response.text || '';
+          if (botReplyText) break;
+        } catch (keyErr) {
+          console.error('API key failed, trying next:', keyErr);
+        }
+      }
     }
 
     // Fallback if no API key or empty response
@@ -697,24 +710,42 @@ app.post('/api/chat', async (req, res) => {
   }
 
   try {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey || apiKey === 'MY_GEMINI_API_KEY') {
+    const envKeys = Object.keys(process.env).filter(k => k.startsWith('GEMINI_API_KEY'));
+    let apiKeys: string[] = [];
+    envKeys.forEach(key => {
+      const val = process.env[key];
+      if (val) apiKeys.push(...val.split(',').map(k => k.trim()));
+    });
+    apiKeys = [...new Set(apiKeys)].filter(k => k && k !== 'MY_GEMINI_API_KEY');
+
+    if (apiKeys.length === 0) {
       return res.status(500).json({ error: 'Internal server error: API key not configured' });
     }
 
-    const ai = new GoogleGenAI({ apiKey });
     const systemInstruction = buildSystemKnowledgeContext(DB);
+    let reply = '';
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
-      contents: [{ role: 'user', parts: [{ text: String(message) }] }],
-      config: {
-        systemInstruction,
-        temperature: 0.7,
-      },
-    });
+    for (const apiKey of apiKeys) {
+      try {
+        const ai = new GoogleGenAI({ apiKey });
+        const response = await ai.models.generateContent({
+          model: 'gemini-3.6-flash',
+          contents: [{ role: 'user', parts: [{ text: String(message) }] }],
+          config: {
+            systemInstruction,
+            temperature: 0.7,
+          },
+        });
+        reply = response.text || '';
+        if (reply) break;
+      } catch (keyErr) {
+        console.error('API key failed, trying next:', keyErr);
+      }
+    }
 
-    const reply = response.text || generateFallbackReply(message, DB);
+    if (!reply) {
+      reply = generateFallbackReply(message, DB);
+    }
     res.json({ reply });
   } catch (error) {
     console.error('Public API /api/chat error:', error);
