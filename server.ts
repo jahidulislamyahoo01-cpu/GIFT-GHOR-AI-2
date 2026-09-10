@@ -128,7 +128,7 @@ interface SystemDB {
         productDetails?: string;
         notes?: string;
         orderStatus: 'lead' | 'confirmed' | 'pending_call';
-        collectedAt: string;
+        collectedAt: string; steadfastStatus?: string; trackingCode?: string;
       };
     }
   >;
@@ -166,55 +166,183 @@ const DEFAULT_DB: SystemDB = {
     specialNotice: 'আমাদের কাছে রয়েছে আকর্ষণীয় সব লেডিজ ব্যাগ এবং ওয়ালেটের কালেকশন!',
   },
   products: [
-    {
-      id: 'prod-1',
-      title: '2in1 Trifold wallet',
-      price: 550,
-      originalPrice: 550,
-      category: 'Wallets',
-      stockStatus: 'in_stock',
-      description: 'Elegant and compact 2in1 trifold wallet.',
-      imageUrl: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=400&q=80',
-      url: 'https://giftghor.world/product/2in1-trifold-wallet',
-      customizable: false,
-    },
-    {
-      id: 'prod-2',
-      title: 'Premium Curved Flap Shoulder Bag for Women',
-      price: 1150,
-      originalPrice: 1750,
-      category: 'Bags',
-      stockStatus: 'in_stock',
-      description: 'Stylish premium curved flap shoulder bag perfect for women.',
-      imageUrl: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400&q=80',
-      url: 'https://giftghor.world/product/premium-shoulder-bag',
-      customizable: false,
-    },
-    {
-      id: 'prod-3',
-      title: 'Shoulder Crossbody Large Capacity Bucket Bag',
-      price: 650,
-      originalPrice: 850,
-      category: 'Bags',
-      stockStatus: 'in_stock',
-      description: 'Spacious shoulder crossbody large capacity bucket bag. Save 24%.',
-      imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&q=80',
-      url: 'https://giftghor.world/product/crossbody-bucket-bag',
-      customizable: false,
-    },
-    {
-      id: 'prod-4',
-      title: 'Cute Bear & Paw Print Mini Folding Ladies Wallet',
-      price: 390,
-      originalPrice: 550,
-      category: 'Wallets',
-      stockStatus: 'in_stock',
-      description: 'Adorable mini folding ladies wallet with bear & paw print. Save 29%.',
-      imageUrl: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400&q=80',
-      url: 'https://giftghor.world/product/bear-paw-wallet',
-      customizable: false,
-    }
-  ],
+  {
+    "id": "1333107",
+    "title": "Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet",
+    "price": 350,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1333107",
+    "description": "প্রতিদিনের ব্যবহারে সোবার ও কিউট লুক পেতে 'Gift Ghor' নিয়ে এলো Cute Daisy Flower Mini Folding Ladies Wallet।"
+  },
+  {
+    "id": "1015780",
+    "title": "Premium Curved Flap Shoulder Bag for Women",
+    "price": 1150,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1015780",
+    "description": "মার্জিত ডিজাইন এবং প্রিমিয়াম ফিনিশিংয়ের এই ব্ল্যাক শোল্ডার ব্যাগটি আপনার আভিজাত্যকে ফুটিয়ে তুলবে কয়েক গুণ।"
+  },
+  {
+    "id": "1015779",
+    "title": "Shoulder Crossbody Large Capacity Bucket Bag",
+    "price": 650,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1015779",
+    "description": "স্টাইলিশ ও প্রিমিয়াম এই হোবো ব্যাগটিতে রয়েছে আকর্ষণীয় এথনিক এমব্রয়ডারি স্ট্র্যাপ।"
+  },
+  {
+    "id": "1337004",
+    "title": "Trendy Crossbody & Shoulder Vanity Bag for Women - Stylish Party & Casual Sling Bag by Gift Ghor",
+    "price": 600,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1337004",
+    "description": "আপনার প্রতিদিনের বা পার্টির পোশাকের সাথে নিখুঁতভাবে মানানসই একটি প্রিমিয়াম স্টাইলিশ ভ্যানিটি ব্যাগ খুঁজছেন? Gift Ghor নিয়ে এসেছে এই চমৎকার ও কমপ্যাক্ট ডিজাইনের ব্যাগ, যা আপনাকে দেবে এক দারুণ ফ্যাশনেবল লুক।"
+  },
+  {
+    "id": "1328410",
+    "title": "Cute Mini Rabbit Metal Buckle Folding Ladies Wallet",
+    "price": 550,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1328410",
+    "description": "আপনার স্টাইল ও প্রয়োজনীয়তার সেরা সংমিশ্রণ! 'Gift Ghor' নিয়ে এলো কিউট র‍্যাবিট মেটাল লোগো সমৃদ্ধ Mini Folding Ladies Wallet।"
+  },
+  {
+    "id": "1328434",
+    "title": "Cute Golden Bow Metal Buckle Small Ladies Wallet",
+    "price": 420,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1328434",
+    "description": "আপনার দৈনন্দিন স্টাইলে কিউট অ্যান্ড গ্ল্যামারাস লুক যোগ করতে 'Gift Ghor' নিয়ে এলো Golden Bow Metal Buckle Mini Ladies Wallet।"
+  },
+  {
+    "id": "1330754",
+    "title": "Vintage Sunflower Embroidery Zipper Short Ladies Wallet",
+    "price": 550,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1330754",
+    "description": "ভিন্টেজ লুক ও ক্লাসি ডিজাইনের পারফেক্ট মেলবন্ধন! 'Gift Ghor' নিয়ে এলো Sunflower Embroidery Short Ladies Wallet।"
+  },
+  {
+    "id": "1330759",
+    "title": "Vintage Leather Shoulder Bag Baguette Handbag for Women",
+    "price": 850,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1330759",
+    "description": "আপনার স্টাইলে গ্ল্যামারাস ও ওয়েস্টার্ন ছোঁয়া যোগ করতে 'Gift Ghor' নিয়ে এলো Retro Vintage Leather Shoulder Bag (Baguette Bag)।"
+  },
+  {
+    "id": "1333100",
+    "title": "Cute Sweet Bow Printed Mini Folding Ladies Wallet",
+    "price": 490,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "out_of_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1333100",
+    "description": "আপনার দৈনন্দিন স্টাইলে কিউট ও ক্যাজুয়াল টাচ যোগ করতে 'Gift Ghor' নিয়ে এলো Sweet Bow Printed Mini Folding Ladies Wallet।"
+  },
+  {
+    "id": "1337043",
+    "title": "Elegant Embossed Floral Long Leather Wallet for Women | Multi-Card Holder & Zipper Clutch Purse – Gift Ghor",
+    "price": 890,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1337043",
+    "description": "হাতে বহনযোগ্য স্টাইলিশ ও স্লিম ডিজাইনের একটি বড় ওয়ালেট খুঁজছেন? Gift Ghor নিয়ে এসেছে প্রিমিয়াম এমবসড ফ্লোরাল ডিজাইনের এই লেডিস লং ওয়ালেট।"
+  },
+  {
+    "id": "1337015",
+    "title": "Cute Bear & Bunny Foldable Mini Wallet for Women & Girls | Compact Card & Money Purse – Gift Ghor",
+    "price": 490,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1337015",
+    "description": "ব্যাগ বা পকেটে সহজে বহনযোগ্য একটি কিউট ও ট্রেন্ডি মিনি ওয়ালেট খুঁজছেন? Gift Ghor নিয়ে এসেছে প্রিমিয়াম কোয়ালিটির এই কমপ্যাক্ট সাইজ ফোল্ডিং পার্স।"
+  },
+  {
+    "id": "1333092",
+    "title": "Cute Cat Embroidery Short Zipper Ladies Wallet",
+    "price": 550,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1333092",
+    "description": "বিড়ালপ্রেমীদের জন্য নিয়ে এলাম অত্যন্ত কিউট ও স্টাইলিশ Cute Cat Embroidery Short Ladies Wallet! টেক্সচার্ড সফট ফিনিশিং, প্রিমিয়াম ক্যাট এমব্রয়ডারি মোটিফ এবং সিকিউর জিপার চেম্বার সমৃদ্ধ এই ওয়ালেটটি আপনার দৈনন্দিন ব্যবহারে আনবে এক অন্যরকম মিষ্টি টাচ।"
+  },
+  {
+    "id": "1330748",
+    "title": "Cute Flower Print Mini Folding Ladies Wallet",
+    "price": 330,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1330748",
+    "description": "আপনার দৈনন্দিন লুকে সোবার এবং কিউট টাচ যোগ করতে 'Gift Ghor' নিয়ে এলো Cute Flower Print & 'Nice Day' Printed Mini Folding Ladies Wallet।"
+  },
+  {
+    "id": "945885",
+    "title": "2in1 Trifold wallet",
+    "price": 550,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/945885",
+    "description": "Premium Quality 2-in-1 Ladies Wallet.Premium PU leather.Cute design with Coin Purse & Card Holder facility. Available in 5 colors. Durable and stylish choice for daily use.।"
+  },
+  {
+    "id": "1328420",
+    "title": "Ladies Wallet with Removable Card Holder & Zipper Pocket",
+    "price": 750,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1328420",
+    "description": "স্মার্ট স্টাইল ও সর্বোচ্চ ইউটিলিটির অপূর্ব কম্বিনেশন! 'Gift Ghor' নিয়ে এলো Detachable Card Holder সহ Multifunctional Short Ladies Wallet।"
+  },
+  {
+    "id": "1330560",
+    "title": "Cute Bear & Paw Print Mini Folding Ladies Wallet",
+    "price": 390,
+    "category": "Accessories",
+    "customizable": false,
+    "stockStatus": "in_stock",
+    "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1330560",
+    "description": "আপনার প্রতিদিনের ক্যাজুয়াল লুকের সঙ্গী হতে 'Gift Ghor' নিয়ে এলো Cute 3D Bear & Paw Print Mini Folding Ladies Wallet।"
+  }
+],
   crawledPages: [
     {
       id: 'crawl-1',
@@ -853,6 +981,60 @@ app.post('/api/admin/chats/:sessionId/read', adminAuthMiddleware, (req, res) => 
 });
 
 // Admin manual takeover or toggle AI
+
+// Send Order to Steadfast Courier
+app.post('/api/admin/steadfast/send-order', adminAuthMiddleware, async (req, res) => {
+  const { sessionId, codAmount } = req.body;
+  if (!DB.sessions[sessionId] || !DB.sessions[sessionId].orderExtracted) {
+    return res.status(404).json({ error: 'Session or order not found' });
+  }
+
+  const session = DB.sessions[sessionId];
+  const order = session.orderExtracted;
+
+  const apiKey = process.env.STEADFAST_API_KEY;
+  const secretKey = process.env.STEADFAST_SECRET_KEY;
+
+  if (!apiKey || !secretKey) {
+    return res.status(400).json({ error: 'Steadfast API keys are not configured in environment (.env)' });
+  }
+
+  try {
+    const payload = {
+      invoice: 'GG-' + Math.floor(Math.random() * 100000),
+      recipient_name: order.customerName || 'Customer',
+      recipient_phone: order.customerPhone,
+      recipient_address: order.customerAddress || 'Address not provided',
+      cod_amount: Number(codAmount) || 0,
+      note: 'Ordered via Gift Ghor AI Chatbot'
+    };
+
+    const sfRes = await fetch('https://portal.steadfast.com.bd/api/v1/create_order', {
+      method: 'POST',
+      headers: {
+        'Api-Key': apiKey,
+        'Secret-Key': secretKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const sfData = await sfRes.json();
+
+    if (sfRes.ok && sfData.status === 200) {
+      session.orderExtracted.steadfastStatus = 'Sent';
+      session.orderExtracted.trackingCode = sfData.consignment?.tracking_code || sfData.consignment_id || 'Success';
+      saveDB(DB);
+      return res.json({ success: true, session });
+    } else {
+      return res.status(400).json({ error: 'Steadfast API Error: ' + JSON.stringify(sfData) });
+    }
+  } catch (err: any) {
+    console.error('Steadfast error:', err);
+    return res.status(500).json({ error: 'Internal Server Error while connecting to Steadfast' });
+  }
+});
+
 app.post('/api/admin/chats/:sessionId/mode', adminAuthMiddleware, (req, res) => {
   const { sessionId } = req.params;
   const { mode } = req.body; // 'ai' | 'admin_takeover'
