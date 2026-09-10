@@ -1,0 +1,6 @@
+{
+  "name": "Gift Ghor AI Customer Support",
+  "description": "Production-grade AI customer support ecosystem for Gift Ghor with embeddable client chat widget and secure admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
