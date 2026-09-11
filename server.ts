@@ -38,7 +38,7 @@ app.use(cors({
 }));
 
 app.use((req, res, next) => {
-  // Explicitly allow embedding in external iframes
+  // Explicitly allow embedding in external frames
   res.removeHeader('X-Frame-Options');
   res.header('Content-Security-Policy', "frame-ancestors *");
   next();
@@ -196,9 +196,9 @@ const DEFAULT_DB: SystemDB = {
     headerTextColor: '#262626',
     welcomeMessage: 'আসসালামু আলাইকুম আপু/ভাইয়া, আপনাকে কীভাবে সাহায্য করতে পারি?',
     quickReplies: [
-      'অর্ডার করতে চাই 🎁',
+      'অর্ডার করতে চাই 🛍️',
       'ডেলিভারি চার্জ কত? 🚚',
-      'প্রোডাক্ট ক্যাটালগ 🛍️'
+      'প্রোডাক্ট ক্যাটালগ 🗂️'
     ],
     showOnlineStatus: true,
     fontFamily: 'sans-serif',
@@ -367,7 +367,7 @@ const DEFAULT_DB: SystemDB = {
     "stockStatus": "in_stock",
     "imageUrl": "https://giftghor.world/assets/logo.png",
       "url": "https://giftghor.world/products/945885",
-    "description": "Premium Quality 2-in-1 Ladies Wallet.Premium PU leather.Cute design with Coin Purse & Card Holder facility. Available in 5 colors. Durable and stylish choice for daily use.।"
+    "description": "Premium Quality 2-in-1 Ladies Wallet.Premium PU leather.Cute design with Coin Purse & Card Holder facilty. Available in 5 colors. Durable and stylish choice for daily use.।"
   },
   {
     "id": "1328420",
@@ -619,14 +619,14 @@ You are the official, intelligent, polite, and persuasive AI Customer Support & 
 
 CRITICAL RULES ABOUT PRODUCTS (STRICT KNOWLEDGE ENFORCEMENT):
 - DO NOT invent, suggest, or mention ANY product that is not strictly listed in the CATALOG below or allowed categories.
-- You ONLY sell: Bags, Wallets, Purses, and Churi (Bangles).
+- You ONLY sell: Bags, Wallets, Purses, and Chur (Bangles).
 - STRICT RULE: If the customer asks for ANY product outside these categories or not found in your knowledge base (e.g., customized gifts, electronics, clothes), you MUST politely inform them that it is NOT available at Gift Ghor.
 - All items (Bags, Wallets, Purses) are available on the website.
-- Exception: "Churi" (Bangles) is NOT on the website. Customers must order Churi directly through this message chat.
+- Exception: "Chur" (Bangles) is NOT on the website. Customers must order Chur directly through this message chat.
 
 LANGUAGE & TONE:
-- Fluently understand and respond in Bengali (বাংলা), Banglish, or English based on the customer's language.
-- Speak with warm hospitality, professional courtesy, and Bangladeshi cultural etiquette (e.g. "আসসালামু আলাইকুম", "জি অবশ্যই", "ধন্যবাদ").
+- Fluently understand and respond in Bengali (বাংলা), Bangladeshi, or English based on the customer's language.
+- Speak with warm hospitality, professional courtesy, and Bangladesh cultural etiquette (e.g. "আসসালামু আলাইকুম", "জি অবশ্যই", "ধন্যবাদ").
 - Keep responses concise, well-structured, formatted with bullet points or emojis where appropriate.
 
 KNOWLEDGE BASE & VERIFIED DATA:
@@ -728,8 +728,8 @@ app.get('/api/chat/session/:sessionId', (req, res) => {
 // Helper to extract order details via regex / smart parsing
 function tryExtractOrder(text: string, existing?: any) {
   const phoneMatch = text.match(/(?:\+?88)?01[3-9]\d{8}/);
-  const nameMatch = text.match(/(?:নাম|name)\s*[:=–-]?\s*([A-Za-z\u0980-\u09FF\s]{2,35})/i);
-  const addressMatch = text.match(/(?:ঠিকানা|address|location|thana|জেলা|থানা)\s*[:=–-]?\s*([^,\n]+(?:,[^,\n]+)*)/i);
+  const nameMatch = text.match(/(?:নাম|name)\s*[:=–-]?\s*([A-Za-z\u0980-\u09FF\s]{2,35})/);
+  const addressMatch = text.match(/(?:ঠিকানা|address|location|thana|জেলা|থানা)\s*[:=–-]?\s*([^,\n]+(?:,[^,\n]+)*)/);
 
   const extracted = { ...existing };
   if (phoneMatch) extracted.customerPhone = phoneMatch[0];
@@ -781,7 +781,7 @@ app.post('/api/chat/message', async (req, res) => {
   const userMsgId = 'msg-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
   const userTimestamp = new Date().toISOString();
 
-  // Try extracting customer order lead
+  // Trying extracting customer order lead
   const updatedOrder = tryExtractOrder(text, session.orderExtracted);
   if (updatedOrder) {
     session.orderExtracted = updatedOrder;
@@ -797,7 +797,7 @@ app.post('/api/chat/message', async (req, res) => {
       const orderId = existingOrder ? existingOrder.id : ('ord-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6));
       const orderNumber = existingOrder ? existingOrder.orderNumber : `GG-${1001 + Object.keys(DB.orders).length}`;
 
-      const deliveryLocation = (updatedOrder.customerAddress && /dhaka|ঢাকা/i.test(updatedOrder.customerAddress)) ? 'inside_dhaka' : 'outside_dhaka';
+      const deliveryLocation = (updatedOrder.customerAddress && /dhaka|ঢাকা/.test(updatedOrder.customerAddress)) ? 'inside_dhaka' : 'outside_dhaka';
       const deliveryCharge = deliveryLocation === 'inside_dhaka' ? (DB.deliveryPolicy.insideDhakaCost || 70) : (DB.deliveryPolicy.outsideDhakaCost || 130);
       const prodPrice = updatedOrder.productPrice || 790;
       const totalAmount = prodPrice + deliveryCharge;
@@ -825,7 +825,7 @@ app.post('/api/chat/message', async (req, res) => {
       DB.orders[orderId] = orderRecord;
       saveOrderToFirestore(orderRecord).catch((e) => console.warn('[Firestore] Order cloud sync failed:', e));
 
-      // Send instant email notification to giftghor6525@gmail.com and jahidulislammozumder@outlook.com
+      // Send instant email notification to giftghor6525@gmail.com and jahdulslammozumder@outlook.com
       if (isNewOrder && (updatedOrder.customerAddress || updatedOrder.customerName)) {
         sendNewOrderEmail(orderRecord, DB.adminSettings).catch((e) => console.warn('[Order Alert] Email failed:', e));
       }
@@ -858,6 +858,7 @@ app.post('/api/chat/message', async (req, res) => {
   if (isAgentRequested) {
     session.mode = 'admin_takeover';
     saveDB(DB);
+    saveSessionToFirestore(session).catch(e => console.warn('Sync failed:', e));
     sendLiveAgentAlertEmail({
       sessionId,
       customerName: session.customerName,
@@ -918,7 +919,7 @@ app.post('/api/chat/message', async (req, res) => {
           const ai = new GoogleGenAI({ apiKey });
           // Generate content
           const response = await ai.models.generateContent({
-            model: 'gemini-3.6-flash',
+            model: 'gemini-2.5-flash',
             contents: chatHistory,
             config: {
               systemInstruction,
@@ -952,6 +953,7 @@ app.post('/api/chat/message', async (req, res) => {
     });
 
     saveDB(DB);
+    saveSessionToFirestore(session).catch((e) => console.warn('[Firestore] Session cloud sync failed:', e));
 
     res.json({
       reply: botReplyText,
@@ -973,7 +975,7 @@ app.post('/api/chat/message', async (req, res) => {
       timestamp: new Date().toISOString(),
     });
     saveDB(DB);
-
+    saveSessionToFirestore(session).catch((e) => console.warn('[Firestore] Session cloud sync failed:', e));
     res.json({
       reply: fallbackText,
       mode: 'ai',
@@ -988,9 +990,9 @@ const generateFallbackReply = (userInput: string, db: SystemDB) => {
   const lower = userInput.toLowerCase();
   if (lower.includes('ডেলিভারি') || lower.includes('delivery') || lower.includes('চার্জ') || userInput.includes('🚚')) {
     return `ঢাকার ভেতরে ডেলিভারি চার্জ ৳${db.deliveryPolicy.insideDhakaCost} এবং ঢাকার বাইরে ৳${db.deliveryPolicy.outsideDhakaCost}। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি (COD) সুবিধা আছে!`;
-  } else if (lower.includes('অর্ডার') || lower.includes('order') || lower.includes('কিনব') || userInput.includes('🎁')) {
+  } else if (lower.includes('অর্ডার') || lower.includes('order') || lower.includes('কিনব') || userInput.includes('🛍️')) {
     return `অর্ডার করতে অনুগ্রহ করে আপনার: \n১. পূর্ণ নাম\n২. সম্পূর্ণ ঠিকানা\n৩. মোবাইল নম্বর\n৪. প্রোডাক্টের নাম/ছবি\n\nলিখে পাঠান।`;
-  } else if (lower.includes('প্রোডাক্ট') || lower.includes('product') || lower.includes('ক্যাটালগ') || userInput.includes('🛍️')) {
+  } else if (lower.includes('প্রোডাক্ট') || lower.includes('product') || lower.includes('ক্যাটালগ') || userInput.includes('🗂️')) {
     const topProducts = db.products.slice(0, 4).map((p: any) => `• ${p.title} (৳${p.price})`).join('\n');
     return `আমাদের বর্তমান জনপ্রিয় প্রোডাক্টসমূহ:\n${topProducts}\n\nকোনটি অর্ডার করতে চান?`;
   } else {
@@ -1025,7 +1027,7 @@ app.post('/api/chat', async (req, res) => {
       try {
         const ai = new GoogleGenAI({ apiKey });
         const response = await ai.models.generateContent({
-          model: 'gemini-3.6-flash',
+          model: 'gemini-2.5-flash',
           contents: [{ role: 'user', parts: [{ text: String(message) }] }],
           config: {
             systemInstruction,
@@ -1076,7 +1078,7 @@ app.post('/api/admin/login', async (req, res) => {
         requiresOtp: true,
         tempToken,
         message: 'A 6-digit verification code has been sent to your email.',
-        targetEmail: 'giftghor6525@gmail.com / jahidulislammozumder@outlook.com',
+        targetEmail: 'giftghor6525@gmail.com / jahdulslammozumder@outlook.com',
         // In preview environments, provide debugOtp so testing is always unblocked
         debugOtp: otpCode,
       });
@@ -1216,7 +1218,7 @@ app.get('/api/admin/state', adminAuthMiddleware, (req, res) => {
 // -------------------------------------------------------------
 
 app.get('/api/admin/integrations', adminAuthMiddleware, (req, res) => {
-  const settings = DB.adminSettings || {};
+  const settings = DB.adminSettings || {} as any;
   res.json({
     hasGmailAppPassword: !!settings.gmailAppPassword,
     gmailUser: settings.gmailUser || '',
@@ -1442,6 +1444,7 @@ app.post('/api/admin/chats/:sessionId/read', adminAuthMiddleware, (req, res) => 
   if (DB.sessions[sessionId]) {
     DB.sessions[sessionId].unreadCount = 0;
     saveDB(DB);
+    saveSessionToFirestore(DB.sessions[sessionId]).catch(e => console.warn('Sync failed:', e));
   }
   res.json({ success: true });
 });
@@ -1491,6 +1494,7 @@ app.post('/api/admin/steadfast/send-order', adminAuthMiddleware, async (req, res
       session.orderExtracted.steadfastStatus = 'Sent';
       session.orderExtracted.trackingCode = sfData.consignment?.tracking_code || sfData.consignment_id || 'Success';
       saveDB(DB);
+      saveSessionToFirestore(session).catch(e => console.warn('Sync failed:', e));
       return res.json({ success: true, session });
     } else {
       return res.status(400).json({ error: 'Steadfast API Error: ' + JSON.stringify(sfData) });
@@ -1509,6 +1513,7 @@ app.post('/api/admin/chats/:sessionId/mode', adminAuthMiddleware, (req, res) => 
   }
   DB.sessions[sessionId].mode = mode;
   saveDB(DB);
+  saveSessionToFirestore(DB.sessions[sessionId]).catch(e => console.warn('Sync failed:', e));
   res.json({ success: true, session: DB.sessions[sessionId] });
 });
 
@@ -1531,7 +1536,7 @@ app.post('/api/admin/chats/:sessionId/reply', adminAuthMiddleware, (req, res) =>
   DB.sessions[sessionId].messages.push(newMsg);
   DB.sessions[sessionId].lastActivity = newMsg.timestamp;
   saveDB(DB);
-
+  saveSessionToFirestore(DB.sessions[sessionId]).catch(e => console.warn('Sync failed:', e));
   res.json({ success: true, message: newMsg, session: DB.sessions[sessionId] });
 });
 
@@ -1777,7 +1782,7 @@ async function crawlGiftGhor() {
     const sitemapRes = await axios.get('https://giftghor.world/api/sitemaps.xml', { timeout: 15000 });
     const $sm = cheerio.load(sitemapRes.data, { xmlMode: true });
     const urls = [];
-    $sm('loc').each((i, el) => {
+    $sm('loc').each((_, el) => {
       urls.push($sm(el).text());
     });
     console.log(`[Crawler] Found ${urls.length} URLs in sitemap`);
@@ -1792,21 +1797,21 @@ async function crawlGiftGhor() {
         const metaDescription = $('meta[name="description"]').attr('content') || '';
         
         let jsonText = '';
-        $('script').each((i, el) => {
+        $('script').each((_, el) => {
           const scriptContent = $(el).html() || '';
           if (scriptContent.includes('self.__next_f.push')) {
-            jsonText += scriptContent.replace(/[^a-zA-Z0-9ঀ-৿s\.\,\:\-]/g, ' ') + ' ';
+            jsonText += scriptContent.replace(/[^a-zA-Z0-9ঀ-৿\s\.\,\:\-]/g, ' ') + ' ';
           }
         });
         
         let imageText = '';
-        $('img').each((i, el) => {
+        $('img').each((_, el) => {
           const src = $(el).attr('src');
           if (src && src.includes('original.jpg')) {
              imageText += `Image: ${src}\n`;
           }
         });
-        const imgRegex = /https:\/\/assets\.zatiqeasy\.com[^\\]+?original\.(jpg|png|jpeg)/g;
+        const imgRegex = /https:\/\/assets\.zatqeasy\.com[^\\]+?original\.(jpg|png|jpeg)/g;
         let match;
         while ((match = imgRegex.exec(jsonText)) !== null) {
           imageText += `Image: ${match[0]}\n`;
