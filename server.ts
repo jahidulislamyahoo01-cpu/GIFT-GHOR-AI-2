@@ -1215,7 +1215,7 @@ app.get('/api/admin/state', adminAuthMiddleware, (req, res) => {
 // INTEGRATIONS SETTINGS
 // -------------------------------------------------------------
 
-app.get('/api/admin/integrations', authenticateToken, (req, res) => {
+app.get('/api/admin/integrations', adminAuthMiddleware, (req, res) => {
   const settings = DB.adminSettings || {};
   res.json({
     hasGmailAppPassword: !!settings.gmailAppPassword,
@@ -1225,7 +1225,7 @@ app.get('/api/admin/integrations', authenticateToken, (req, res) => {
   });
 });
 
-app.post('/api/admin/integrations', authenticateToken, (req, res) => {
+app.post('/api/admin/integrations', adminAuthMiddleware, (req, res) => {
   const { gmailUser, gmailAppPassword, steadfastApiKey, steadfastSecretKey } = req.body;
   if (!DB.adminSettings) {
     DB.adminSettings = { twoFactorEnabled: false, twoFactorEmail: 'giftghor6525@gmail.com' };
