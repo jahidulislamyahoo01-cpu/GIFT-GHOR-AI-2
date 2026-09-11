@@ -552,10 +552,10 @@ async function syncDatabaseWithCloud() {
         if (s.adminSettings) DB.adminSettings = { ...DB.adminSettings, ...s.adminSettings };
         if (s.branding) DB.branding = { ...DB.branding, ...s.branding };
         if (s.deliveryPolicy) DB.deliveryPolicy = { ...DB.deliveryPolicy, ...s.deliveryPolicy };
-        if (Array.isArray(s.faqs) && s.faqs.length > 0) DB.faqs = s.faqs;
-        if (Array.isArray(s.crawledPages) && s.crawledPages.length > 0) DB.crawledPages = s.crawledPages;
-        if (Array.isArray(s.uploadedFiles) && s.uploadedFiles.length > 0) DB.uploadedFiles = s.uploadedFiles;
-        if (Array.isArray(s.products) && s.products.length > 0) DB.products = s.products;
+        if (Array.isArray(s.faqs)) DB.faqs = s.faqs;
+        if (Array.isArray(s.crawledPages)) DB.crawledPages = s.crawledPages;
+        if (Array.isArray(s.uploadedFiles)) DB.uploadedFiles = s.uploadedFiles;
+        if (Array.isArray(s.products)) DB.products = s.products;
         if (s.lastTrainedAt) DB.lastTrainedAt = s.lastTrainedAt;
         if (s.trainingVersion) DB.trainingVersion = s.trainingVersion;
         console.log('[Firestore] Loaded knowledge, password & settings from Cloud Firestore.');
@@ -1237,7 +1237,7 @@ app.post('/api/admin/integrations', adminAuthMiddleware, (req, res) => {
   if (steadfastApiKey !== undefined) DB.adminSettings.steadfastApiKey = steadfastApiKey;
   if (steadfastSecretKey) DB.adminSettings.steadfastSecretKey = steadfastSecretKey;
 
-  saveStateToFirestore().catch(e => console.error(e));
+  saveDB(DB);
   res.json({ success: true, message: 'Integrations updated successfully' });
 });
 
@@ -1771,62 +1771,78 @@ app.post('/api/admin/sync-and-train', adminAuthMiddleware, (req, res) => {
 // Auto Web Crawler Job (Updates Knowledge twice a day)
 // -------------------------------------------------------------
 async function crawlGiftGhor() {
-  console.log('[Crawler] Starting auto-crawl of giftghor.world and subpages...');
-  const urls = [
-    'https://giftghor.world/',
-    'https://giftghor.world/checkout',
-    'https://giftghor.world/categories/217915?selected_category=217915&category_id=217915',
-    'https://giftghor.world/categories/204464?selected_category=204464&category_id=204464',
-    'https://giftghor.world/categories/204461?selected_category=204461&category_id=204461',
-    'https://giftghor.world/about-us'
-  ];
-
-  for (const url of urls) {
-    try {
-      const response = await axios.get(url, { timeout: 15000 });
-      const $ = cheerio.load(response.data);
-      
-      const title = $('title').text() || 'Gift Ghor';
-      const metaDescription = $('meta[name="description"]').attr('content') || '';
-      
-      let jsonText = '';
-      $('script').each((i, el) => {
-        const scriptContent = $(el).html() || '';
-        if (scriptContent.includes('self.__next_f.push')) {
-          jsonText += scriptContent.replace(/[^a-zA-Z0-9ঀ-৿s\.\,\:\-]/g, ' ') + ' ';
+  console.log('[Crawler] Starting auto-crawl of giftghor.world sitemap...');
+  try {
+    const sitemapRes = await axios.get('https://giftghor.world/api/sitemaps.xml', { timeout: 15000 });
+    const $sm = cheerio.load(sitemapRes.data, { xmlMode: true });
+    const urls = [];
+    $sm('loc').each((i, el) => {
+      urls.push($sm(el).text());
+    });
+    console.log(`[Crawler] Found ${urls.length} URLs in sitemap`);
+    
+    for (const url of urls) {
+      if (url.includes('/categories')) continue;
+      try {
+        const response = await axios.get(url, { timeout: 15000 });
+        const $ = cheerio.load(response.data);
+        
+        const title = $('title').text() || 'Gift Ghor';
+        const metaDescription = $('meta[name="description"]').attr('content') || '';
+        
+        let jsonText = '';
+        $('script').each((i, el) => {
+          const scriptContent = $(el).html() || '';
+          if (scriptContent.includes('self.__next_f.push')) {
+            jsonText += scriptContent.replace(/[^a-zA-Z0-9ঀ-৿s\.\,\:\-]/g, ' ') + ' ';
+          }
+        });
+        
+        let imageText = '';
+        $('img').each((i, el) => {
+          const src = $(el).attr('src');
+          if (src && src.includes('original.jpg')) {
+             imageText += `Image: ${src}\n`;
+          }
+        });
+        const imgRegex = /https:\/\/assets\.zatiqeasy\.com[^\\]+?original\.(jpg|png|jpeg)/g;
+        let match;
+        while ((match = imgRegex.exec(jsonText)) !== null) {
+          imageText += `Image: ${match[0]}\n`;
         }
-      });
-
-      const bodyText = $('body').text().replace(/\s+/g, ' ').trim();
-      
-      const combinedContent = `Title: ${title}\nDescription: ${metaDescription}\nText: ${bodyText}\nInternal Data: ${jsonText.substring(0, 5000)}`;
-
-      const id = url === 'https://giftghor.world/' ? 'homepage' : (url.split('/').pop()?.substring(0, 30) || url.substring(0, 30));
-      const existingIndex = DB.crawledPages.findIndex((c: any) => c.id === id || c.url === url);
-      const crawledData = {
-        id: id,
-        url: url,
-        title: title,
-        pageType: 'page' as const,
-        status: 'success' as const,
-        wordCount: combinedContent.split(' ').length,
-        itemsFound: 1,
-        crawledAt: new Date().toISOString(),
-        contentSummary: combinedContent.substring(0, 2000) + '... (auto-updated from giftghor.world)'
-      };
-
-      if (existingIndex >= 0) {
-        DB.crawledPages[existingIndex] = crawledData;
-      } else {
-        DB.crawledPages.push(crawledData);
+        
+        const bodyText = $('body').text().replace(/\s+/g, ' ').trim();
+        const combinedContent = `Title: ${title}\nDescription: ${metaDescription}\nImages:\n${imageText}\nText: ${bodyText}\nInternal Data: ${jsonText.substring(0, 5000)}`;
+        
+        const id = url === 'https://giftghor.world/' ? 'homepage' : (url.split('/').pop()?.substring(0, 30) || url.substring(0, 30));
+        
+        const existingIndex = DB.crawledPages.findIndex((c: any) => c.id === id || c.url === url);
+        const crawledData = {
+          id: id,
+          url: url,
+          title: title,
+          pageType: 'page' as const,
+          status: 'success' as const,
+          wordCount: combinedContent.split(' ').length,
+          itemsFound: 1,
+          crawledAt: new Date().toISOString(),
+          contentSummary: combinedContent.substring(0, 2000) + '... (auto-updated from sitemap)'
+        };
+        
+        if (existingIndex >= 0) {
+          DB.crawledPages[existingIndex] = crawledData;
+        } else {
+          DB.crawledPages.push(crawledData);
+        }
+      } catch (err) {
+        console.error(`[Crawler] Failed to crawl ${url}:`, err.message);
       }
-      
-      console.log(`[Crawler] Successfully updated knowledge base from ${url}`);
-    } catch (err) {
-      console.error(`[Crawler] Failed to crawl ${url}:`, err);
     }
+    saveDB(DB);
+    console.log('[Crawler] Auto-crawl finished successfully.');
+  } catch (err) {
+    console.error('[Crawler] Failed to fetch sitemap:', err.message);
   }
-  saveDB(DB);
 }
 
 // Run crawler on startup, then every 12 hours
