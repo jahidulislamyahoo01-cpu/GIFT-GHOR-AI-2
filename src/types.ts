@@ -99,6 +99,35 @@ export interface ChatSession {
   orderExtracted?: OrderDetails;
 }
 
+export interface CapturedOrder {
+  id: string;
+  orderNumber: string;
+  sessionId?: string;
+  customerName: string;
+  customerPhone: string;
+  customerAddress: string;
+  productName: string;
+  quantity: number;
+  codAmount: number;
+  deliveryLocation: 'inside_dhaka' | 'outside_dhaka';
+  deliveryCharge: number;
+  totalAmount: number;
+  status: 'pending' | 'confirmed' | 'steadfast_booked' | 'delivered' | 'cancelled';
+  steadfastConsignmentId?: string;
+  steadfastTrackingCode?: string;
+  source: 'chat' | 'manual';
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminSecuritySettings {
+  twoFactorEnabled: boolean;
+  twoFactorEmail: string;
+  smtpConfigured: boolean;
+  lastPasswordChangedAt?: string;
+}
+
 export interface AdminOverviewStats {
   totalSessions: number;
   unreadSessions: number;
@@ -107,4 +136,5 @@ export interface AdminOverviewStats {
   knowledgeSourcesCount: number;
   lastTrainedAt: string;
   aiMode: string;
+  twoFactorEnabled?: boolean;
 }
