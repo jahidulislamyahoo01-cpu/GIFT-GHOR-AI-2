@@ -176,6 +176,10 @@ interface SystemDB {
     twoFactorEnabled: boolean;
     twoFactorEmail: string;
     lastPasswordChangedAt?: string;
+    gmailUser?: string;
+    gmailAppPassword?: string;
+    steadfastApiKey?: string;
+    steadfastSecretKey?: string;
   };
   lastTrainedAt: string;
   trainingVersion: number;
@@ -823,7 +827,7 @@ app.post('/api/chat/message', async (req, res) => {
 
       // Send instant email notification to giftghor6525@gmail.com and jahidulislammozumder@outlook.com
       if (isNewOrder && (updatedOrder.customerAddress || updatedOrder.customerName)) {
-        sendNewOrderEmail(orderRecord).catch((e) => console.warn('[Order Alert] Email failed:', e));
+        sendNewOrderEmail(orderRecord, DB.adminSettings).catch((e) => console.warn('[Order Alert] Email failed:', e));
       }
     }
   }
@@ -860,7 +864,7 @@ app.post('/api/chat/message', async (req, res) => {
       customerPhone: session.customerPhone,
       lastMessage: text,
       timestamp: userTimestamp,
-    }).catch((e) => console.warn('[Live Agent Alert] Email failed:', e));
+    }, DB.adminSettings).catch((e) => console.warn('[Live Agent Alert] Email failed:', e));
 
     return res.json({
       reply: 'ধন্যবাদ! আমাদের একজন কাস্টমার সাপোর্ট প্রতিনিধি/অ্যাডমিন আপনার সাথে সরাসরি যুক্ত হচ্ছেন। অনুগ্রহ করে একটু অপেক্ষা করুন।',
@@ -1066,7 +1070,7 @@ app.post('/api/admin/login', async (req, res) => {
         username,
       };
 
-      const emailResult = await sendOtpEmail(otpCode, DB.adminSettings.twoFactorEmail || 'giftghor6525@gmail.com');
+      const emailResult = await sendOtpEmail(otpCode, DB.adminSettings.twoFactorEmail || 'giftghor6525@gmail.com', DB.adminSettings);
 
       return res.json({
         requiresOtp: true,
@@ -1206,6 +1210,37 @@ app.get('/api/admin/state', adminAuthMiddleware, (req, res) => {
 });
 
 // -------------------------------------------------------------
+
+// -------------------------------------------------------------
+// INTEGRATIONS SETTINGS
+// -------------------------------------------------------------
+
+app.get('/api/admin/integrations', authenticateToken, (req, res) => {
+  const settings = DB.adminSettings || {};
+  res.json({
+    hasGmailAppPassword: !!settings.gmailAppPassword,
+    gmailUser: settings.gmailUser || '',
+    hasSteadfastSecretKey: !!settings.steadfastSecretKey,
+    steadfastApiKey: settings.steadfastApiKey || '',
+  });
+});
+
+app.post('/api/admin/integrations', authenticateToken, (req, res) => {
+  const { gmailUser, gmailAppPassword, steadfastApiKey, steadfastSecretKey } = req.body;
+  if (!DB.adminSettings) {
+    DB.adminSettings = { twoFactorEnabled: false, twoFactorEmail: 'giftghor6525@gmail.com' };
+  }
+  
+  if (gmailUser !== undefined) DB.adminSettings.gmailUser = gmailUser;
+  if (gmailAppPassword) DB.adminSettings.gmailAppPassword = gmailAppPassword;
+  
+  if (steadfastApiKey !== undefined) DB.adminSettings.steadfastApiKey = steadfastApiKey;
+  if (steadfastSecretKey) DB.adminSettings.steadfastSecretKey = steadfastSecretKey;
+
+  saveStateToFirestore().catch(e => console.error(e));
+  res.json({ success: true, message: 'Integrations updated successfully' });
+});
+
 // DEDICATED ORDERS MANAGEMENT ENDPOINTS
 // -------------------------------------------------------------
 
@@ -1267,7 +1302,7 @@ app.post('/api/admin/orders', adminAuthMiddleware, async (req, res) => {
   await saveOrderToFirestore(newOrder);
 
   // Send email alert to admin team
-  sendNewOrderEmail(newOrder).catch((e) => console.warn('[Order Alert] Email failed:', e));
+  sendNewOrderEmail(newOrder, DB.adminSettings).catch((e) => console.warn('[Order Alert] Email failed:', e));
 
   res.json({ success: true, order: newOrder });
 });
@@ -1315,8 +1350,8 @@ app.post('/api/admin/orders/:id/book-steadfast', adminAuthMiddleware, async (req
   }
 
   const order = DB.orders[id];
-  const apiKey = process.env.STEADFAST_API_KEY;
-  const secretKey = process.env.STEADFAST_SECRET_KEY;
+  const apiKey = DB.adminSettings?.steadfastApiKey || process.env.STEADFAST_API_KEY;
+  const secretKey = DB.adminSettings?.steadfastSecretKey || process.env.STEADFAST_SECRET_KEY;
 
   if (!apiKey || !secretKey) {
     // In demo / preview mode without credentials, simulate successful booking
@@ -1422,8 +1457,8 @@ app.post('/api/admin/steadfast/send-order', adminAuthMiddleware, async (req, res
   const session = DB.sessions[sessionId];
   const order = session.orderExtracted;
 
-  const apiKey = process.env.STEADFAST_API_KEY;
-  const secretKey = process.env.STEADFAST_SECRET_KEY;
+  const apiKey = DB.adminSettings?.steadfastApiKey || process.env.STEADFAST_API_KEY;
+  const secretKey = DB.adminSettings?.steadfastSecretKey || process.env.STEADFAST_SECRET_KEY;
 
   if (!apiKey || !secretKey) {
     return res.status(400).json({ error: 'Steadfast API keys are not configured in environment (.env)' });

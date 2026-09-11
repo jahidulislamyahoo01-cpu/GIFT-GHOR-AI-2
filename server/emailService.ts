@@ -6,10 +6,15 @@ export const NOTIFICATION_RECIPIENTS = [
   'jahidulislammozumder@outlook.com',
 ];
 
+export interface EmailConfig {
+  gmailUser?: string;
+  gmailAppPassword?: string;
+}
+
 /**
  * Get or create Nodemailer transporter
  */
-function getTransporter() {
+function getTransporter(config?: EmailConfig) {
   const host = process.env.SMTP_HOST;
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
@@ -25,13 +30,17 @@ function getTransporter() {
     });
   }
 
+  // Use passed config from DB, or fallback to environment variables
+  const finalGmailUser = config?.gmailUser || process.env.GMAIL_USER;
+  const finalGmailPass = config?.gmailAppPassword || process.env.GMAIL_APP_PASSWORD;
+
   // If GMAIL_APP_PASSWORD and GMAIL_USER exist
-  if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+  if (finalGmailUser && finalGmailPass) {
     return nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD,
+        user: finalGmailUser,
+        pass: finalGmailPass,
       },
     });
   }
@@ -55,7 +64,7 @@ export async function sendNewOrderEmail(order: {
   totalAmount: number;
   createdAt: string;
   notes?: string;
-}) {
+}, config?: EmailConfig) {
   const subject = `🛒 New Order Captured #${order.orderNumber} - Gift Ghor [${order.productName}]`;
   const htmlContent = `
     <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ECECEC; border-radius: 12px; background-color: #FFFFFF;">
@@ -120,7 +129,7 @@ export async function sendNewOrderEmail(order: {
   console.log(`[Email Notification] New order #${order.orderNumber} notification to: ${NOTIFICATION_RECIPIENTS.join(', ')}`);
 
   let status = 'logged';
-  const transporter = getTransporter();
+  const transporter = getTransporter(config);
   if (transporter) {
     try {
       await transporter.sendMail({
@@ -162,7 +171,7 @@ export async function sendLiveAgentAlertEmail(data: {
   customerPhone?: string;
   lastMessage: string;
   timestamp: string;
-}) {
+}, config?: EmailConfig) {
   const subject = `🚨 Customer Wants to Talk with Admin / Live Agent - Gift Ghor!`;
   const htmlContent = `
     <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ECECEC; border-radius: 12px; background-color: #FFFFFF;">
@@ -208,7 +217,7 @@ export async function sendLiveAgentAlertEmail(data: {
   console.log(`[Email Notification] Live Agent request notification to: ${NOTIFICATION_RECIPIENTS.join(', ')}`);
 
   let status = 'logged';
-  const transporter = getTransporter();
+  const transporter = getTransporter(config);
   if (transporter) {
     try {
       await transporter.sendMail({
@@ -241,7 +250,7 @@ export async function sendLiveAgentAlertEmail(data: {
 /**
  * Send 2-Step Verification OTP Code Email
  */
-export async function sendOtpEmail(otp: string, targetEmail: string = 'giftghor6525@gmail.com') {
+export async function sendOtpEmail(otp: string, targetEmail: string = 'giftghor6525@gmail.com', config?: EmailConfig) {
   const subject = `🔐 Your Gift Ghor Admin Verification Code: ${otp}`;
   const htmlContent = `
     <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #ECECEC; border-radius: 12px; background-color: #FFFFFF;">
@@ -270,7 +279,7 @@ export async function sendOtpEmail(otp: string, targetEmail: string = 'giftghor6
   console.log(`[Email OTP] 2FA OTP [${otp}] generated for: ${recipients.join(', ')}`);
 
   let status = 'logged';
-  const transporter = getTransporter();
+  const transporter = getTransporter(config);
   if (transporter) {
     try {
       await transporter.sendMail({
