@@ -1392,6 +1392,7 @@ app.post('/api/admin/orders/:id/book-steadfast', adminAuthMiddleware, async (req
         'Secret-Key': secretKey,
         'Content-Type': 'application/json',
       },
+      validateStatus: () => true,
     });
 
     if (sfRes.data && (sfRes.data.status === 200 || sfRes.data.consignment)) {
@@ -1414,7 +1415,7 @@ app.post('/api/admin/orders/:id/book-steadfast', adminAuthMiddleware, async (req
       });
     } else {
       return res.status(400).json({
-        error: 'Steadfast booking failed',
+        error: sfRes.data?.errors ? JSON.stringify(sfRes.data.errors) : (sfRes.data?.message || 'Steadfast booking failed'),
         details: sfRes.data,
       });
     }

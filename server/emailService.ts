@@ -133,7 +133,7 @@ export async function sendNewOrderEmail(order: {
   if (transporter) {
     try {
       await transporter.sendMail({
-        from: process.env.SMTP_FROM || `"Gift Ghor Orders" <no-reply@giftghor.world>`,
+        from: config?.gmailUser || process.env.SMTP_FROM || `"Gift Ghor Orders" <no-reply@giftghor.world>`,
         to: NOTIFICATION_RECIPIENTS,
         subject,
         html: htmlContent,
@@ -221,7 +221,7 @@ export async function sendLiveAgentAlertEmail(data: {
   if (transporter) {
     try {
       await transporter.sendMail({
-        from: process.env.SMTP_FROM || `"Gift Ghor Alerts" <alerts@giftghor.world>`,
+        from: config?.gmailUser || process.env.SMTP_FROM || `"Gift Ghor Alerts" <alerts@giftghor.world>`,
         to: NOTIFICATION_RECIPIENTS,
         subject,
         html: htmlContent,
@@ -283,7 +283,7 @@ export async function sendOtpEmail(otp: string, targetEmail: string = 'giftghor6
   if (transporter) {
     try {
       await transporter.sendMail({
-        from: process.env.SMTP_FROM || `"Gift Ghor Security" <security@giftghor.world>`,
+        from: config?.gmailUser || process.env.SMTP_FROM || `"Gift Ghor Security" <security@giftghor.world>`,
         to: recipients,
         subject,
         html: htmlContent,
