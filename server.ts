@@ -346,59 +346,40 @@ const DEFAULT_DB: SystemDB = {
 ],
   crawledPages: [
     {
-      id: 'crawl-1',
-      url: 'https://giftghor.world/sitemap.xml',
-      title: 'Gift Ghor XML Sitemap Index',
-      pageType: 'sitemap',
-      status: 'success',
-      wordCount: 1420,
-      itemsFound: 38,
-      crawledAt: new Date().toISOString(),
-      contentSummary: 'Indexed 38 active product URLs, categories: Personalized Gifts, Home Decor, Men Accessories, Anniversary Combos.',
-    },
-    {
-      id: 'crawl-2',
-      url: 'https://giftghor.world/delivery-policy',
-      title: 'Delivery & Shipping Guidelines - Gift Ghor',
+      id: 'homepage',
+      url: 'https://giftghor.world/',
+      title: 'GIFT GHOR',
       pageType: 'page',
       status: 'success',
-      wordCount: 450,
-      itemsFound: 4,
+      wordCount: 350,
+      itemsFound: 1,
       crawledAt: new Date().toISOString(),
-      contentSummary: 'Dhaka shipping 80 Tk (1-2 days), outside Dhaka 130 Tk (2-4 days). Steadfast & RedX courier. COD enabled.',
+      contentSummary: 'Gift Ghor - Quality Ladies Wallets, Handbags and Fashion Accessories. Cash on delivery available nationwide.',
     },
     {
-      id: 'crawl-3',
-      url: 'https://giftghor.world/how-to-customize',
-      title: 'Custom Gift Instructions & Preview Guidelines',
+      id: 'checkout',
+      url: 'https://giftghor.world/checkout',
+      title: 'GIFT GHOR Checkout',
       pageType: 'page',
       status: 'success',
-      wordCount: 680,
-      itemsFound: 6,
+      wordCount: 120,
+      itemsFound: 1,
       crawledAt: new Date().toISOString(),
-      contentSummary: 'Customers can send photos via WhatsApp or website upload. Clear high-resolution photo recommended. Digital preview shown before final crafting.',
-    },
-  ],
-  uploadedFiles: [
-    {
-      id: 'file-1',
-      fileName: 'giftghor_catalog_feed.xml',
-      fileType: 'xml',
-      size: 48920,
-      parsedItemsCount: 18,
-      uploadedAt: new Date().toISOString(),
-      summary: 'Google Merchant Center XML catalog feed. Parsed 18 items with stock, BDT pricing, and high-res image tags.',
+      contentSummary: 'Checkout page with Cash on Delivery (COD) and delivery information.',
     },
     {
-      id: 'file-2',
-      fileName: 'frequently_asked_questions.csv',
-      fileType: 'csv',
-      size: 12400,
-      parsedItemsCount: 12,
-      uploadedAt: new Date().toISOString(),
-      summary: 'Customer FAQ CSV covering payment gateways (bKash, Nagad, COD), order cancellation, and custom gift mockups.',
-    },
+      id: 'about-us',
+      url: 'https://giftghor.world/about-us',
+      title: 'About Us - GIFT GHOR',
+      pageType: 'page',
+      status: 'success',
+      wordCount: 220,
+      itemsFound: 1,
+      crawledAt: new Date().toISOString(),
+      contentSummary: 'Gift Ghor is a trusted online shop for premium ladies wallets, card holders and bags in Bangladesh.',
+    }
   ],
+  uploadedFiles: [],
   faqs: [
     {
       id: 'faq-1',
@@ -417,7 +398,7 @@ const DEFAULT_DB: SystemDB = {
     {
       id: 'faq-4',
       question: 'অগ্রিম কোনো টাকা দিতে হবে কি?',
-      answer: 'আমাদের সকল প্রোডাক্ট কোনো প্রকার অগ্রিম ছাড়াই সম্পূর্ণ ক্যাশ অন ডেলিভারিতে নিতে পারবেন।',
+      answer: 'আমাদের সকল প্রোডাক্ট কোনো প্রকার অগ্রিম ছাড়াই সম্পূর্ণ ক্যাশ অন ডেলিভারিতে নিতে পারবেন। ডেলিভারিম্যানের সামনে পার্সেল চেক করে টাকা দিতে পারবেন।',
       category: 'payment',
       updatedAt: new Date().toISOString(),
     },
@@ -427,25 +408,59 @@ const DEFAULT_DB: SystemDB = {
   trainingVersion: 1,
 };
 
-function loadDB(): SystemDB {
-  try {
-    if (fs.existsSync(DB_FILE)) {
-      const data = fs.readFileSync(DB_FILE, 'utf-8');
-      return JSON.parse(data);
-    }
-  } catch (err) {
-    console.error('Failed to read db file, using fallback', err);
-  }
-  saveDB(DEFAULT_DB);
-  return DEFAULT_DB;
-}
+const DB_BACKUP_FILE = path.join(process.cwd(), 'data_storage.backup.json');
 
 function saveDB(db: SystemDB) {
   try {
-    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf-8');
+    const json = JSON.stringify(db, null, 2);
+    // Write atomically to temporary file first to avoid corruption during server restarts
+    const tempFile = DB_FILE + '.tmp';
+    fs.writeFileSync(tempFile, json, 'utf-8');
+    fs.renameSync(tempFile, DB_FILE);
+    // Maintain a mirrored backup file
+    fs.writeFileSync(DB_BACKUP_FILE, json, 'utf-8');
   } catch (err) {
     console.error('Failed to save db file', err);
   }
+}
+
+function loadDB(): SystemDB {
+  // 1. Try reading the primary DB file
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      const data = fs.readFileSync(DB_FILE, 'utf-8');
+      if (data && data.trim().length > 10) {
+        const parsed = JSON.parse(data);
+        if (parsed && typeof parsed === 'object') {
+          return parsed;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Failed to read primary db file, attempting backup recovery...', err);
+  }
+
+  // 2. Try recovering from mirrored backup file if primary is missing or corrupt
+  try {
+    if (fs.existsSync(DB_BACKUP_FILE)) {
+      const backupData = fs.readFileSync(DB_BACKUP_FILE, 'utf-8');
+      if (backupData && backupData.trim().length > 10) {
+        const parsedBackup = JSON.parse(backupData);
+        if (parsedBackup && typeof parsedBackup === 'object') {
+          console.log('[Storage Engine] Successfully restored database from backup file!');
+          saveDB(parsedBackup);
+          return parsedBackup;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Failed to read backup db file', err);
+  }
+
+  // 3. Fallback only if no DB or backup exists
+  console.log('[Storage Engine] Initializing database with DEFAULT_DB');
+  saveDB(DEFAULT_DB);
+  return DEFAULT_DB;
 }
 
 // Global DB in memory synced to disk
@@ -1084,6 +1099,56 @@ app.delete('/api/admin/uploaded-files/:id', adminAuthMiddleware, (req, res) => {
   res.json({ success: true, uploadedFiles: DB.uploadedFiles });
 });
 
+app.delete('/api/admin/crawled-pages/:id', adminAuthMiddleware, (req, res) => {
+  const { id } = req.params;
+  DB.crawledPages = DB.crawledPages.filter((c) => c.id !== id);
+  saveDB(DB);
+  res.json({ success: true, crawledPages: DB.crawledPages });
+});
+
+// Full Knowledge & State Backup / Restore Endpoints
+app.get('/api/admin/backup/export', adminAuthMiddleware, (req, res) => {
+  res.json({
+    timestamp: new Date().toISOString(),
+    faqs: DB.faqs,
+    uploadedFiles: DB.uploadedFiles,
+    crawledPages: DB.crawledPages,
+    deliveryPolicy: DB.deliveryPolicy,
+    branding: DB.branding,
+    products: DB.products,
+  });
+});
+
+app.post('/api/admin/backup/restore', adminAuthMiddleware, (req, res) => {
+  const data = req.body;
+  if (!data || typeof data !== 'object') {
+    return res.status(400).json({ error: 'Invalid backup payload' });
+  }
+
+  if (Array.isArray(data.faqs)) DB.faqs = data.faqs;
+  if (Array.isArray(data.uploadedFiles)) DB.uploadedFiles = data.uploadedFiles;
+  if (Array.isArray(data.crawledPages)) DB.crawledPages = data.crawledPages;
+  if (data.deliveryPolicy) DB.deliveryPolicy = { ...DB.deliveryPolicy, ...data.deliveryPolicy };
+  if (data.branding) DB.branding = { ...DB.branding, ...data.branding };
+  if (Array.isArray(data.products)) DB.products = data.products;
+
+  DB.trainingVersion = (DB.trainingVersion || 1) + 1;
+  DB.lastTrainedAt = new Date().toISOString();
+  saveDB(DB);
+
+  console.log('[Backup] Successfully restored knowledge and system state!');
+  res.json({
+    success: true,
+    message: 'Knowledge base successfully restored and saved!',
+    faqs: DB.faqs,
+    uploadedFiles: DB.uploadedFiles,
+    crawledPages: DB.crawledPages,
+    deliveryPolicy: DB.deliveryPolicy,
+    branding: DB.branding,
+    products: DB.products,
+  });
+});
+
 app.post('/api/admin/crawler/start', adminAuthMiddleware, async (req, res) => {
   const { url } = req.body;
   const targetUrl = url || 'https://giftghor.world';
@@ -1239,19 +1304,6 @@ async function crawlGiftGhor() {
         DB.crawledPages.push(crawledData);
       }
       
-      if (url === 'https://giftghor.world/') {
-        const lowerBody = (bodyText + ' ' + jsonText).toLowerCase();
-        if (lowerBody.includes('return') || lowerBody.includes('রিটার্ন')) {
-          const sentences = (bodyText + ' ' + jsonText).split(/(?<=[.।])/);
-          const returnSentences = sentences.filter(s => s.toLowerCase().includes('return') || s.includes('রিটার্ন'));
-          if (returnSentences.length > 0) {
-             const foundText = returnSentences.join(' ').replace(/\s+/g, ' ').substring(0, 200);
-             if (foundText.length > 10) {
-                 DB.deliveryPolicy.returnPolicyText = foundText + '... (auto-updated from giftghor.world)';
-             }
-          }
-        }
-      }
       console.log(`[Crawler] Successfully updated knowledge base from ${url}`);
     } catch (err) {
       console.error(`[Crawler] Failed to crawl ${url}:`, err);

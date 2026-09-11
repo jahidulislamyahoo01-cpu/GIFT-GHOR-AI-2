@@ -1,0 +1,334 @@
+{
+  "adminPasswordHash": "giftghor2026",
+  "branding": {
+    "storeName": "Gift Ghor",
+    "widgetTitle": "Gift Ghor Assistant",
+    "widgetSubtitle": "Online | Instant replies in বাংলা & English",
+    "logoUrl": "https://cdn-icons-png.flaticon.com/512/3063/3063822.png",
+    "primaryColor": "#ECA548",
+    "headerTextColor": "#262626",
+    "welcomeMessage": "আসসালামু আলাইকুম আপু/ভাইয়া, আপনাকে কীভাবে সাহায্য করতে পারি?",
+    "quickReplies": [
+      "অর্ডার করতে চাই 🎁",
+      "ডেলিভারি চার্জ কত? 🚚",
+      "প্রোডাক্ট ক্যাটালগ 🛍️"
+    ],
+    "showOnlineStatus": true,
+    "fontFamily": "sans-serif"
+  },
+  "deliveryPolicy": {
+    "insideDhakaCost": 70,
+    "outsideDhakaCost": 130,
+    "codAvailable": true,
+    "deliveryTimeDhaka": "২৪-৪৮ ঘণ্টার মধ্যে",
+    "deliveryTimeOutside": "২-৪ কার্যদিবসের মধ্যে",
+    "advancePaymentRequired": false,
+    "advancePaymentNote": "সারা বাংলাদেশে ক্যাশ অন ডেলিভারি (COD) সুবিধা আছে। পার্সেল হাতে পেয়ে মূল্য পরিশোধ করতে পারবেন।",
+    "returnPolicyText": "ডেলিভারিম্যানের সামনে পার্সেল চেক করে গ্রহণ করবেন। কোনো ত্রুটি বা সমস্যা থাকলে সাথে সাথে রিটার্ন করতে পারবেন বা আমাদের সাথে যোগাযোগ করতে পারবেন।",
+    "specialNotice": "আমাদের কাছে রয়েছে আকর্ষণীয় সব লেডিজ ব্যাগ এবং ওয়ালেটের কালেকশন!"
+  },
+  "products": [
+    {
+      "id": "1333107",
+      "title": "Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet",
+      "price": 350,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1333107",
+      "description": "প্রতিদিনের ব্যবহারে সোবার ও কিউট লুক পেতে 'Gift Ghor' নিয়ে এলো Cute Daisy Flower Mini Folding Ladies Wallet।"
+    },
+    {
+      "id": "1015780",
+      "title": "Premium Curved Flap Shoulder Bag for Women",
+      "price": 1150,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1015780",
+      "description": "মার্জিত ডিজাইন এবং প্রিমিয়াম ফিনিশিংয়ের এই ব্ল্যাক শোল্ডার ব্যাগটি আপনার আভিজাত্যকে ফুটিয়ে তুলবে কয়েক গুণ।"
+    },
+    {
+      "id": "1015779",
+      "title": "Shoulder Crossbody Large Capacity Bucket Bag",
+      "price": 650,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1015779",
+      "description": "স্টাইলিশ ও প্রিমিয়াম এই হোবো ব্যাগটিতে রয়েছে আকর্ষণীয় এথনিক এমব্রয়ডারি স্ট্র্যাপ।"
+    },
+    {
+      "id": "1337004",
+      "title": "Trendy Crossbody & Shoulder Vanity Bag for Women - Stylish Party & Casual Sling Bag by Gift Ghor",
+      "price": 600,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1337004",
+      "description": "আপনার প্রতিদিনের বা পার্টির পোশাকের সাথে নিখুঁতভাবে মানানসই একটি প্রিমিয়াম স্টাইলিশ ভ্যানিটি ব্যাগ খুঁজছেন? Gift Ghor নিয়ে এসেছে এই চমৎকার ও কমপ্যাক্ট ডিজাইনের ব্যাগ, যা আপনাকে দেবে এক দারুণ ফ্যাশনেবল লুক।"
+    },
+    {
+      "id": "1328410",
+      "title": "Cute Mini Rabbit Metal Buckle Folding Ladies Wallet",
+      "price": 550,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1328410",
+      "description": "আপনার স্টাইল ও প্রয়োজনীয়তার সেরা সংমিশ্রণ! 'Gift Ghor' নিয়ে এলো কিউট র‍্যাবিট মেটাল লোগো সমৃদ্ধ Mini Folding Ladies Wallet।"
+    },
+    {
+      "id": "1328434",
+      "title": "Cute Golden Bow Metal Buckle Small Ladies Wallet",
+      "price": 420,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1328434",
+      "description": "আপনার দৈনন্দিন স্টাইলে কিউট অ্যান্ড গ্ল্যামারাস লুক যোগ করতে 'Gift Ghor' নিয়ে এলো Golden Bow Metal Buckle Mini Ladies Wallet।"
+    },
+    {
+      "id": "1330754",
+      "title": "Vintage Sunflower Embroidery Zipper Short Ladies Wallet",
+      "price": 550,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1330754",
+      "description": "ভিন্টেজ লুক ও ক্লাসি ডিজাইনের পারফেক্ট মেলবন্ধন! 'Gift Ghor' নিয়ে এলো Sunflower Embroidery Short Ladies Wallet।"
+    },
+    {
+      "id": "1330759",
+      "title": "Vintage Leather Shoulder Bag Baguette Handbag for Women",
+      "price": 850,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1330759",
+      "description": "আপনার স্টাইলে গ্ল্যামারাস ও ওয়েস্টার্ন ছোঁয়া যোগ করতে 'Gift Ghor' নিয়ে এলো Retro Vintage Leather Shoulder Bag (Baguette Bag)।"
+    },
+    {
+      "id": "1333100",
+      "title": "Cute Sweet Bow Printed Mini Folding Ladies Wallet",
+      "price": 490,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "out_of_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1333100",
+      "description": "আপনার দৈনন্দিন স্টাইলে কিউট ও ক্যাজুয়াল টাচ যোগ করতে 'Gift Ghor' নিয়ে এলো Sweet Bow Printed Mini Folding Ladies Wallet।"
+    },
+    {
+      "id": "1337043",
+      "title": "Elegant Embossed Floral Long Leather Wallet for Women | Multi-Card Holder & Zipper Clutch Purse – Gift Ghor",
+      "price": 890,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1337043",
+      "description": "হাতে বহনযোগ্য স্টাইলিশ ও স্লিম ডিজাইনের একটি বড় ওয়ালেট খুঁজছেন? Gift Ghor নিয়ে এসেছে প্রিমিয়াম এমবসড ফ্লোরাল ডিজাইনের এই লেডিস লং ওয়ালেট।"
+    },
+    {
+      "id": "1337015",
+      "title": "Cute Bear & Bunny Foldable Mini Wallet for Women & Girls | Compact Card & Money Purse – Gift Ghor",
+      "price": 490,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1337015",
+      "description": "ব্যাগ বা পকেটে সহজে বহনযোগ্য একটি কিউট ও ট্রেন্ডি মিনি ওয়ালেট খুঁজছেন? Gift Ghor নিয়ে এসেছে প্রিমিয়াম কোয়ালিটির এই কমপ্যাক্ট সাইজ ফোল্ডিং পার্স।"
+    },
+    {
+      "id": "1333092",
+      "title": "Cute Cat Embroidery Short Zipper Ladies Wallet",
+      "price": 550,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1333092",
+      "description": "বিড়ালপ্রেমীদের জন্য নিয়ে এলাম অত্যন্ত কিউট ও স্টাইলিশ Cute Cat Embroidery Short Ladies Wallet! টেক্সচার্ড সফট ফিনিশিং, প্রিমিয়াম ক্যাট এমব্রয়ডারি মোটিফ এবং সিকিউর জিপার চেম্বার সমৃদ্ধ এই ওয়ালেটটি আপনার দৈনন্দিন ব্যবহারে আনবে এক অন্যরকম মিষ্টি টাচ।"
+    },
+    {
+      "id": "1330748",
+      "title": "Cute Flower Print Mini Folding Ladies Wallet",
+      "price": 330,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1330748",
+      "description": "আপনার দৈনন্দিন লুকে সোবার এবং কিউট টাচ যোগ করতে 'Gift Ghor' নিয়ে এলো Cute Flower Print & 'Nice Day' Printed Mini Folding Ladies Wallet।"
+    },
+    {
+      "id": "945885",
+      "title": "2in1 Trifold wallet",
+      "price": 550,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/945885",
+      "description": "Premium Quality 2-in-1 Ladies Wallet.Premium PU leather.Cute design with Coin Purse & Card Holder facility. Available in 5 colors. Durable and stylish choice for daily use.।"
+    },
+    {
+      "id": "1328420",
+      "title": "Ladies Wallet with Removable Card Holder & Zipper Pocket",
+      "price": 750,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1328420",
+      "description": "স্মার্ট স্টাইল ও সর্বোচ্চ ইউটিলিটির অপূর্ব কম্বিনেশন! 'Gift Ghor' নিয়ে এলো Detachable Card Holder সহ Multifunctional Short Ladies Wallet।"
+    },
+    {
+      "id": "1330560",
+      "title": "Cute Bear & Paw Print Mini Folding Ladies Wallet",
+      "price": 390,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1330560",
+      "description": "আপনার প্রতিদিনের ক্যাজুয়াল লুকের সঙ্গী হতে 'Gift Ghor' নিয়ে এলো Cute 3D Bear & Paw Print Mini Folding Ladies Wallet।"
+    }
+  ],
+  "crawledPages": [
+    {
+      "id": "homepage",
+      "url": "https://giftghor.world/",
+      "title": "GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 2579,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-11T05:54:47.924Z",
+      "contentSummary": "Title: GIFT GHOR\nDescription: \"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\"\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploa... (auto-updated from giftghor.world)"
+    },
+    {
+      "id": "checkout",
+      "url": "https://giftghor.world/checkout",
+      "title": "GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 2413,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-11T05:54:48.022Z",
+      "contentSummary": "Title: GIFT GHOR\nDescription: \"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\"\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploa... (auto-updated from giftghor.world)"
+    },
+    {
+      "id": "217915?selected_category=21791",
+      "url": "https://giftghor.world/categories/217915?selected_category=217915&category_id=217915",
+      "title": "217915 - GIFT GHOR | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 2354,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-11T05:54:48.118Z",
+      "contentSummary": "Title: 217915 - GIFT GHOR | GIFT GHOR\nDescription: Browse 217915 products\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"email\":\"info@giftgh... (auto-updated from giftghor.world)"
+    },
+    {
+      "id": "204464?selected_category=20446",
+      "url": "https://giftghor.world/categories/204464?selected_category=204464&category_id=204464",
+      "title": "204464 - GIFT GHOR | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 2350,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-11T05:54:48.212Z",
+      "contentSummary": "Title: 204464 - GIFT GHOR | GIFT GHOR\nDescription: Browse 204464 products\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"email\":\"info@giftgh... (auto-updated from giftghor.world)"
+    },
+    {
+      "id": "204461?selected_category=20446",
+      "url": "https://giftghor.world/categories/204461?selected_category=204461&category_id=204461",
+      "title": "204461 - GIFT GHOR | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 2354,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-11T05:54:48.316Z",
+      "contentSummary": "Title: 204461 - GIFT GHOR | GIFT GHOR\nDescription: Browse 204461 products\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"email\":\"info@giftgh... (auto-updated from giftghor.world)"
+    },
+    {
+      "id": "about-us",
+      "url": "https://giftghor.world/about-us",
+      "title": "About Us - GIFT GHOR | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 4031,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-11T05:54:48.418Z",
+      "contentSummary": "Title: About Us - GIFT GHOR | GIFT GHOR\nDescription: \"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\"\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.z... (auto-updated from giftghor.world)"
+    }
+  ],
+  "uploadedFiles": [],
+  "faqs": [
+    {
+      "question": "ক্যাশ অন ডেলিভারি কি আছে?",
+      "answer": "হ্যাঁ, সারা বাংলাদেশে ক্যাশ অন ডেলিভারি (COD) সুবিধা আছে।",
+      "category": "payment",
+      "id": "faq-1789106099594",
+      "updatedAt": "2026-09-11T05:54:59.594Z"
+    },
+    {
+      "id": "faq-1",
+      "question": "ডেলিভারি চার্জ কত এবং কতদিন সময় লাগে?",
+      "answer": "ঢাকার ভিতরে ডেলিভারি চার্জ ৭০ টাকা (২৪ থেকে ৪৮ ঘণ্টার মধ্যে ডেলিভারি)। ঢাকার বাইরে ডেলিভারি চার্জ ১৩০ টাকা (২ থেকে ৪ দিনের মধ্যে ডেলিভারি)। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি সুবিধা রয়েছে।",
+      "category": "delivery",
+      "updatedAt": "2026-09-11T05:47:37.621Z"
+    },
+    {
+      "id": "faq-2",
+      "question": "অর্ডার কনফার্ম করতে কি কি তথ্য লাগে?",
+      "answer": "অর্ডার করতে আপনার পূর্ণ নাম, সম্পূর্ণ ঠিকানা (জেলা ও থানা সহ), সচল মোবাইল নম্বর এবং আপনি কোন প্রোডাক্টটি নিতে চান তা লিখে আমাদের চ্যাটে পাঠালেই হবে।",
+      "category": "order",
+      "updatedAt": "2026-09-11T05:47:37.621Z"
+    },
+    {
+      "id": "faq-4",
+      "question": "অগ্রিম কোনো টাকা দিতে হবে কি?",
+      "answer": "আমাদের সকল প্রোডাক্ট কোনো প্রকার অগ্রিম ছাড়াই সম্পূর্ণ ক্যাশ অন ডেলিভারিতে নিতে পারবেন।",
+      "category": "payment",
+      "updatedAt": "2026-09-11T05:47:37.621Z"
+    }
+  ],
+  "sessions": {
+    "ghor-jwusy2a-mtwjbij9": {
+      "id": "ghor-jwusy2a-mtwjbij9",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-11T05:51:03.489Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789105863489-s1f36",
+          "sessionId": "ghor-jwusy2a-mtwjbij9",
+          "sender": "user",
+          "text": "অর্ডার করতে চাই 🎁",
+          "timestamp": "2026-09-11T05:51:03.489Z"
+        },
+        {
+          "id": "msg-1789105877344-2wf9h",
+          "sessionId": "ghor-jwusy2a-mtwjbij9",
+          "sender": "bot",
+          "text": "আসসালামু আলাইকুম! **Gift Ghor**-এ আপনাকে স্বাগতম। ❤️ \n\nআমাদের থেকে অর্ডার কনফার্ম করতে অনুগ্রহ করে নিচের তথ্যগুলো লিখে আমাদের পাঠিয়ে দিন:\n\n• **আপনার নাম:** \n• **সচল মোবাইল নম্বর:** \n• **সম্পূর্ণ ঠিকানা (জেলা, থানা, এলাকা ও বাসা নম্বর সহ):** \n• **প্রোডাক্টের নাম ও কালার/ভ্যারিয়েন্ট:** \n\n🚚 **ডেলিভারি চার্জ ও পেমেন্ট ডিটেইলস:**\n- **ঢাকার ভিতরে:** ৳৭০ (২৪-৪৮ ঘণ্টার মধ্যে ডেলিভারি)\n- **ঢাকার বাইরে (সারা বাংলাদেশ):** ৳১৩০ (২-৪ কার্যদিবসের মধ্যে ডেলিভারি)\n- **ক্যাশ অন ডেলিভারি (COD):** কোনো প্রকার অগ্রিম টাকা ছাড়াই পার্সেল হাতে পেয়ে দেখে মূল্য পরিশোধ করতে পারবেন।\n\nআপনি নির্দিষ্ট কোন প্রোডাক্টটি অর্ডার করতে চাচ্ছেন তা আমাদের জানিয়ে দিন, ধন্যবাদ! 🌸",
+          "timestamp": "2026-09-11T05:51:17.343Z"
+        }
+      ]
+    }
+  },
+  "lastTrainedAt": "2026-09-11T05:47:37.621Z",
+  "trainingVersion": 1
+}

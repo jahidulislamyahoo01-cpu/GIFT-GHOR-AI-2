@@ -32,6 +32,7 @@ import {
   Sliders,
   Copy,
   Check,
+  Download,
 } from 'lucide-react';
 import {
   AdminOverviewStats,
@@ -112,6 +113,35 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
     setTimeout(() => setToastMessage(null), 3500);
   };
 
+  // Helper for localStorage knowledge backup
+  const saveLocalKnowledgeBackup = (partial: {
+    faqs?: KnowledgeFAQ[];
+    uploadedFiles?: UploadedFile[];
+    crawledPages?: CrawledPage[];
+    deliveryPolicy?: DeliveryPolicy;
+  }) => {
+    try {
+      const existingStr = localStorage.getItem('giftghor_knowledge_backup');
+      const existing = existingStr ? JSON.parse(existingStr) : {};
+      const updated = {
+        ...existing,
+        ...partial,
+        timestamp: new Date().toISOString(),
+      };
+      localStorage.setItem('giftghor_knowledge_backup', JSON.stringify(updated));
+    } catch (e) {
+      console.error('Failed to save local knowledge backup', e);
+    }
+  };
+
+  const [localBackupAvailable, setLocalBackupAvailable] = useState<{
+    faqs?: KnowledgeFAQ[];
+    uploadedFiles?: UploadedFile[];
+    crawledPages?: CrawledPage[];
+    deliveryPolicy?: DeliveryPolicy;
+    timestamp?: string;
+  } | null>(null);
+
   // Fetch full admin state
   const loadAdminState = async (token = authToken, isInitial = false, isPolling = false) => {
     if (!token) return;
@@ -136,14 +166,34 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
         setCrawledPages(data.crawledPages || []);
         setUploadedFiles(data.uploadedFiles || []);
         setFaqs(data.faqs || []);
+
+        // Auto-backup to browser localStorage when data is populated
+        if (data.faqs && data.faqs.length > 0) {
+          saveLocalKnowledgeBackup({
+            faqs: data.faqs,
+            uploadedFiles: data.uploadedFiles,
+            crawledPages: data.crawledPages,
+            deliveryPolicy: data.deliveryPolicy,
+          });
+        }
       }
 
-      // Auto-select first session on initial load
+      // On initial load, check if local storage has a backup with more FAQs than the server
       if (isInitial) {
         const sessionKeys = Object.keys(data.sessions || {});
         if (sessionKeys.length > 0) {
           setSelectedSessionId(sessionKeys[0]);
         }
+
+        try {
+          const localStr = localStorage.getItem('giftghor_knowledge_backup');
+          if (localStr) {
+            const localObj = JSON.parse(localStr);
+            if (localObj && localObj.faqs && localObj.faqs.length > (data.faqs?.length || 0)) {
+              setLocalBackupAvailable(localObj);
+            }
+          }
+        } catch (e) {}
       }
     } catch (err) {
       console.error('Failed to load admin state', err);
@@ -288,12 +338,36 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
       if (res.ok && data.success) {
         setCrawledPages(data.crawledPages);
         showToast(`Indexed ${data.crawledItem.itemsFound} items from ${crawlUrl}`);
-        loadAdminState();
+        saveLocalKnowledgeBackup({ crawledPages: data.crawledPages });
+        setCrawlUrl('');
+      } else {
+        showToast(data.error || 'Crawling failed');
       }
     } catch (err) {
       showToast('Crawling failed');
     } finally {
       setIsCrawling(false);
+    }
+  };
+
+  // Delete Crawled Page
+  const handleDeleteCrawledPage = async (id: string) => {
+    if (!confirm('Are you sure you want to remove this indexed page from knowledge?')) return;
+    try {
+      const res = await fetch(`/api/admin/crawled-pages/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setCrawledPages(data.crawledPages);
+        showToast('Indexed page removed');
+        saveLocalKnowledgeBackup({ crawledPages: data.crawledPages });
+      } else {
+        showToast('Failed to delete crawled page');
+      }
+    } catch (e) {
+      showToast('Error deleting crawled page');
     }
   };
 
@@ -305,9 +379,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
         method: 'DELETE',
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setUploadedFiles(data.uploadedFiles);
         showToast('File deleted successfully');
-        loadAdminState(authToken, false);
+        saveLocalKnowledgeBackup({ uploadedFiles: data.uploadedFiles });
+      } else {
+        showToast('Error deleting file');
       }
     } catch (e) {
       showToast('Error deleting file');
@@ -324,11 +402,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
         body: JSON.stringify({ question: newFaqQuestion, answer: newFaqAnswer, category: newFaqCategory }),
       });
-      if (res.ok) {
-        showToast('FAQ added successfully');
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setFaqs(data.faqs);
+        showToast('FAQ added and saved successfully!');
         setNewFaqQuestion('');
         setNewFaqAnswer('');
-        loadAdminState(authToken, false);
+        saveLocalKnowledgeBackup({ faqs: data.faqs });
+      } else {
+        showToast('Failed to save FAQ');
       }
     } catch (e) {
       showToast('Error adding FAQ');
@@ -344,9 +426,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
         method: 'DELETE',
         headers: { Authorization: `Bearer ${authToken}` },
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setFaqs(data.faqs);
         showToast('FAQ deleted successfully');
-        loadAdminState(authToken, false);
+        saveLocalKnowledgeBackup({ faqs: data.faqs });
+      } else {
+        showToast('Error deleting FAQ');
       }
     } catch (e) {
       showToast('Error deleting FAQ');
@@ -356,9 +442,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
   const handleUploadKnowledge = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isUploading) return;
+    if (!uploadRawText.trim() && !uploadFileName.trim()) {
+      showToast('Please select a file or provide text content');
+      return;
+    }
     setIsUploading(true);
 
-    const name = uploadFileName || `giftghor_feed_${Date.now()}.${uploadFileType}`;
+    const name = uploadFileName.trim() || `giftghor_source_${Date.now()}.${uploadFileType}`;
     try {
       const res = await fetch('/api/admin/upload-knowledge', {
         method: 'POST',
@@ -378,12 +468,99 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
         setUploadFileName('');
         setUploadRawText('');
         showToast(`Knowledge source added: ${name}`);
-        loadAdminState();
+        saveLocalKnowledgeBackup({ uploadedFiles: data.uploadedFiles });
+      } else {
+        showToast('Upload failed');
       }
     } catch (err) {
       showToast('Upload failed');
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  // Export Knowledge & System Backup to downloadable JSON
+  const handleExportBackup = async () => {
+    try {
+      const res = await fetch('/api/admin/backup/export', {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      const data = await res.json();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `giftghor_knowledge_backup_${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Knowledge backup file downloaded successfully!');
+    } catch (e) {
+      showToast('Failed to export backup');
+    }
+  };
+
+  // Import / Restore Backup JSON File to Server
+  const handleImportBackupFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      try {
+        const parsed = JSON.parse(ev.target?.result as string);
+        if (!confirm(`Restore ${parsed.faqs?.length || 0} FAQs, ${parsed.uploadedFiles?.length || 0} files, and settings to the server?`)) return;
+        const res = await fetch('/api/admin/backup/restore', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
+          body: JSON.stringify(parsed),
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          setFaqs(data.faqs || []);
+          setUploadedFiles(data.uploadedFiles || []);
+          setCrawledPages(data.crawledPages || []);
+          if (data.deliveryPolicy) setDeliveryPolicy(data.deliveryPolicy);
+          if (data.branding) setBranding(data.branding);
+          setLocalBackupAvailable(null);
+          showToast('Knowledge base successfully restored and saved to server!');
+          saveLocalKnowledgeBackup({
+            faqs: data.faqs,
+            uploadedFiles: data.uploadedFiles,
+            crawledPages: data.crawledPages,
+            deliveryPolicy: data.deliveryPolicy,
+          });
+        } else {
+          showToast('Failed to restore backup');
+        }
+      } catch (err) {
+        showToast('Invalid backup file format');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
+  // Restore local browser backup to server
+  const handleRestoreLocalBackup = async () => {
+    if (!localBackupAvailable) return;
+    try {
+      const res = await fetch('/api/admin/backup/restore', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${authToken}` },
+        body: JSON.stringify(localBackupAvailable),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setFaqs(data.faqs || []);
+        setUploadedFiles(data.uploadedFiles || []);
+        setCrawledPages(data.crawledPages || []);
+        if (data.deliveryPolicy) setDeliveryPolicy(data.deliveryPolicy);
+        setLocalBackupAvailable(null);
+        showToast('Browser backup successfully restored to server!');
+      } else {
+        showToast('Failed to restore local backup');
+      }
+    } catch (e) {
+      showToast('Error restoring local backup');
     }
   };
 
@@ -427,9 +604,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
         },
         body: JSON.stringify(deliveryPolicy),
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setDeliveryPolicy(data.deliveryPolicy);
         showToast('Delivery rules & notices updated!');
-        loadAdminState();
+        saveLocalKnowledgeBackup({ deliveryPolicy: data.deliveryPolicy });
+      } else {
+        showToast('Failed to update delivery policy');
       }
     } catch (err) {
       showToast('Failed to update delivery policy');
@@ -449,9 +630,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
         },
         body: JSON.stringify(branding),
       });
-      if (res.ok) {
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setBranding(data.branding);
         showToast('Branding settings saved!');
-        loadAdminState();
+      } else {
+        showToast('Failed to save branding');
       }
     } catch (err) {
       showToast('Failed to save branding');
@@ -1079,27 +1263,89 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
           {/* ----------------- TAB 2: KNOWLEDGE BASE & TRAINING ----------------- */}
           {activeTab === 'knowledge' && (
             <div className="space-y-6 max-w-5xl">
-              {/* Top Banner with Re-train button */}
-              <div className="bg-[#FDF7EE] rounded-2xl border border-[#ECA548]/30 p-4 md:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-0">
+              {/* Top Banner with Re-train button & Backup options */}
+              <div className="bg-[#FDF7EE] rounded-2xl border border-[#ECA548]/30 p-4 md:p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
-                  <h2 className="font-bold text-base text-[#262626] flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-[#ECA548]" />
-                    Multi-Source Knowledge Base & Training Manager
-                  </h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="font-bold text-base text-[#262626] flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-[#ECA548]" />
+                      Multi-Source Knowledge Base & Training Manager
+                    </h2>
+                    <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                      Auto-Saved & Protected
+                    </span>
+                  </div>
                   <p className="text-xs text-gray-600 mt-1">
-                    Crawl URLs, upload XML/CSV catalog feeds, and synchronize delivery rules into the unified Gemini 2.5 Flash context.
+                    Crawl URLs, upload XML/CSV catalog feeds, and synchronize delivery rules into the unified Gemini 2.5 Flash context. All knowledge is permanently saved to server disk & mirrored backups.
                   </p>
                 </div>
-                <button
-                  onClick={handleSyncAndRetrain}
-                  disabled={isSyncing}
-                  className="px-5 py-2.5 rounded-xl font-bold text-xs text-white shadow-md transition-all flex items-center gap-2 disabled:opacity-60"
-                  style={{ backgroundColor: '#ECA548' }}
-                >
-                  <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
-                  <span>{isSyncing ? 'Re-indexing Model...' : 'Sync & Re-train AI'}</span>
-                </button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleExportBackup}
+                    title="Download JSON backup of all FAQs, files, and rules"
+                    className="px-3.5 py-2.5 rounded-xl font-bold text-xs bg-white text-gray-700 border border-[#ECECEC] hover:bg-gray-50 shadow-xs transition-all flex items-center gap-1.5"
+                  >
+                    <Download className="w-3.5 h-3.5 text-gray-600" />
+                    <span>Export Backup</span>
+                  </button>
+                  <label
+                    title="Restore knowledge from a previously downloaded JSON file"
+                    className="cursor-pointer px-3.5 py-2.5 rounded-xl font-bold text-xs bg-white text-gray-700 border border-[#ECECEC] hover:bg-gray-50 shadow-xs transition-all flex items-center gap-1.5"
+                  >
+                    <UploadCloud className="w-3.5 h-3.5 text-gray-600" />
+                    <span>Restore Backup</span>
+                    <input
+                      type="file"
+                      accept=".json"
+                      onChange={handleImportBackupFile}
+                      className="hidden"
+                    />
+                  </label>
+                  <button
+                    onClick={handleSyncAndRetrain}
+                    disabled={isSyncing}
+                    className="px-5 py-2.5 rounded-xl font-bold text-xs text-white shadow-md transition-all flex items-center gap-2 disabled:opacity-60"
+                    style={{ backgroundColor: '#ECA548' }}
+                  >
+                    <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
+                    <span>{isSyncing ? 'Re-indexing Model...' : 'Sync & Re-train AI'}</span>
+                  </button>
+                </div>
               </div>
+
+              {/* Local Backup Alert Banner */}
+              {localBackupAvailable && (
+                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-xs">
+                  <div className="flex items-center gap-2">
+                    <Database className="w-4 h-4 text-amber-600 shrink-0" />
+                    <div>
+                      <p className="font-bold">
+                        Browser Backup Available ({localBackupAvailable.faqs?.length || 0} FAQs, {localBackupAvailable.uploadedFiles?.length || 0} files)
+                      </p>
+                      <p className="text-[11px] text-amber-700">
+                        We detected knowledge saved locally in your browser cache. Would you like to restore it to the server?
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      onClick={handleRestoreLocalBackup}
+                      className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-xs transition-colors flex items-center gap-1.5"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      Restore to Server
+                    </button>
+                    <button
+                      onClick={() => setLocalBackupAvailable(null)}
+                      className="px-2.5 py-1.5 bg-white hover:bg-gray-100 text-gray-600 font-medium rounded-lg text-xs border border-gray-200 transition-colors"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {syncFeedback && (
                 <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
@@ -1110,11 +1356,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
 
               {/* Sub-section 1: Website Crawler */}
               <div className="bg-white rounded-2xl border border-[#ECECEC] p-5 shadow-xs">
-                <div className="flex items-center gap-2 mb-3">
-                  <Globe className="w-4 h-4 text-[#ECA548]" />
-                  <h3 className="font-bold text-sm text-[#262626]">
-                    Website URL & Sitemap Crawler
-                  </h3>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-[#ECA548]" />
+                    <h3 className="font-bold text-sm text-[#262626]">
+                      Website URL & Sitemap Crawler
+                    </h3>
+                  </div>
+                  <span className="text-xs text-gray-500 font-medium">
+                    {crawledPages.length} source(s) indexed
+                  </span>
                 </div>
                 <p className="text-xs text-gray-500 mb-4">
                   Crawls product URLs, sitemaps, and landing pages on <code className="font-mono text-gray-700">giftghor.world</code>, indexing titles, BDT prices, descriptions, and stock status.
@@ -1154,6 +1405,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                         <th className="px-4 py-2.5">Items Found</th>
                         <th className="px-4 py-2.5">Summary</th>
                         <th className="px-4 py-2.5">Status</th>
+                        <th className="px-4 py-2.5 text-right">Action</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -1176,8 +1428,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                               {c.status}
                             </span>
                           </td>
+                          <td className="px-4 py-2.5 text-right">
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteCrawledPage(c.id)}
+                              title="Delete crawled page"
+                              className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
                         </tr>
                       ))}
+                      {crawledPages.length === 0 && (
+                        <tr>
+                          <td colSpan={6} className="px-4 py-6 text-center text-gray-400 text-xs">
+                            No crawled pages indexed yet. Enter a URL or sitemap above to begin.
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -1185,21 +1454,26 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
 
               {/* Sub-section 2: File & XML Feed Upload */}
               <div className="bg-white rounded-2xl border border-[#ECECEC] p-5 shadow-xs">
-                <div className="flex items-center gap-2 mb-3">
-                  <UploadCloud className="w-4 h-4 text-[#ECA548]" />
-                  <h3 className="font-bold text-sm text-[#262626]">
-                    File & XML Product Feed Upload
-                  </h3>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <UploadCloud className="w-4 h-4 text-[#ECA548]" />
+                    <h3 className="font-bold text-sm text-[#262626]">
+                      File & XML Product Feed Upload
+                    </h3>
+                  </div>
+                  <span className="text-xs text-gray-500 font-medium">
+                    {uploadedFiles.length} file(s) uploaded
+                  </span>
                 </div>
                 <p className="text-xs text-gray-500 mb-4">
-                  Upload XML Google Shopping product feeds, catalog CSVs, or text policy documents to enrich the model's responses.
+                  Upload XML Google Shopping product feeds, catalog CSVs, text notes, or brochure documents. Data is parsed and saved permanently to server storage.
                 </p>
 
                 <form onSubmit={handleUploadKnowledge} className="space-y-3 mb-4">
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     <div>
                       <label className="block text-[11px] font-semibold text-gray-600 mb-1">
-                        Feed Type
+                        Feed / Document Type
                       </label>
                       <select
                         value={uploadFileType}
@@ -1212,7 +1486,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                         <option value="pdf">PDF Document / Brochure</option>
                       </select>
                     </div>
-                    <div className="col-span-2">
+                    <div className="md:col-span-2">
                       <label className="block text-[11px] font-semibold text-gray-600 mb-1">
                         File Name / Description
                       </label>
@@ -1226,15 +1500,45 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                     </div>
                   </div>
 
+                  {/* Direct File Picker Input */}
+                  <div className="p-3 border border-dashed border-[#ECECEC] hover:border-[#ECA548] rounded-xl bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-[#ECA548]" />
+                      <span className="text-xs text-gray-600">Choose file from your device (.txt, .csv, .xml, .json, .pdf):</span>
+                    </div>
+                    <input
+                      type="file"
+                      accept=".txt,.csv,.xml,.json,.pdf"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setUploadFileName(file.name);
+                          const ext = file.name.split('.').pop()?.toLowerCase();
+                          if (ext === 'xml') setUploadFileType('xml');
+                          else if (ext === 'csv') setUploadFileType('csv');
+                          else if (ext === 'pdf') setUploadFileType('pdf');
+                          else setUploadFileType('txt');
+
+                          const reader = new FileReader();
+                          reader.onload = (ev) => {
+                            setUploadRawText((ev.target?.result as string) || '');
+                          };
+                          reader.readAsText(file);
+                        }
+                      }}
+                      className="text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-[#ECA548] file:text-white hover:file:opacity-90 cursor-pointer"
+                    />
+                  </div>
+
                   <div>
                     <label className="block text-[11px] font-semibold text-gray-600 mb-1">
-                      Raw Content / Snippet (Optional - XML/CSV structure)
+                      Raw Content / Snippet (Or paste text directly)
                     </label>
                     <textarea
                       rows={3}
                       value={uploadRawText}
                       onChange={(e) => setUploadRawText(e.target.value)}
-                      placeholder="<item><g:title>Custom Magic Mirror</g:title><g:price>690 BDT</g:price><g:availability>in stock</g:availability></item>"
+                      placeholder="Paste text notes, policies, or XML/CSV snippet here..."
                       className="w-full text-xs bg-gray-50 border border-[#ECECEC] rounded-xl p-3 font-mono text-[#262626]"
                     />
                   </div>
@@ -1246,7 +1550,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                     style={{ backgroundColor: '#ECA548' }}
                   >
                     <UploadCloud className="w-3.5 h-3.5" />
-                    <span>Upload & Parse Source</span>
+                    <span>{isUploading ? 'Uploading & Parsing...' : 'Upload & Parse Source'}</span>
                   </button>
                 </form>
 
@@ -1258,23 +1562,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                       className="p-3 rounded-xl border border-[#ECECEC] bg-[#FDF7EE]/30 flex items-center justify-between"
                     >
                       <div className="flex items-center gap-2 md:gap-3">
-                      <button onClick={() => setSelectedSessionId(null)} className="md:hidden p-1.5 mr-1 text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg shrink-0 transition-colors">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-                      </button>
-                        <FileText className="w-5 h-5 text-[#ECA548]" />
+                        <FileText className="w-5 h-5 text-[#ECA548] shrink-0" />
                         <div>
                           <p className="font-bold text-xs text-[#262626]">{f.fileName}</p>
                           <p className="text-[11px] text-gray-500">{f.summary}</p>
                         </div>
                       </div>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-white border border-[#ECECEC] text-gray-600">
-                        {f.fileType}
-                      </span>
-                      <button onClick={() => handleDeleteUploadedFile(f.id)} className="ml-3 p-1.5 bg-red-50 text-red-500 rounded hover:bg-red-100 transition-colors">
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-white border border-[#ECECEC] text-gray-600">
+                          {f.fileType}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteUploadedFile(f.id)}
+                          title="Delete file"
+                          className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                   ))}
+                  {uploadedFiles.length === 0 && (
+                    <p className="text-xs text-gray-400 text-center py-3">No uploaded files or documents yet.</p>
+                  )}
                 </div>
               </div>
 
@@ -1284,18 +1595,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                   <div className="flex items-center gap-2">
                     <BookOpen className="w-4 h-4 text-[#ECA548]" />
                     <h3 className="font-bold text-sm text-[#262626]">
-                      Frequently Asked Questions (Bangla & English)
+                      Frequently Asked Questions & Text Data
                     </h3>
                   </div>
+                  <span className="text-xs text-gray-500 font-medium">
+                    {faqs.length} FAQ(s) saved
+                  </span>
                 </div>
 
-                
                 <form onSubmit={handleAddFaq} className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-xl space-y-3">
                   <h4 className="text-xs font-bold text-gray-700">Add New Text Data / FAQ</h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <input 
                       type="text" 
-                      placeholder="Question / Title" 
+                      placeholder="Question / Title (e.g. ডেলিভারি চার্জ কত?)" 
                       value={newFaqQuestion} 
                       onChange={(e) => setNewFaqQuestion(e.target.value)} 
                       className="text-xs border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-800 focus:outline-none focus:border-[#ECA548]" 
@@ -1313,14 +1626,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                     </select>
                   </div>
                   <textarea 
-                    placeholder="Answer / Text Content (You can paste plain text knowledge here)" 
+                    placeholder="Answer / Text Content (Paste complete details here, instantly saved to database)" 
                     rows={3}
                     value={newFaqAnswer} 
                     onChange={(e) => setNewFaqAnswer(e.target.value)} 
                     className="w-full text-xs border border-gray-300 rounded-lg px-3 py-2 bg-white text-gray-800 focus:outline-none focus:border-[#ECA548]" 
                   />
-                  <button type="submit" disabled={isAddingFaq} className="bg-[#ECA548] text-white px-4 py-2 rounded-lg text-xs font-bold hover:opacity-90">
-                    {isAddingFaq ? 'Adding...' : 'Add Knowledge'}
+                  <button
+                    type="submit"
+                    disabled={isAddingFaq}
+                    className="bg-[#ECA548] text-white px-4 py-2 rounded-lg text-xs font-bold hover:opacity-90 flex items-center gap-1.5"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>{isAddingFaq ? 'Saving FAQ...' : 'Save Knowledge / FAQ'}</span>
                   </button>
                 </form>
 
@@ -1330,19 +1648,29 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                       key={faq.id}
                       className="p-4 rounded-xl border border-[#ECECEC] bg-white hover:border-[#ECA548]/40 transition-all"
                     >
-                      <p className="font-bold text-xs text-[#262626] mb-1">Q: {faq.question}</p>
-                      <p className="text-xs text-gray-600 leading-relaxed">A: {faq.answer}</p>
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="font-bold text-xs text-[#262626] mb-1">Q: {faq.question}</p>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteFaq(faq.id)}
+                          title="Delete FAQ"
+                          className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors shrink-0"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <p className="text-xs text-gray-600 leading-relaxed whitespace-pre-line">A: {faq.answer}</p>
                       <div className="mt-2 flex items-center justify-between text-[10px] text-gray-400">
                         <span className="uppercase font-semibold text-[#ECA548]">
                           Category: {faq.category}
                         </span>
-                        <span>Updated: {new Date(faq.updatedAt).toLocaleDateString()}</span>
-                        <button onClick={() => handleDeleteFaq(faq.id)} className="text-red-500 hover:text-red-700 p-1">
-                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                        </button>
+                        <span>Saved: {new Date(faq.updatedAt).toLocaleDateString()}</span>
                       </div>
                     </div>
                   ))}
+                  {faqs.length === 0 && (
+                    <p className="text-xs text-gray-400 text-center py-4">No FAQs added yet. Use the form above to add your first knowledge question.</p>
+                  )}
                 </div>
               </div>
             </div>
