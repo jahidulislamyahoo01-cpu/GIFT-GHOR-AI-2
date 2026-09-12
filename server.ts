@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
+import { fetchAnalyticsData } from './server/analyticsService.js';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
@@ -897,6 +898,14 @@ app.post('/api/chat/message', async (req, res) => {
 
     if (apiKeys.length > 0) {
       let systemInstruction = buildSystemKnowledgeContext(DB);
+      try {
+        const analyticsContext = await fetchAnalyticsData();
+        if (analyticsContext) {
+          systemInstruction += `\n\nREAL-TIME WEBSITE ANALYTICS DATA:\n${analyticsContext}\nUse this data to answer questions about which pages or products are most viewed or popular.`;
+        }
+      } catch (e) {
+        console.warn('Could not fetch analytics data', e);
+      }
       if (pageContext) {
         systemInstruction += `\n\nCURRENT PAGE CONTEXT:\nThe user is currently browsing this page on the website:\nURL: ${pageContext.url}\nTitle: ${pageContext.title}\nContent Extract: ${pageContext.content}\n\n-> INSTRUCTION: Use this context to understand what the user is looking at and help them accordingly (e.g. if they are on a checkout page, guide them on what fields to fill). Do NOT mention the raw URL unless necessary.`;
       }
