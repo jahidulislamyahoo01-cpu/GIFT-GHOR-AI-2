@@ -45,6 +45,7 @@ import {
   ChatSession,
 } from '../types';
 import { AdminOrdersView } from './AdminOrdersView';
+import { AdminAIAssistant } from './AdminAIAssistant';
 
 interface AdminDashboardProps {
   onGoToStorefront: () => void;
@@ -88,7 +89,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
   // Active Tab
   // Active Tab - Defaulting to 'orders' so admin can see customer orders immediately
   const [activeTab, setActiveTab] = useState<
-    'orders' | 'inbox' | 'knowledge' | 'products' | 'branding' | 'delivery' | 'embed' | 'integrations' | 'security'
+    'orders' | 'inbox' | 'ai-assistant' | 'knowledge' | 'products' | 'branding' | 'delivery' | 'embed' | 'integrations' | 'security'
   >('orders');
 
   // Dashboard Data State
@@ -1112,6 +1113,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
               )}
             </button>
 
+
+            <button
+              onClick={() => setActiveTab('ai-assistant')}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === 'ai-assistant'
+                  ? 'bg-[#FDF7EE] text-[#ECA548] border border-[#ECA548]/30'
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <Sparkles className="w-4 h-4 text-[#ECA548]" />
+                <span>AI Assistant (New)</span>
+              </div>
+            </button>
             <button
               onClick={() => setActiveTab('knowledge')}
               className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
