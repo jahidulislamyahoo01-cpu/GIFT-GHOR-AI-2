@@ -13,6 +13,11 @@ export async function fetchAnalyticsData(): Promise<string> {
   try {
     const propertyId = '518576178';
     const credentialsPath = path.join(process.cwd(), 'ga-credentials.json');
+    const fsNative = require('fs');
+    if (!fsNative.existsSync(credentialsPath)) {
+      console.warn('[Analytics] ga-credentials.json missing, skipping analytics');
+      return 'Analytics data currently unavailable.';
+    }
 
     const analyticsDataClient = new BetaAnalyticsDataClient({
       keyFilename: credentialsPath,

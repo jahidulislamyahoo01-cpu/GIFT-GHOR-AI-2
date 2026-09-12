@@ -29,7 +29,7 @@ import {
 dotenv.config();
 
 const app = express();
-const PORT = Number(process.env.PORT) || 10000;
+const PORT = 3000;
 
 // Allow CORS and Iframe embedding for the widget
 app.use(cors({
@@ -894,7 +894,7 @@ app.post('/api/chat/message', async (req, res) => {
       if (val) apiKeys.push(...val.split(',').map(k => k.trim()));
     });
     apiKeys = [...new Set(apiKeys)].filter(k => k && k !== 'MY_GEMINI_API_KEY');
-    let botReplyText = '';
+    let botReplyText = ''; let lastErr = null;
 
     if (apiKeys.length > 0) {
       let systemInstruction = buildSystemKnowledgeContext(DB);
@@ -921,7 +921,7 @@ app.post('/api/chat/message', async (req, res) => {
           const ai = new GoogleGenAI({ apiKey });
           // Generate content
           const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.6-flash',
             contents: chatHistory,
             config: {
               systemInstruction,
@@ -932,7 +932,7 @@ app.post('/api/chat/message', async (req, res) => {
           botReplyText = response.text || '';
           if (botReplyText) break;
         } catch (keyErr) {
-          console.error('API key failed, trying next:', keyErr);
+          console.error('API key failed, trying next:', keyErr.response ? JSON.stringify(keyErr.response.data) : keyErr.message);
         }
       }
     }
@@ -1029,7 +1029,7 @@ app.post('/api/chat', async (req, res) => {
       try {
         const ai = new GoogleGenAI({ apiKey });
         const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
+          model: 'gemini-3.6-flash',
           contents: [{ role: 'user', parts: [{ text: String(message) }] }],
           config: {
             systemInstruction,
@@ -1039,7 +1039,7 @@ app.post('/api/chat', async (req, res) => {
         reply = response.text || '';
         if (reply) break;
       } catch (keyErr) {
-        console.error('API key failed, trying next:', keyErr);
+        console.error('API key failed, trying next:', keyErr.response ? JSON.stringify(keyErr.response.data) : keyErr.message);
       }
     }
 
@@ -1582,13 +1582,13 @@ app.post('/api/admin/ai-assistant', adminAuthMiddleware, async (req, res) => {
       }
     }
 
-    let botReplyText = '';
+    let botReplyText = ''; let lastErr = null;
 
     for (const apiKey of apiKeys) {
       try {
-        const ai = new (require('@google/genai').GoogleGenAI)({ apiKey });
+        const ai = new GoogleGenAI({ apiKey });
         const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
+          model: 'gemini-3.6-flash',
           contents: normalizedHistory,
           config: {
             systemInstruction,
@@ -1598,12 +1598,12 @@ app.post('/api/admin/ai-assistant', adminAuthMiddleware, async (req, res) => {
         botReplyText = response.text || '';
         if (botReplyText) break;
       } catch (keyErr) {
-        console.error('API key failed for admin AI, trying next:', keyErr);
+        lastErr = keyErr.response ? JSON.stringify(keyErr.response.data) : keyErr.message; console.error('API key failed for admin AI, trying next:', lastErr);
       }
     }
 
     if (!botReplyText) {
-      return res.status(500).json({ error: 'All API keys failed or no response generated.' });
+      return res.status(500).json({ error: 'All API keys failed or no response generated.', details: lastErr });
     }
 
     res.json({ reply: botReplyText });

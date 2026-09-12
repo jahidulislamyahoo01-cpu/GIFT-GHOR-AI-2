@@ -148,7 +148,7 @@ export const AdminAIAssistant: React.FC = () => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-[700px] overflow-hidden">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-[80vh] md:h-[700px] min-h-[500px] overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 flex items-center gap-3">
         <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold shadow-md">
