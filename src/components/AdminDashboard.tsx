@@ -1558,6 +1558,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
             </div>
           )}
 
+          {/* ----------------- TAB: AI ASSISTANT ----------------- */}
+          {activeTab === 'ai-assistant' && (
+            <AdminAIAssistant />
+          )}
+
           {/* ----------------- TAB 2: KNOWLEDGE BASE & TRAINING ----------------- */}
           {activeTab === 'knowledge' && (
             <div className="space-y-6 max-w-5xl">

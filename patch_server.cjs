@@ -1,62 +1,41 @@
 const fs = require('fs');
 let code = fs.readFileSync('server.ts', 'utf8');
 
-const routeCode = `
-app.post('/api/admin/ai-assistant', adminAuthMiddleware, async (req, res) => {
-  try {
-    const { history } = req.body;
-    if (!history || !Array.isArray(history)) {
-      return res.status(400).json({ error: 'Invalid history payload' });
-    }
+// Fix model version
+code = code.replace(/gemini-3\.6-flash/g, 'gemini-2.5-flash');
 
-    const envKeys = Object.keys(process.env).filter(k => k.startsWith('GEMINI_API_KEY'));
-    let apiKeys = [];
-    envKeys.forEach(key => {
-      const val = process.env[key];
-      if (val) apiKeys.push(...val.split(',').map(k => k.trim()));
-    });
-    apiKeys = [...new Set(apiKeys)].filter(k => k && k !== 'MY_GEMINI_API_KEY');
+// We need to carefully remove the analytics data insertion from the customer chat endpoint
+// which is around line 901 in app.post('/api/chat/message' ... )
 
-    if (apiKeys.length === 0) {
-      return res.status(500).json({ error: 'API key not configured' });
-    }
-
-    const systemInstruction = "You are an expert AI Business Assistant, Digital Marketer, and Strategist for 'Gift Ghor'. You are talking directly to the Owner of the business. Do NOT talk like a customer service bot. Your job is to help the owner with ad copy, business strategy, data analysis, and product ideas. Be professional, creative, and proactive. Provide well-formatted answers with emojis where appropriate. Base your knowledge on the following business context:\\n\\n" + buildSystemKnowledgeContext(DB);
-    let botReplyText = '';
-
-    for (const apiKey of apiKeys) {
+// The user is concerned about "analytics r" leaking in customer panel.
+// We should remove this block:
+/*
       try {
-        const ai = new (require('@google/genai').GoogleGenAI)({ apiKey });
-        const response = await ai.models.generateContent({
-          model: 'gemini-3.6-flash',
-          contents: history,
-          config: {
-            systemInstruction,
-            temperature: 0.8,
-          },
-        });
-        botReplyText = response.text || '';
-        if (botReplyText) break;
-      } catch (keyErr) {
-        console.error('API key failed for admin AI, trying next:', keyErr);
+        const analyticsContext = await fetchAnalyticsData();
+        if (analyticsContext) {
+          systemInstruction += `\n\nREAL-TIME WEBSITE ANALYTICS DATA:\n${analyticsContext}\nUse this data to answer questions about which pages or products are most viewed or popular.`;
+        }
+      } catch (e) {
+        console.warn('Could not fetch analytics data', e);
       }
-    }
+*/
 
-    if (!botReplyText) {
-      return res.status(500).json({ error: 'All API keys failed or no response generated.' });
-    }
+const analyticsLeak = `      try {
+        const analyticsContext = await fetchAnalyticsData();
+        if (analyticsContext) {
+          systemInstruction += \`\\n\\nREAL-TIME WEBSITE ANALYTICS DATA:\\n\${analyticsContext}\\nUse this data to answer questions about which pages or products are most viewed or popular.\`;
+        }
+      } catch (e) {
+        console.warn('Could not fetch analytics data', e);
+      }`;
 
-    res.json({ reply: botReplyText });
-  } catch (err) {
-    console.error('Admin AI Assistant error:', err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-`;
-
-code = code.replace(
-  "app.post('/api/admin/branding', adminAuthMiddleware, (req, res) => {",
-  routeCode + "\napp.post('/api/admin/branding', adminAuthMiddleware, (req, res) => {"
-);
+if (code.includes(analyticsLeak)) {
+    code = code.replace(analyticsLeak, '');
+    console.log("Successfully removed analytics leak from API");
+} else {
+    // maybe it is slightly different formatted
+    code = code.replace(/try\s*\{\s*const analyticsContext = await fetchAnalyticsData\(\);\s*if \(analyticsContext\)\s*\{\s*systemInstruction \+= [^}]*\}\s*catch\s*\(e\)\s*\{\s*console\.warn\('Could not fetch analytics data', e\);\s*\}/g, '');
+    console.log("Replaced with regex");
+}
 
 fs.writeFileSync('server.ts', code);

@@ -898,14 +898,7 @@ app.post('/api/chat/message', async (req, res) => {
 
     if (apiKeys.length > 0) {
       let systemInstruction = buildSystemKnowledgeContext(DB);
-      try {
-        const analyticsContext = await fetchAnalyticsData();
-        if (analyticsContext) {
-          systemInstruction += `\n\nREAL-TIME WEBSITE ANALYTICS DATA:\n${analyticsContext}\nUse this data to answer questions about which pages or products are most viewed or popular.`;
-        }
-      } catch (e) {
-        console.warn('Could not fetch analytics data', e);
-      }
+
       if (pageContext) {
         systemInstruction += `\n\nCURRENT PAGE CONTEXT:\nThe user is currently browsing this page on the website:\nURL: ${pageContext.url}\nTitle: ${pageContext.title}\nContent Extract: ${pageContext.content}\n\n-> INSTRUCTION: Use this context to understand what the user is looking at and help them accordingly (e.g. if they are on a checkout page, guide them on what fields to fill). Do NOT mention the raw URL unless necessary.`;
       }
@@ -928,7 +921,7 @@ app.post('/api/chat/message', async (req, res) => {
           const ai = new GoogleGenAI({ apiKey });
           // Generate content
           const response = await ai.models.generateContent({
-            model: 'gemini-3.6-flash',
+            model: 'gemini-2.5-flash',
             contents: chatHistory,
             config: {
               systemInstruction,
@@ -1036,7 +1029,7 @@ app.post('/api/chat', async (req, res) => {
       try {
         const ai = new GoogleGenAI({ apiKey });
         const response = await ai.models.generateContent({
-          model: 'gemini-3.6-flash',
+          model: 'gemini-2.5-flash',
           contents: [{ role: 'user', parts: [{ text: String(message) }] }],
           config: {
             systemInstruction,
@@ -1570,14 +1563,22 @@ app.post('/api/admin/ai-assistant', adminAuthMiddleware, async (req, res) => {
       return res.status(500).json({ error: 'API key not configured' });
     }
 
-    const systemInstruction = "You are an expert AI Business Assistant, Digital Marketer, and Strategist for 'Gift Ghor'. You are talking directly to the Owner of the business. Do NOT talk like a customer service bot. Your job is to help the owner with ad copy, business strategy, data analysis, and product ideas. Be professional, creative, and proactive. Provide well-formatted answers with emojis where appropriate. Base your knowledge on the following business context:\n\n" + buildSystemKnowledgeContext(DB);
+    let systemInstruction = "You are an expert AI Business Assistant, Digital Marketer, and Strategist for 'Gift Ghor'. You are talking directly to the Owner of the business. Do NOT talk like a customer service bot. Your job is to help the owner with ad copy, business strategy, data analysis, and product ideas. Be professional, creative, and proactive. Provide well-formatted answers with emojis where appropriate. Base your knowledge on the following business context:\n\n" + buildSystemKnowledgeContext(DB);
+    try {
+      const analyticsContext = await fetchAnalyticsData();
+      if (analyticsContext) {
+        systemInstruction += `\n\nREAL-TIME WEBSITE ANALYTICS DATA:\n${analyticsContext}\nUse this data to answer questions about which pages or products are most viewed or popular.`;
+      }
+    } catch (e) {
+      console.warn('Could not fetch analytics data', e);
+    }
     let botReplyText = '';
 
     for (const apiKey of apiKeys) {
       try {
         const ai = new (require('@google/genai').GoogleGenAI)({ apiKey });
         const response = await ai.models.generateContent({
-          model: 'gemini-3.6-flash',
+          model: 'gemini-2.5-flash',
           contents: history,
           config: {
             systemInstruction,
