@@ -6,8 +6,8 @@ let cachedAnalyticsData: string = '';
 let lastFetchTime: number = 0;
 
 export async function fetchAnalyticsData(): Promise<string> {
-  // Cache for 1 hour (3600000 ms)
-  if (cachedAnalyticsData && Date.now() - lastFetchTime < 3600000) {
+  // Cache for 1 hour (300000 ms)
+  if (cachedAnalyticsData && Date.now() - lastFetchTime < 300000) {
     return cachedAnalyticsData;
   }
 
@@ -69,6 +69,20 @@ export async function fetchAnalyticsData(): Promise<string> {
       limit: 5,
     });
 
+    // Report 4: Daily Traffic (Last 7 Days)
+    const [dailyResponse] = await analyticsDataClient.runReport({
+      property: `properties/${propertyId}`,
+      dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+      dimensions: [{ name: 'date' }],
+      metrics: [{ name: 'activeUsers' }, { name: 'screenPageViews' }],
+      orderBys: [
+        {
+          dimension: { dimensionName: 'date' },
+          desc: true,
+        },
+      ],
+    });
+
     // Report 3: Device Category
     const [deviceResponse] = await analyticsDataClient.runReport({
       property: `properties/${propertyId}`,
@@ -107,6 +121,19 @@ export async function fetchAnalyticsData(): Promise<string> {
       reportStr += 'No data available.\n';
     }
 
+    reportStr += '\n--- Daily Traffic (Last 7 Days) ---\n';
+    if (dailyResponse.rows && dailyResponse.rows.length > 0) {
+      dailyResponse.rows.forEach(row => {
+        if (row.dimensionValues && row.metricValues) {
+           const dateStr = row.dimensionValues[0].value;
+           const formattedDate = dateStr ? (dateStr.slice(0,4) + '-' + dateStr.slice(4,6) + '-' + dateStr.slice(6,8)) : 'Unknown';
+           reportStr += `- ${formattedDate}: ${row.metricValues[1].value} views (${row.metricValues[0].value} users)\n`;
+        }
+      });
+    } else {
+      reportStr += 'No data available.\n';
+    }
+    
     reportStr += '\n--- Top Devices Used ---\n';
     if (deviceResponse.rows && deviceResponse.rows.length > 0) {
       deviceResponse.rows.forEach(row => {
