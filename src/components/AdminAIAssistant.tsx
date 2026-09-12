@@ -69,6 +69,9 @@ export const AdminAIAssistant: React.FC = () => {
     recognition.onerror = (event: any) => {
       console.error("Speech recognition error", event.error);
       setIsRecording(false);
+      if (event.error === 'not-allowed') {
+        alert("Microphone access blocked! Please allow microphone permissions in your browser settings.");
+      }
     };
 
     recognition.onend = () => {

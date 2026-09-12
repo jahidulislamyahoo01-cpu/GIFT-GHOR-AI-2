@@ -1572,6 +1572,16 @@ app.post('/api/admin/ai-assistant', adminAuthMiddleware, async (req, res) => {
     } catch (e) {
       console.warn('Could not fetch analytics data', e);
     }
+    // Normalize history to group consecutive roles
+    const normalizedHistory = [];
+    for (const m of history) {
+      if (normalizedHistory.length > 0 && normalizedHistory[normalizedHistory.length - 1].role === m.role) {
+        normalizedHistory[normalizedHistory.length - 1].parts.push(...m.parts);
+      } else {
+        normalizedHistory.push(m);
+      }
+    }
+
     let botReplyText = '';
 
     for (const apiKey of apiKeys) {
@@ -1579,7 +1589,7 @@ app.post('/api/admin/ai-assistant', adminAuthMiddleware, async (req, res) => {
         const ai = new (require('@google/genai').GoogleGenAI)({ apiKey });
         const response = await ai.models.generateContent({
           model: 'gemini-2.5-flash',
-          contents: history,
+          contents: normalizedHistory,
           config: {
             systemInstruction,
             temperature: 0.8,

@@ -1231,7 +1231,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
               </div>
               <div className="flex items-center justify-between text-[11px] text-gray-500">
                 <span>AI Version:</span>
-                <span className="font-mono text-gray-700">v{stats.trainingVersion || 1}</span>
+                <span className="font-mono text-gray-700">v{stats.trainingVersion || "v1" || 1}</span>
               </div>
             </div>
           )}
