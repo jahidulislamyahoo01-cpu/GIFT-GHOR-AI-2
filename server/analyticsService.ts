@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { BetaAnalyticsDataClient } from '@google-analytics/data';
 import path from 'path';
 
@@ -13,8 +14,8 @@ export async function fetchAnalyticsData(): Promise<string> {
   try {
     const propertyId = '518576178';
     const credentialsPath = path.join(process.cwd(), 'ga-credentials.json');
-    const fsNative = require('fs');
-    if (!fsNative.existsSync(credentialsPath)) {
+    // removed import inside function
+    if (!fs.existsSync(credentialsPath)) {
       console.warn('[Analytics] ga-credentials.json missing, skipping analytics');
       return 'Analytics data currently unavailable.';
     }
@@ -110,6 +111,6 @@ export async function fetchAnalyticsData(): Promise<string> {
 
   } catch (error: any) {
     console.error('[Analytics] Error fetching data:', error?.message || error);
-    return cachedAnalyticsData || 'Analytics data currently unavailable or API not enabled properly yet.';
+    return cachedAnalyticsData || 'Analytics Error: ' + (error?.message || error);
   }
 }
