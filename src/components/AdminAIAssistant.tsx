@@ -84,7 +84,7 @@ export const AdminAIAssistant: React.FC = () => {
   const handleSend = async () => {
     if (!inputText.trim() && !selectedImage) return;
 
-    const token = localStorage.getItem('adminToken');
+    const token = localStorage.getItem('giftghor_admin_token');
     if (!token) return;
 
     const newMessage: ChatMessage = {
