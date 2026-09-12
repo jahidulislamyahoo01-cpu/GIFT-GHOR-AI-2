@@ -919,7 +919,7 @@ app.post('/api/chat/message', async (req, res) => {
           const ai = new GoogleGenAI({ apiKey });
           // Generate content
           const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.6-flash',
             contents: chatHistory,
             config: {
               systemInstruction,
@@ -1027,7 +1027,7 @@ app.post('/api/chat', async (req, res) => {
       try {
         const ai = new GoogleGenAI({ apiKey });
         const response = await ai.models.generateContent({
-          model: 'gemini-2.5-flash',
+          model: 'gemini-3.6-flash',
           contents: [{ role: 'user', parts: [{ text: String(message) }] }],
           config: {
             systemInstruction,
