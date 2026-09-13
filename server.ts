@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import fs from 'fs';
 import { fetchAnalyticsData } from './server/analyticsService.js';
+import { fetchSearchConsoleData } from './server/searchConsoleService.js';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
@@ -1245,6 +1246,15 @@ app.post('/api/admin/integrations', adminAuthMiddleware, (req, res) => {
   res.json({ success: true, message: 'Integrations updated successfully' });
 });
 
+app.get('/api/admin/search-console', adminAuthMiddleware, async (req, res) => {
+  try {
+    const data = await fetchSearchConsoleData();
+    res.json({ success: true, data });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err?.message || String(err) });
+  }
+});
+
 // DEDICATED ORDERS MANAGEMENT ENDPOINTS
 // -------------------------------------------------------------
 
@@ -1571,6 +1581,15 @@ app.post('/api/admin/ai-assistant', adminAuthMiddleware, async (req, res) => {
       }
     } catch (e) {
       console.warn('Could not fetch analytics data', e);
+    }
+
+    try {
+      const searchConsoleContext = await fetchSearchConsoleData();
+      if (searchConsoleContext) {
+        systemInstruction += `\n\nGOOGLE SEARCH CONSOLE (SEO & ORGANIC SEARCH) DATA:\n${searchConsoleContext}\nUse this data to answer questions about Google search keywords, clicks, impressions, CTR, SEO ranking positions, and organic search optimization recommendations.`;
+      }
+    } catch (e) {
+      console.warn('Could not fetch search console data', e);
     }
     // Normalize history to group consecutive roles
     const normalizedHistory = [];
