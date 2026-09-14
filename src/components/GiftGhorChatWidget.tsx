@@ -349,7 +349,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <h3 className="font-bold text-sm tracking-tight" style={{ color: branding.headerTextColor }}>
+                    <h3 className="font-bold text-sm tracking-tight" style={{ color: (branding as any).headerTextColor || '#ffffff' }}>
                       {branding.widgetTitle}
                     </h3>
                     <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#FDF7EE] text-[#ECA548] border border-[#ECA548]/20">

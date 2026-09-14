@@ -6,7 +6,7 @@ import {
   MessageSquare,
   BookOpen,
   Palette,
-  Code2,
+  Code2, TrendingUp,
   Package,
   RefreshCw,
   Search,
@@ -96,7 +96,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
   // Active Tab
   // Active Tab - Defaulting to 'orders' so admin can see customer orders immediately
   const [activeTab, setActiveTab] = useState<
-    'orders' | 'inbox' | 'ai-assistant' | 'knowledge' | 'products' | 'branding' | 'delivery' | 'embed' | 'integrations' | 'security'
+    'orders' | 'inbox' | 'ai-assistant' | 'knowledge' | 'products' | 'branding' | 'delivery' | 'embed' | 'integrations' | 'security' | 'insights'
   >('orders');
 
   // Dashboard Data State
@@ -1451,14 +1451,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                         <span className="text-xs font-semibold text-gray-700">Steadfast Courier</span>
                       </div>
                       
-                      {currentSession.orderExtracted.steadfastStatus === 'Sent' ? (
+                      {(currentSession.orderExtracted as any).status === 'Sent' ? (
                         <div className="flex items-center gap-2 text-xs">
                           <span className="text-emerald-600 font-bold bg-emerald-100 px-2 py-1 rounded">
                             ✅ Order Created successfully!
                           </span>
-                          {currentSession.orderExtracted.trackingCode && (
+                          {(currentSession.orderExtracted as any).steadfastTrackingCode && (
                             <span className="text-gray-500 font-mono">
-                              Tracking ID: {currentSession.orderExtracted.trackingCode}
+                              Tracking ID: {(currentSession.orderExtracted as any).steadfastTrackingCode}
                             </span>
                           )}
                         </div>

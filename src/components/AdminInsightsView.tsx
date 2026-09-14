@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, BarChart2, Search, Facebook, RefreshCw, AlertCircle } from 'lucide-react';
-import Markdown from 'react-markdown';
 
 export function AdminInsightsView({ authToken }: { authToken: string }) {
   const [loading, setLoading] = useState(true);

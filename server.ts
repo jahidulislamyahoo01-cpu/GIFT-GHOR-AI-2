@@ -183,6 +183,10 @@ interface SystemDB {
     gmailAppPassword?: string;
     steadfastApiKey?: string;
     steadfastSecretKey?: string;
+    paystationMerchantId?: string;
+    paystationPassword?: string;
+    facebookPageId?: string;
+    facebookAccessToken?: string;
   };
   lastTrainedAt: string;
   trainingVersion: number;
@@ -538,7 +542,7 @@ function loadDB(): SystemDB {
 }
 
 // Global DB in memory synced to disk and Firestore
-let DB: SystemDB = loadDB();
+export let DB: SystemDB = loadDB();
 
 /**
  * Hydrates in-memory DB and local disk cache from Cloud Firestore on server startup.

@@ -135,6 +135,7 @@ export interface AdminOverviewStats {
   totalProducts: number;
   knowledgeSourcesCount: number;
   lastTrainedAt: string;
-  aiMode: string;
+  trainingVersion?: number;
+  aiMode?: string;
   twoFactorEnabled?: boolean;
 }
