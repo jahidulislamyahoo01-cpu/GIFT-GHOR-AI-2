@@ -1,3 +1,4 @@
+import { AdminInsightsView } from "./AdminInsightsView";
 import React, { useState, useEffect } from 'react';
 import {
   Shield,
@@ -29,7 +30,7 @@ import {
   Database,
   Sparkles,
   ShoppingBag,
-  Sliders, Settings,
+  Sliders, Settings, CreditCard,
   Copy,
   Check,
   Download,
@@ -84,6 +85,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
   const [hasSteadfastSecretKey, setHasSteadfastSecretKey] = useState(false);
   const [steadfastApiKey, setSteadfastApiKey] = useState('');
   const [steadfastSecretKeyInput, setSteadfastSecretKeyInput] = useState('');
+  const [paystationMerchantIdInput, setPaystationMerchantIdInput] = useState('');
+  const [paystationPasswordInput, setPaystationPasswordInput] = useState('');
+  const [hasPaystationPassword, setHasPaystationPassword] = useState(false);
+  const [facebookPageIdInput, setFacebookPageIdInput] = useState('');
+  const [facebookAccessTokenInput, setFacebookAccessTokenInput] = useState('');
+  const [hasFacebookAccessToken, setHasFacebookAccessToken] = useState(false);
   const [isUpdatingIntegrations, setIsUpdatingIntegrations] = useState(false);
 
   // Active Tab
@@ -395,6 +402,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
         if (steadfastSecretKeyInput) {
           setHasSteadfastSecretKey(true);
           setSteadfastSecretKeyInput('');
+        }
+        if (paystationPasswordInput) {
+          setHasPaystationPassword(true);
+          setPaystationPasswordInput('');
+        }
+        if (facebookAccessTokenInput) {
+          setHasFacebookAccessToken(true);
+          setFacebookAccessTokenInput('');
         }
       } else {
         showToast(data.error || 'Failed to update integrations');
@@ -1164,6 +1179,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
             </button>
 
             <button
+              onClick={() => setActiveTab('insights')}
+              className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === 'insights'
+                  ? 'bg-[#FDF7EE] text-[#ECA548] border border-[#ECA548]/30'
+                  : 'text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              <TrendingUp className="w-4 h-4" />
+              Insights & Analytics
+            </button>
+
+            <button
               onClick={() => setActiveTab('branding')}
               className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'branding'
@@ -1845,6 +1872,74 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                       className="w-full text-xs bg-gray-50 border border-[#ECECEC] rounded-xl p-3 font-mono text-[#262626]"
                     />
                   </div>
+                  
+                  <div className="pt-2 border-t border-gray-100">
+                    <h4 className="text-xs font-bold text-gray-800 mb-3 flex items-center gap-1.5">
+                      <CreditCard className="w-3.5 h-3.5" style={{ color: '#ECA548' }} />
+                      Pay Station (Payment Gateway)
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Merchant ID / Store ID
+                        </label>
+                        <input
+                          type="text"
+                          value={paystationMerchantIdInput}
+                          onChange={(e) => setPaystationMerchantIdInput(e.target.value)}
+                          placeholder="Enter Merchant ID"
+                          className="w-full text-xs bg-white border border-[#ECECEC] rounded-xl px-4 py-2.5 text-[#262626]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Password / Secret Key
+                        </label>
+                        <input
+                          type="password"
+                          value={paystationPasswordInput}
+                          onChange={(e) => setPaystationPasswordInput(e.target.value)}
+                          placeholder={hasPaystationPassword ? "•••••••••••• (Leave blank to keep current)" : "Enter Password"}
+                          className="w-full text-xs bg-white border border-[#ECECEC] rounded-xl px-4 py-2.5 text-[#262626]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-2 border-t border-gray-100">
+                    <h4 className="text-xs font-bold text-gray-800 mb-3 flex items-center gap-1.5">
+                      <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" style={{ color: '#ECA548' }}>
+                        <path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z" />
+                      </svg>
+                      Facebook Page Insights
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Facebook Page ID
+                        </label>
+                        <input
+                          type="text"
+                          value={facebookPageIdInput}
+                          onChange={(e) => setFacebookPageIdInput(e.target.value)}
+                          placeholder="e.g. 123456789012345"
+                          className="w-full text-xs bg-white border border-[#ECECEC] rounded-xl px-4 py-2.5 text-[#262626]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Page Access Token
+                        </label>
+                        <input
+                          type="password"
+                          value={facebookAccessTokenInput}
+                          onChange={(e) => setFacebookAccessTokenInput(e.target.value)}
+                          placeholder={hasFacebookAccessToken ? "•••••••••••• (Leave blank to keep current)" : "Enter Long-Lived Token"}
+                          className="w-full text-xs bg-white border border-[#ECECEC] rounded-xl px-4 py-2.5 text-[#262626]"
+                        />
+                      </div>
+                    </div>
+                  </div>
 
                   <button
                     type="submit"
@@ -2184,6 +2279,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                 </button>
               </form>
             </div>
+          )}
+
+          {/* ----------------- TAB: INSIGHTS & ANALYTICS ----------------- */}
+          {activeTab === 'insights' && (
+            <AdminInsightsView authToken={authToken} />
           )}
 
           {/* ----------------- TAB 5: BRANDING CUSTOMIZER ----------------- */}

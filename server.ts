@@ -3,6 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import { fetchAnalyticsData } from './server/analyticsService.js';
 import { fetchSearchConsoleData } from './server/searchConsoleService.js';
+import { fetchFacebookInsights } from './server/facebookInsightsService.js';
 import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
@@ -1227,11 +1228,21 @@ app.get('/api/admin/integrations', adminAuthMiddleware, (req, res) => {
     gmailUser: settings.gmailUser || '',
     hasSteadfastSecretKey: !!settings.steadfastSecretKey,
     steadfastApiKey: settings.steadfastApiKey || '',
+    hasPaystationPassword: !!settings.paystationPassword,
+    paystationMerchantId: settings.paystationMerchantId || '',
+    facebookPageId: settings.facebookPageId || '',
+    hasFacebookAccessToken: !!settings.facebookAccessToken,
   });
 });
 
 app.post('/api/admin/integrations', adminAuthMiddleware, (req, res) => {
-  const { gmailUser, gmailAppPassword, steadfastApiKey, steadfastSecretKey } = req.body;
+  const { 
+    gmailUser, gmailAppPassword, 
+    steadfastApiKey, steadfastSecretKey, 
+    paystationMerchantId, paystationPassword,
+    facebookPageId, facebookAccessToken
+  } = req.body;
+  
   if (!DB.adminSettings) {
     DB.adminSettings = { twoFactorEnabled: false, twoFactorEmail: 'giftghor6525@gmail.com' };
   }
@@ -1241,6 +1252,12 @@ app.post('/api/admin/integrations', adminAuthMiddleware, (req, res) => {
   
   if (steadfastApiKey !== undefined) DB.adminSettings.steadfastApiKey = steadfastApiKey;
   if (steadfastSecretKey) DB.adminSettings.steadfastSecretKey = steadfastSecretKey;
+  
+  if (paystationMerchantId !== undefined) DB.adminSettings.paystationMerchantId = paystationMerchantId;
+  if (paystationPassword) DB.adminSettings.paystationPassword = paystationPassword;
+  
+  if (facebookPageId !== undefined) DB.adminSettings.facebookPageId = facebookPageId;
+  if (facebookAccessToken) DB.adminSettings.facebookAccessToken = facebookAccessToken;
 
   saveDB(DB);
   res.json({ success: true, message: 'Integrations updated successfully' });
@@ -1590,6 +1607,14 @@ app.post('/api/admin/ai-assistant', adminAuthMiddleware, async (req, res) => {
       }
     } catch (e) {
       console.warn('Could not fetch search console data', e);
+    }
+    try {
+      const fbContext = await fetchFacebookInsights();
+      if (fbContext && !fbContext.includes('currently unavailable')) {
+        systemInstruction += `\n\nFACEBOOK PAGE INSIGHTS:\n${fbContext}\nUse this data to answer questions about social media performance, Facebook page reach, engagement, and impressions.`;
+      }
+    } catch (e) {
+      console.warn('Could not fetch facebook insights', e);
     }
     // Normalize history to group consecutive roles
     const normalizedHistory = [];
