@@ -23,7 +23,7 @@ export async function fetchAnalyticsData(): Promise<string> {
         authOptions = { 
           credentials: { 
             client_email: creds.client_email, 
-            private_key: creds.private_key 
+            private_key: creds.private_key.replace(/\\n/g, '\n') 
           } 
         };
       } catch (e) {

@@ -26,7 +26,7 @@ export async function fetchSearchConsoleData(): Promise<string> {
         authClient = new auth.GoogleAuth({
           credentials: {
             client_email: creds.client_email,
-            private_key: creds.private_key,
+            private_key: creds.private_key.replace(/\\n/g, '\n'),
           },
           scopes,
         });

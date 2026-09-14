@@ -687,6 +687,25 @@ function adminAuthMiddleware(req: express.Request, res: express.Response, next: 
 }
 
 // -------------------------------------------------------------
+
+// Admin Insights Dashboard
+app.get('/api/admin/insights-dashboard', adminAuthMiddleware, async (req, res) => {
+  try {
+    const analyticsContext = await fetchAnalyticsData();
+    const searchConsoleContext = await fetchSearchConsoleData();
+    const fbContext = await fetchFacebookInsights();
+    
+    res.json({
+      analytics: analyticsContext,
+      searchConsole: searchConsoleContext,
+      facebook: fbContext
+    });
+  } catch (error: any) {
+    console.error('Insights Dashboard Error:', error);
+    res.status(500).json({ error: error.message || 'Failed to fetch insights' });
+  }
+});
+
 // PUBLIC API ENDPOINTS (FOR EMBEDDABLE CLIENT WIDGET)
 // Note: Strictly no admin endpoints, credentials, or training tokens exposed.
 // -------------------------------------------------------------
