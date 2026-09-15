@@ -710,6 +710,30 @@ app.get('/api/admin/insights-dashboard', adminAuthMiddleware, async (req, res) =
 // Note: Strictly no admin endpoints, credentials, or training tokens exposed.
 // -------------------------------------------------------------
 
+
+// Sitemap XML endpoint
+app.get('/api/sitemaps.xml', (req, res) => {
+  const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://giftghor.world/</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  ${DB.products.map(p => `
+  <url>
+    <loc>https://giftghor.world/product/${p.id}</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`).join('')}
+</urlset>`;
+
+  res.header('Content-Type', 'application/xml');
+  res.send(sitemapXml);
+});
+
 // 1. Public branding & widget configuration
 app.get('/api/public/branding', (req, res) => {
   res.json({
@@ -1920,12 +1944,13 @@ async function crawlGiftGhor() {
   try {
     const sitemapRes = await axios.get('https://giftghor.world/api/sitemaps.xml', { timeout: 15000 });
     const $sm = cheerio.load(sitemapRes.data, { xmlMode: true });
-    const urls = [];
+    const urls: string[] = [];
     $sm('loc').each((_, el) => {
       urls.push($sm(el).text());
     });
     console.log(`[Crawler] Found ${urls.length} URLs in sitemap`);
     
+    let updatedCount = 0;
     for (const url of urls) {
       if (url.includes('/categories')) continue;
       try {
@@ -1971,7 +1996,7 @@ async function crawlGiftGhor() {
           wordCount: combinedContent.split(' ').length,
           itemsFound: 1,
           crawledAt: new Date().toISOString(),
-          contentSummary: combinedContent.substring(0, 2000) + '... (auto-updated from sitemap)'
+          contentSummary: combinedContent
         };
         
         if (existingIndex >= 0) {
@@ -1979,13 +2004,14 @@ async function crawlGiftGhor() {
         } else {
           DB.crawledPages.push(crawledData);
         }
-      } catch (err) {
+        updatedCount++;
+      } catch (err: any) {
         console.error(`[Crawler] Failed to crawl ${url}:`, err.message);
       }
     }
     saveDB(DB);
-    console.log('[Crawler] Auto-crawl finished successfully.');
-  } catch (err) {
+    console.log(`[Crawler] Auto-crawl finished successfully. Updated ${updatedCount} pages.`);
+  } catch (err: any) {
     console.error('[Crawler] Failed to fetch sitemap:', err.message);
   }
 }
