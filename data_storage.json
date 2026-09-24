@@ -1,0 +1,2042 @@
+{
+  "adminPasswordHash": "giftghor2026",
+  "branding": {
+    "storeName": "Gift Ghor",
+    "widgetTitle": "Gift Ghor Assistant",
+    "widgetSubtitle": "Online | Instant replies in বাংলা & English",
+    "logoUrl": "https://cdn-icons-png.flaticon.com/512/3063/3063822.png",
+    "primaryColor": "#ECA548",
+    "headerTextColor": "#262626",
+    "welcomeMessage": "আসসালামু আলাইকুম আপু/ভাইয়া, আপনাকে কীভাবে সাহায্য করতে পারি?",
+    "quickReplies": [
+      "অর্ডার করতে চাই 🎁",
+      "ডেলিভারি চার্জ কত? 🚚",
+      "প্রোডাক্ট ক্যাটালগ 🛍️"
+    ],
+    "showOnlineStatus": true,
+    "fontFamily": "sans-serif"
+  },
+  "deliveryPolicy": {
+    "insideDhakaCost": 70,
+    "outsideDhakaCost": 130,
+    "codAvailable": true,
+    "deliveryTimeDhaka": "২৪-৪৮ ঘণ্টার মধ্যে",
+    "deliveryTimeOutside": "২-৪ কার্যদিবসের মধ্যে",
+    "advancePaymentRequired": false,
+    "advancePaymentNote": "সারা বাংলাদেশে ক্যাশ অন ডেলিভারি (COD) সুবিধা আছে। পার্সেল হাতে পেয়ে মূল্য পরিশোধ করতে পারবেন।",
+    "returnPolicyText": "ডেলিভারিম্যানের সামনে পার্সেল চেক করে গ্রহণ করবেন। কোনো ত্রুটি বা সমস্যা থাকলে সাথে সাথে রিটার্ন করতে পারবেন বা আমাদের সাথে যোগাযোগ করতে পারবেন।",
+    "specialNotice": "আমাদের কাছে রয়েছে আকর্ষণীয় সব লেডিজ ব্যাগ এবং ওয়ালেটের কালেকশন!"
+  },
+  "products": [
+    {
+      "id": "1333107",
+      "title": "Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet",
+      "price": 350,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1333107",
+      "description": "প্রতিদিনের ব্যবহারে সোবার ও কিউট লুক পেতে 'Gift Ghor' নিয়ে এলো Cute Daisy Flower Mini Folding Ladies Wallet।"
+    },
+    {
+      "id": "1015780",
+      "title": "Premium Curved Flap Shoulder Bag for Women",
+      "price": 1150,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1015780",
+      "description": "মার্জিত ডিজাইন এবং প্রিমিয়াম ফিনিশিংয়ের এই ব্ল্যাক শোল্ডার ব্যাগটি আপনার আভিজাত্যকে ফুটিয়ে তুলবে কয়েক গুণ।"
+    },
+    {
+      "id": "1015779",
+      "title": "Shoulder Crossbody Large Capacity Bucket Bag",
+      "price": 650,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1015779",
+      "description": "স্টাইলিশ ও প্রিমিয়াম এই হোবো ব্যাগটিতে রয়েছে আকর্ষণীয় এথনিক এমব্রয়ডারি স্ট্র্যাপ।"
+    },
+    {
+      "id": "1337004",
+      "title": "Trendy Crossbody & Shoulder Vanity Bag for Women - Stylish Party & Casual Sling Bag by Gift Ghor",
+      "price": 600,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1337004",
+      "description": "আপনার প্রতিদিনের বা পার্টির পোশাকের সাথে নিখুঁতভাবে মানানসই একটি প্রিমিয়াম স্টাইলিশ ভ্যানিটি ব্যাগ খুঁজছেন? Gift Ghor নিয়ে এসেছে এই চমৎকার ও কমপ্যাক্ট ডিজাইনের ব্যাগ, যা আপনাকে দেবে এক দারুণ ফ্যাশনেবল লুক।"
+    },
+    {
+      "id": "1328410",
+      "title": "Cute Mini Rabbit Metal Buckle Folding Ladies Wallet",
+      "price": 550,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1328410",
+      "description": "আপনার স্টাইল ও প্রয়োজনীয়তার সেরা সংমিশ্রণ! 'Gift Ghor' নিয়ে এলো কিউট র‍্যাবিট মেটাল লোগো সমৃদ্ধ Mini Folding Ladies Wallet।"
+    },
+    {
+      "id": "1328434",
+      "title": "Cute Golden Bow Metal Buckle Small Ladies Wallet",
+      "price": 420,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1328434",
+      "description": "আপনার দৈনন্দিন স্টাইলে কিউট অ্যান্ড গ্ল্যামারাস লুক যোগ করতে 'Gift Ghor' নিয়ে এলো Golden Bow Metal Buckle Mini Ladies Wallet।"
+    },
+    {
+      "id": "1330754",
+      "title": "Vintage Sunflower Embroidery Zipper Short Ladies Wallet",
+      "price": 550,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1330754",
+      "description": "ভিন্টেজ লুক ও ক্লাসি ডিজাইনের পারফেক্ট মেলবন্ধন! 'Gift Ghor' নিয়ে এলো Sunflower Embroidery Short Ladies Wallet।"
+    },
+    {
+      "id": "1330759",
+      "title": "Vintage Leather Shoulder Bag Baguette Handbag for Women",
+      "price": 850,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1330759",
+      "description": "আপনার স্টাইলে গ্ল্যামারাস ও ওয়েস্টার্ন ছোঁয়া যোগ করতে 'Gift Ghor' নিয়ে এলো Retro Vintage Leather Shoulder Bag (Baguette Bag)।"
+    },
+    {
+      "id": "1333100",
+      "title": "Cute Sweet Bow Printed Mini Folding Ladies Wallet",
+      "price": 490,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "out_of_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1333100",
+      "description": "আপনার দৈনন্দিন স্টাইলে কিউট ও ক্যাজুয়াল টাচ যোগ করতে 'Gift Ghor' নিয়ে এলো Sweet Bow Printed Mini Folding Ladies Wallet।"
+    },
+    {
+      "id": "1337043",
+      "title": "Elegant Embossed Floral Long Leather Wallet for Women | Multi-Card Holder & Zipper Clutch Purse – Gift Ghor",
+      "price": 890,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1337043",
+      "description": "হাতে বহনযোগ্য স্টাইলিশ ও স্লিম ডিজাইনের একটি বড় ওয়ালেট খুঁজছেন? Gift Ghor নিয়ে এসেছে প্রিমিয়াম এমবসড ফ্লোরাল ডিজাইনের এই লেডিস লং ওয়ালেট।"
+    },
+    {
+      "id": "1337015",
+      "title": "Cute Bear & Bunny Foldable Mini Wallet for Women & Girls | Compact Card & Money Purse – Gift Ghor",
+      "price": 490,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1337015",
+      "description": "ব্যাগ বা পকেটে সহজে বহনযোগ্য একটি কিউট ও ট্রেন্ডি মিনি ওয়ালেট খুঁজছেন? Gift Ghor নিয়ে এসেছে প্রিমিয়াম কোয়ালিটির এই কমপ্যাক্ট সাইজ ফোল্ডিং পার্স।"
+    },
+    {
+      "id": "1333092",
+      "title": "Cute Cat Embroidery Short Zipper Ladies Wallet",
+      "price": 550,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1333092",
+      "description": "বিড়ালপ্রেমীদের জন্য নিয়ে এলাম অত্যন্ত কিউট ও স্টাইলিশ Cute Cat Embroidery Short Ladies Wallet! টেক্সচার্ড সফট ফিনিশিং, প্রিমিয়াম ক্যাট এমব্রয়ডারি মোটিফ এবং সিকিউর জিপার চেম্বার সমৃদ্ধ এই ওয়ালেটটি আপনার দৈনন্দিন ব্যবহারে আনবে এক অন্যরকম মিষ্টি টাচ।"
+    },
+    {
+      "id": "1330748",
+      "title": "Cute Flower Print Mini Folding Ladies Wallet",
+      "price": 330,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1330748",
+      "description": "আপনার দৈনন্দিন লুকে সোবার এবং কিউট টাচ যোগ করতে 'Gift Ghor' নিয়ে এলো Cute Flower Print & 'Nice Day' Printed Mini Folding Ladies Wallet।"
+    },
+    {
+      "id": "945885",
+      "title": "2in1 Trifold wallet",
+      "price": 550,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/945885",
+      "description": "Premium Quality 2-in-1 Ladies Wallet.Premium PU leather.Cute design with Coin Purse & Card Holder facility. Available in 5 colors. Durable and stylish choice for daily use.।"
+    },
+    {
+      "id": "1328420",
+      "title": "Ladies Wallet with Removable Card Holder & Zipper Pocket",
+      "price": 750,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1328420",
+      "description": "স্মার্ট স্টাইল ও সর্বোচ্চ ইউটিলিটির অপূর্ব কম্বিনেশন! 'Gift Ghor' নিয়ে এলো Detachable Card Holder সহ Multifunctional Short Ladies Wallet।"
+    },
+    {
+      "id": "1330560",
+      "title": "Cute Bear & Paw Print Mini Folding Ladies Wallet",
+      "price": 390,
+      "category": "Accessories",
+      "customizable": false,
+      "stockStatus": "in_stock",
+      "imageUrl": "https://giftghor.world/assets/logo.png",
+      "url": "https://giftghor.world/products/1330560",
+      "description": "আপনার প্রতিদিনের ক্যাজুয়াল লুকের সঙ্গী হতে 'Gift Ghor' নিয়ে এলো Cute 3D Bear & Paw Print Mini Folding Ladies Wallet।"
+    }
+  ],
+  "crawledPages": [
+    {
+      "id": "crawl-1789413325860",
+      "url": "https://giftghor.world/checkout",
+      "title": "Checkout",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 7,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-14T19:15:25.860Z",
+      "contentSummary": "Successfully extracted text from https://giftghor.world/checkout (6 words)."
+    },
+    {
+      "id": "homepage",
+      "url": "https://giftghor.world/",
+      "title": "GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 96,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:42:06.388Z",
+      "contentSummary": "Title: GIFT GHOR\nDescription: Shop GIFT GHOR online — browse the collection and order with fast, reliable delivery.\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/shops/af/c6/image-picker-97ad5ca3-8b32-44cc-8210-123bcfe33ff8-1820-0000005ffbcd67d2-6514876747078067/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e4/11/image-picker-9026c575-4842-47b4-8758-1af673472097-2162-0000004f29bbce36-6093901768610138/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f5/1000015308-5962779286591719/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/cc/1000015272-5879341020069728/original.jpg\nProduct Details: Skip to main contentSHOP NOWShopShop by categoryView all →Female walletShop now →Hand BagShop now →Best sellersCustomer favoritesView all →2in1 Trifold walletBDT 550Add to CartSalePremium Curved Flap Shoulder Bag for WomenBDT 1,150BDT 1,750Add to CartSaleShoulder Crossbody Large Capacity Bucket BagBDT 550BDT 790Add to CartSaleCute Bear & Paw Print Mini Folding Ladies Wallet - Gift GhorBDT 390BDT 550Add to CartSaleCute Golden Bow Metal Buckle Small Ladies Wallet - Gift GhorBD"
+    },
+    {
+      "id": "checkout",
+      "url": "https://giftghor.world/checkout",
+      "title": "GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 94,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-11T08:39:16.105Z",
+      "contentSummary": "Title: GIFT GHOR\nDescription: \"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\"\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploa"
+    },
+    {
+      "id": "217915?selected_category=21791",
+      "url": "https://giftghor.world/categories/217915?selected_category=217915&category_id=217915",
+      "title": "217915 - GIFT GHOR | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 72,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-11T08:39:24.649Z",
+      "contentSummary": "Title: 217915 - GIFT GHOR | GIFT GHOR\nDescription: Browse 217915 products\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"email\":\"info@giftgh"
+    },
+    {
+      "id": "204464?selected_category=20446",
+      "url": "https://giftghor.world/categories/204464?selected_category=204464&category_id=204464",
+      "title": "204464 - GIFT GHOR | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 72,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-11T08:39:24.737Z",
+      "contentSummary": "Title: 204464 - GIFT GHOR | GIFT GHOR\nDescription: Browse 204464 products\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"email\":\"info@giftgh"
+    },
+    {
+      "id": "204461?selected_category=20446",
+      "url": "https://giftghor.world/categories/204461?selected_category=204461&category_id=204461",
+      "title": "204461 - GIFT GHOR | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 72,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-11T08:39:24.807Z",
+      "contentSummary": "Title: 204461 - GIFT GHOR | GIFT GHOR\nDescription: Browse 204461 products\nText: #nprogress{pointer-events:none}#nprogress .bar{background:#9E9E9E;position:fixed;z-index:1600;top: 0;left:0;width:100%;height:4px}#nprogress .peg{display:block;position:absolute;right:0;width:100px;height:100%;box-shadow:0 0 10px #9E9E9E,0 0 5px #9E9E9E;opacity:1;-webkit-transform:rotate(3deg) translate(0px,-4px);-ms-transform:rotate(3deg) translate(0px,-4px);transform:rotate(3deg) translate(0px,-4px)}#nprogress .spinner{display:block;position:fixed;z-index:1600;top: 15px;right:15px}#nprogress .spinner-icon{width:18px;height:18px;box-sizing:border-box;border:2px solid transparent;border-top-color:#9E9E9E;border-left-color:#9E9E9E;border-radius:50%;-webkit-animation:nprogress-spinner 400ms linear infinite;animation:nprogress-spinner 400ms linear infinite}.nprogress-custom-parent{overflow:hidden;position:relative}.nprogress-custom-parent #nprogress .bar,.nprogress-custom-parent #nprogress .spinner{position:absolute}@-webkit-keyframes nprogress-spinner{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}@keyframes nprogress-spinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}{\"@context\":\"https://schema.org\",\"@type\":\"WebSite\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"description\":\"\\\"গিফট ঘর-এ আপনাকে স্বাগতম! এখানে আপনি পাবেন স্টাইলিশ ওয়ালেট, ইউনিক গিফট আইটেম এবং কিউট সব এক্সেসরিজ। জন্মদিন বা যেকোনো অনুষ্ঠানের জন্য সেরা গিফটটি খুঁজে নিন আমাদের কাছে। আজই অর্ডার করুন!\\\"\",\"image\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"inLanguage\":\"en\"}{\"@context\":\"https://schema.org\",\"@type\":\"Organization\",\"name\":\"GIFT GHOR\",\"url\":\"https://giftghor.world\",\"logo\":\"https://assets.zatiqeasy.com/easy/uploads/166014/shops/17/1d/image-picker-ed22f09b-1f63-434f-a7be-20b2a18f6ae5-2923-0000007d81815f81-6520398227541206/original.png\",\"email\":\"info@giftgh"
+    },
+    {
+      "id": "about-us",
+      "url": "https://giftghor.world/about-us",
+      "title": "About us | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 150,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:42:07.101Z",
+      "contentSummary": "Title: About us | GIFT GHOR\nDescription: Shop GIFT GHOR online — browse the collection and order with fast, reliable delivery.\nProduct Details: Skip to main contentWelcome to Our FamilyFounded in May 2025, GIFT GHOR™ shopping for quality essentials and memorable gifts should feel personal, reliable, and warm. To us, GIFT GHOR™ is more than just a brand name—it is a home, a growing community, and a family where every customer is valued.Our MissionOur purpose is straight forward: to deliver premium-quality products at the best possible prices, paired with honest, attentive customer care. We carefully source and curate our collections to ensure everyday durability, refined style, and complete customer satisfaction. From the moment you browse our store to the unboxing at your doorstep, your trust remains our top priorityOfficial Business Details:Company Name: GIFT GHOR™ Trade License No: 26019878019000589Mobile / WhatsApp: +880 1522126525Email: giftghor6525@gmail.comOperating Since: May 2025© 2026 GIFT GHOR™. All Rights Reserved."
+    },
+    {
+      "id": "products",
+      "url": "https://giftghor.world/products",
+      "title": "Products | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 33,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:42:06.758Z",
+      "contentSummary": "Title: Products | GIFT GHOR\nDescription: Browse products from GIFT GHOR.\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ed/ce/image-picker-8eb5dfae-8da3-4d33-8708-85fae5aa4049-1417-0000004f39254060-6696447756932996/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/image-picker-e5c02833-516d-4224-9334-d437cd8ddbef-1417-0000004cd8aff7c3-6695983940400228/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e4/11/image-picker-9026c575-4842-47b4-8758-1af673472097-2162-0000004f29bbce36-6093901768610138/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f5/1000015308-5962779286591719/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/cc/1000015272-5879341020069728/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nProduct Details: Skip to main contentAll Products (18)Sort byNewest First"
+    },
+    {
+      "id": "privacy-policy",
+      "url": "https://giftghor.world/privacy-policy",
+      "title": "Privacy Policy | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 308,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:42:07.463Z",
+      "contentSummary": "Title: Privacy Policy | GIFT GHOR\nDescription: Shop GIFT GHOR online — browse the collection and order with fast, reliable delivery.\nProduct Details: Skip to main contentPrivacy Policy for GIFT GHORLast updated: 2025-11-30Welcome to GIFT GHOR (\"us\", \"we\", or \"our\"). This page informs you of our policies regarding the collection, use, and disclosure of Personal Information we receive from users of the site.We use your Personal Information only for providing and improving the site. By using the site, you agree to the collection and use of information by this policy.Information Collection and UseWhile using our site, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you. Personally identifiable information may include but is not limited to your name, email address, postal address, and phone number (\"Personal Information\").Log DataLike many site operators, we collect information that your browser sends whenever you visit our site (\"Log Data\"). This Log Data may include information such as your computer's Internet Protocol (\"IP\") address, browser type, browser version, the pages of our site that you visit, the time and date of your visit, the time spent on those pages, and other statistics.CookiesCookies are files with small amounts of data, which may include an anonymous unique identifier. Cookies are sent to your browser from a website and stored on your computer's hard drive.Like many sites, we use \"cookies\" to collect information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent. However, if you do not accept cookies, you may not be able to use some portions of our site.SecurityThe security of your Personal Information is important to us, but remember that no method of transmission over the Internet, or method of electronic storage, is 100% secure. While we strive to use commercially acceptable means to pr"
+    },
+    {
+      "id": "terms-and-conditions",
+      "url": "https://giftghor.world/terms-and-conditions",
+      "title": "Terms & Conditions | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 298,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:42:07.809Z",
+      "contentSummary": "Title: Terms & Conditions | GIFT GHOR\nDescription: Shop GIFT GHOR online — browse the collection and order with fast, reliable delivery.\nProduct Details: Skip to main contentTerms and Conditions for GIFT GHORLast updated: 2025-11-30Please read these Terms and Conditions (\"Terms\", \"Terms and Conditions\") carefully before using the website (the \"Service\") operated by GIFT GHOR (\"us\", \"we\", or \"our\").1. Acceptance of TermsBy accessing or using the Service, you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.2. AccountsWhen you create an account with us, you must provide accurate and complete information. You are responsible for maintaining the confidentiality of your account and password. You agree to accept responsibility for all activities that occur under your account.3. Product InformationWe make every effort to display as accurately as possible the colors, features, specifications, and details of the products available on our website. However, we do not guarantee that the colors, features, specifications, and details of the products will be accurate, complete, reliable, current, or free of other errors.4. Pricing and PaymentPrices for products are subject to change without notice. We reserve the right at any time to modify or discontinue the Service (or any part or content thereof) without notice at any time. We shall not be liable to you or to any third-party for any modification, price change, suspension, or discontinuance of the Service.5. Shipping and DeliveryOur aim is to ship orders promptly; however, delivery times may vary. We are not liable for delays in shipping or delivery due to force majeure events or other reasons beyond our reasonable control.6. Returns and RefundsPlease review our Return Policy posted on the website for information on returns and refunds.7. Intellectual PropertyThe Service and its original content, features, and functiona"
+    },
+    {
+      "id": "return-and-cancellation-policy",
+      "url": "https://giftghor.world/return-and-cancellation-policy",
+      "title": "Return and cancellation policy | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 306,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:42:07.601Z",
+      "contentSummary": "Title: Return and cancellation policy | GIFT GHOR\nDescription: Shop GIFT GHOR online — browse the collection and order with fast, reliable delivery.\nProduct Details: Skip to main contentReturn and Cancellation Policy for GIFT GHORLast updated: 2025-11-30Thank you for shopping at GIFT GHOR. Please read this policy carefully. Your satisfaction is our priority, and we want to ensure a transparent and hassle-free experience for you.1. Refund PolicyWe strive to provide products and services that meet or exceed your expectations. If, for any reason, you are not completely satisfied with your purchase, you may be eligible for a refund under the following conditions:Damaged or Defective Products: If you receive a damaged or defective product, please contact our customer service team as soon as possible to receive the item. We will provide instructions on returning the product, and upon verification, a full refund or replacement will be issued.Incorrect Items: If you receive an incorrect item, please notify us as soon as possible of receiving the product. We will arrange for the correct item to be shipped to you, and you may be required to return the incorrect item.Please note that certain items, such as personalized or customized products, may not be eligible for a refund unless they are damaged or defective.2. Return PolicyTo initiate a return, please contact our customer service team at +8801522126528. Our team will provide you with instructions on how to return the item. Please ensure that the item is securely packaged to prevent damage during transit.Once we receive the returned item and verify its condition, we will process the refund or replacement accordingly. Refunds will be issued to the original payment method.3. Cancellation PolicyYou may cancel an order as soon as possible, provided that the order has not already been processed or shipped. To cancel an order, please contact our customer service team immediately at +8801522126528"
+    },
+    {
+      "id": "1330748",
+      "url": "https://giftghor.world/products/1330748",
+      "title": "Cute Flower Print Mini Folding Ladies Wallet - Gift Ghor | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 57,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:53.989Z",
+      "contentSummary": "Title: Cute Flower Print Mini Folding Ladies Wallet - Gift Ghor | GIFT GHOR\nDescription: আপনার দৈনন্দিন লুকে সোবার এবং কিউট টাচ যোগ করতে 'Gift Ghor' নিয়ে এলো Cute Flower Print & 'Nice Day' Printed Mini Folding Ladies Wallet। স্মুথ ম্যাট লেদার ফিন…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/f4/01/1000015264-5879009188677271/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/84/20/1000015263-5878748880378010/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/76/4f/1000015265-5879011260087850/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d2/73/1000015266-5879012393389868/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/25/b2/1000015267-5878752353727233/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015"
+    },
+    {
+      "id": "1351445",
+      "url": "https://giftghor.world/products/1351445",
+      "title": "Wish Pearl / Love Pearl Necklace Set with Natural Oyster Pearl – Romantic Surprise Jewellery Gift Box for Girls & Women | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 62,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:48.374Z",
+      "contentSummary": "Title: Wish Pearl / Love Pearl Necklace Set with Natural Oyster Pearl – Romantic Surprise Jewellery Gift Box for Girls & Women | GIFT GHOR\nDescription: নিজ হাতে আসল ঝিনুক খুলে মুক্তা বের করার রোমাঞ্চকর অনুভূতির সাথে ভালোবাসার মানুষকে দিন এক অনন্য উপহার। Love Pearl সেটটিতে রয়েছে আস্ত ঝিনুকের ভেতরের আসল মুক্তা…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/image-picker-e5c02833-516d-4224-9334-d437cd8ddbef-1417-0000004cd8aff7c3-6695983940400228/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/image-picker-e5c02833-516d-4224-9334-d437cd8ddbef-1417-0000004cd8aff7c3-6695983940400228/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/a7/49/image-picker-6ed6ba51-40c2-4389-baac-cb29a2e1219f-1417-0000004cd8dd2a0e-6695985014237712/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/aa/64/image-picker-1f4962ca-dedf-45b0-8879-af3e6ca2a3dc-1417-0000004cd8883ebd-8676275853190766/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/75/image-picker-14e97af3-8ea4-424b-83a6-10f2e0b777ee-1417-0000004cd8c69fdf-6695987030247099/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ed/ce/image-picker-8eb5dfae-8da3-4d33-8708-85fae5aa4049-1417-0000004f39254060-6696447756932996/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e4/11/image-picker-9026c575-4842-47b4-8758-1af673472097-2162-0000004f29bbce36-6093901768610138/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/16"
+    },
+    {
+      "id": "1337004",
+      "url": "https://giftghor.world/products/1337004",
+      "title": "Trendy Crossbody & Shoulder Vanity Bag for Women - Stylish Party & Casual Sling Bag by Gift Ghor | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 58,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:50.981Z",
+      "contentSummary": "Title: Trendy Crossbody & Shoulder Vanity Bag for Women - Stylish Party & Casual Sling Bag by Gift Ghor | GIFT GHOR\nDescription: আপনার প্রতিদিনের বা পার্টির পোশাকের সাথে নিখুঁতভাবে মানানসই একটি প্রিমিয়াম স্টাইলিশ ভ্যানিটি ব্যাগ খুঁজছেন? Gift Ghor নিয়ে এসেছে এই চমৎকার ও কমপ্যাক্ট ডিজাই…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/00/ff/image-picker-f66ca784-d9ea-49f4-90ff-5471fbac80ca-1931-0000003fade687b5-8071137290750608/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/cc/1000015272-5879341020069728/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/image-picker-e5c02833-516d-4224-9334-d437cd8ddbef-1417-0000004cd8aff7c3-6695983940400228/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ed/ce/image-picker-8eb5dfae-8da3-4d33-8708-85fae5aa4049-1417-0000004f39254060-6696447756932996/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e4/11/image-picker-9026c575-4842-47b4-8758-1af673472097-2162-0000004f29bbce36-6093901768610138/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiq"
+    },
+    {
+      "id": "1351464",
+      "url": "https://giftghor.world/products/1351464",
+      "title": "Love Forever Wish Pearl Luxury Gift Box with Preserved Red Roses & Jewelry Set – Romantic Anniversary & Birthday Gift for Her | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 65,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:47.791Z",
+      "contentSummary": "Title: Love Forever Wish Pearl Luxury Gift Box with Preserved Red Roses & Jewelry Set – Romantic Anniversary & Birthday Gift for Her | GIFT GHOR\nDescription: ১২টি চিরসবুজ লাল গোলাপ আর নিজ হাতে আসল ঝিনুক খুলে মুক্তা বের করার জাদুকরী অনুভূতি নিয়ে এসেছে Love Forever Pearl Box। এই লাক্সারি কম্বোতে থাকছে খাঁটি ঝিনুকের…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ed/ce/image-picker-8eb5dfae-8da3-4d33-8708-85fae5aa4049-1417-0000004f39254060-6696447756932996/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/c4/9a/image-picker-b2fadd53-5ea7-4423-9180-ae7b1271feb1-1417-0000004f392fca51-6696448515056191/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/image-picker-e5c02833-516d-4224-9334-d437cd8ddbef-1417-0000004cd8aff7c3-6695983940400228/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e4/11/image-picker-9026c575-4842-47b4-8758-1af673472097-2162-0000004f29bbce36-6093901768610138/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/cc/1000015272-5879341020069728/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg"
+    },
+    {
+      "id": "1015780",
+      "url": "https://giftghor.world/products/1015780",
+      "title": "Premium Curved Flap Shoulder Bag for Women | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 47,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:58.273Z",
+      "contentSummary": "Title: Premium Curved Flap Shoulder Bag for Women | GIFT GHOR\nDescription: মার্জিত ডিজাইন এবং প্রিমিয়াম ফিনিশিংয়ের এই ব্ল্যাক শোল্ডার ব্যাগটি আপনার আভিজাত্যকে ফুটিয়ে তুলবে কয়েক গুণ। ইউনিক কার্ভড ফ্ল্যাপ এবং গোল্ডেন হার্ডওয়্যারের সংম…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/cc/1000015272-5879341020069728/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/image-picker-e5c02833-516d-4224-9334-d437cd8ddbef-1417-0000004cd8aff7c3-6695983940400228/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ed/ce/image-picker-8eb5dfae-8da3-4d33-8708-85fae5aa4049-1417-0000004f39254060-6696447756932996/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e4/11/image-picker-9026c575-4842-47b4-8758-1af673472097-2162-0000004f29bbce36-6093901768610138/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiq"
+    },
+    {
+      "id": "1328410",
+      "url": "https://giftghor.world/products/1328410",
+      "title": "Cute Mini Rabbit Metal Buckle Folding Ladies Wallet - Gift Ghor | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 54,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:59.762Z",
+      "contentSummary": "Title: Cute Mini Rabbit Metal Buckle Folding Ladies Wallet - Gift Ghor | GIFT GHOR\nDescription: আপনার স্টাইল ও প্রয়োজনীয়তার সেরা সংমিশ্রণ! 'Gift Ghor' নিয়ে এলো কিউট র‍্যাবিট মেটাল লোগো সমৃদ্ধ Mini Folding Ladies Wallet। প্রিমিয়াম লেদার ফিনিশিং, ক্যাস ও…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/9f/ba/1000015041-5792945158465403/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/8d/ed/1000015040-5793207502430088/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/fe/34/1000015049-5792947260093942/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f5/1000015308-5962779286591719/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/i"
+    },
+    {
+      "id": "1328434",
+      "url": "https://giftghor.world/products/1328434",
+      "title": "Cute Golden Bow Metal Buckle Small Ladies Wallet - Gift Ghor | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 55,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:55.372Z",
+      "contentSummary": "Title: Cute Golden Bow Metal Buckle Small Ladies Wallet - Gift Ghor | GIFT GHOR\nDescription: আপনার দৈনন্দিন স্টাইলে কিউট অ্যান্ড গ্ল্যামারাস লুক যোগ করতে 'Gift Ghor' নিয়ে এলো Golden Bow Metal Buckle Mini Ladies Wallet। সফট পিইউ লেদার ফিনিশিং, প্র্যাক…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/38/7c/1000015230-5793945472721849/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/16/a9/1000015231-7773974867497653/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f5/1000015308-5962779286591719/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/image-picker-e5c02833-516d-4224-9334-d437cd8ddbef-1417-0000004cd8aff7c3-6695983940400228/original.jpg\nImage: https://a"
+    },
+    {
+      "id": "1330754",
+      "url": "https://giftghor.world/products/1330754",
+      "title": "Vintage Sunflower Embroidery Zipper Short Ladies Wallet - Gift Ghor | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 51,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:53.807Z",
+      "contentSummary": "Title: Vintage Sunflower Embroidery Zipper Short Ladies Wallet - Gift Ghor | GIFT GHOR\nDescription: ভিন্টেজ লুক ও ক্লাসি ডিজাইনের পারফেক্ট মেলবন্ধন! 'Gift Ghor' নিয়ে এলো Sunflower Embroidery Short Ladies Wallet। সফট টেক্সচার্ড লেদার ফিনিশিং, প্রিমিয়াম সানফ…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/29/4e/1000015271-5878929486017917/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/41/23/1000015270-5878930552224163/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/df/06/1000015268-5878931787318608/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f5/1000015308-5962779286591719/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4"
+    },
+    {
+      "id": "1330759",
+      "url": "https://giftghor.world/products/1330759",
+      "title": "Vintage Leather Shoulder Bag Baguette Handbag for Women - Gift Ghor | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 51,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:53.075Z",
+      "contentSummary": "Title: Vintage Leather Shoulder Bag Baguette Handbag for Women - Gift Ghor | GIFT GHOR\nDescription: আপনার স্টাইলে গ্ল্যামারাস ও ওয়েস্টার্ন ছোঁয়া যোগ করতে 'Gift Ghor' নিয়ে এলো Retro Vintage Leather Shoulder Bag (Baguette Bag)। গ্লসি লেদার ফিনিশিং, প্রিমিয়াম…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/cc/1000015272-5879341020069728/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/cc/1000015272-5879341020069728/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/c0/07/1000015273-5879342011500932/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/image-picker-e5c02833-516d-4224-9334-d437cd8ddbef-1417-0000004cd8aff7c3-6695983940400228/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ed/ce/image-picker-8eb5dfae-8da3-4d33-8708-85fae5aa4049-1417-0000004f39254060-6696447756932996/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e4/11/image-picker-9026c575-4842-47b4-8758-1af673472097-2162-0000004f29bbce36-6093901768610138/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nIma"
+    },
+    {
+      "id": "1333100",
+      "url": "https://giftghor.world/products/1333100",
+      "title": "Cute Sweet Bow Printed Mini Folding Ladies Wallet - Gift Ghor | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 57,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:51.892Z",
+      "contentSummary": "Title: Cute Sweet Bow Printed Mini Folding Ladies Wallet - Gift Ghor | GIFT GHOR\nDescription: আপনার দৈনন্দিন স্টাইলে কিউট ও ক্যাজুয়াল টাচ যোগ করতে 'Gift Ghor' নিয়ে এলো Sweet Bow Printed Mini Folding Ladies Wallet। সফট ম্যাট লেদার ফিনিশিং, কিউট বো (Bo…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f5/1000015308-5962779286591719/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f5/1000015308-5962779286591719/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/1e/13/1000015309-7943070162880375/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/15/57/1000015310-7943071286379532/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/c8/96/1000015311-5962782550518982/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d9/da/1000015312-5962783555529843/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/10"
+    },
+    {
+      "id": "1337043",
+      "url": "https://giftghor.world/products/1337043",
+      "title": "Elegant Embossed Floral Long Leather Wallet for Women | Multi-Card Holder & Zipper Clutch Purse – Gift Ghor | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 58,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:49.344Z",
+      "contentSummary": "Title: Elegant Embossed Floral Long Leather Wallet for Women | Multi-Card Holder & Zipper Clutch Purse – Gift Ghor | GIFT GHOR\nDescription: হাতে বহনযোগ্য স্টাইলিশ ও স্লিম ডিজাইনের একটি বড় ওয়ালেট খুঁজছেন? Gift Ghor নিয়ে এসেছে প্রিমিয়াম এমবসড ফ্লোরাল ডিজাইনের এই লেডিস লং ওয়ালেট। স্টাইলিশ মেটাল লিফ…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e4/11/image-picker-9026c575-4842-47b4-8758-1af673472097-2162-0000004f29bbce36-6093901768610138/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e4/11/image-picker-9026c575-4842-47b4-8758-1af673472097-2162-0000004f29bbce36-6093901768610138/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/94/40/image-picker-58f73143-ee34-49b1-bc49-5a3103bae742-2162-0000004f29c99242-6093902598837207/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/66/c2/image-picker-c6f1fcab-f99c-44cf-9aa9-9bed8e88fe21-2162-0000004f298cff63-6094164689133438/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/12/cc/image-picker-5a63e2a2-b61e-42f1-8802-2f54852af1be-2162-0000004f29ade379-8074193827774857/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/7c/7f/image-picker-f98bbd5a-2e1b-44c2-b6a6-92943ee0c656-2162-0000004f29a5db14-6094166177082955/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/62/75/image-picker-700f910f-913e-4ce3-b286-5acb5675a3e4-2162-00000051f7770beb-6093905565499741/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/image-picker-e5c02833-516d-4224-9334-d437cd8ddbef-1417-0000004cd8aff7c3-6695983940400228/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventor"
+    },
+    {
+      "id": "1337015",
+      "url": "https://giftghor.world/products/1337015",
+      "title": "Cute Bear & Bunny Foldable Mini Wallet for Women & Girls | Compact Card & Money Purse – Gift Ghor | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 62,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:50.816Z",
+      "contentSummary": "Title: Cute Bear & Bunny Foldable Mini Wallet for Women & Girls | Compact Card & Money Purse – Gift Ghor | GIFT GHOR\nDescription: ব্যাগ বা পকেটে সহজে বহনযোগ্য একটি কিউট ও ট্রেন্ডি মিনি ওয়ালেট খুঁজছেন? Gift Ghor নিয়ে এসেছে প্রিমিয়াম কোয়ালিটির এই কমপ্যাক্ট সাইজ ফোল্ডিং পার্স। সানগ্লাস পরা…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/a1/9a/image-picker-399ca16c-13fe-4157-a18b-a9c2dfe17398-2026-0000004501274962-6091723156617089/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e6/16/image-picker-b3128583-d4fc-49da-ba0e-9a0727c38d7f-2026-00000045013366bf-6091985277789740/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/0f/bb/image-picker-e02101d4-85b5-4fac-a24e-9f69c6e364a9-2026-00000045010eb0a9-6091724878813527/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f5/1000015308-59"
+    },
+    {
+      "id": "1015779",
+      "url": "https://giftghor.world/products/1015779",
+      "title": "Shoulder Crossbody Large Capacity Bucket Bag | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 47,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:58.733Z",
+      "contentSummary": "Title: Shoulder Crossbody Large Capacity Bucket Bag | GIFT GHOR\nDescription: স্টাইলিশ ও প্রিমিয়াম এই হোবো ব্যাগটিতে রয়েছে আকর্ষণীয় এথনিক এমব্রয়ডারি স্ট্র্যাপ। উন্নতমানের টেক্সচারড লেদার এবং বিশাল স্টোরেজ সমৃদ্ধ এই ব্যাগটি অফিস বা প্র…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/cc/1000015272-5879341020069728/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/image-picker-e5c02833-516d-4224-9334-d437cd8ddbef-1417-0000004cd8aff7c3-6695983940400228/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ed/ce/image-picker-8eb5dfae-8da3-4d33-8708-85fae5aa4049-1417-0000004f39254060-6696447756932996/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e4/11/image-picker-9026c575-4842-47b4-8758-1af673472097-2162-0000004f29bbce36-6093901768610138/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zat"
+    },
+    {
+      "id": "1333092",
+      "url": "https://giftghor.world/products/1333092",
+      "title": "Cute Cat Embroidery Short Zipper Ladies Wallet - Gift Ghor | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 51,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:52.571Z",
+      "contentSummary": "Title: Cute Cat Embroidery Short Zipper Ladies Wallet - Gift Ghor | GIFT GHOR\nDescription: বিড়ালপ্রেমীদের জন্য নিয়ে এলাম অত্যন্ত কিউট ও স্টাইলিশ Cute Cat Embroidery Short Ladies Wallet! টেক্সচার্ড সফট ফিনিশিং, প্রিমিয়াম ক্যাট এমব্রয়ডারি মোটিফ এবং…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/39/d7/1000015299-5962535847167753/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ff/dd/1000015300-5962798245148710/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/c5/9c/1000015301-5962799354628550/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f5/1000015308-5962779286591719/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/image-"
+    },
+    {
+      "id": "1333107",
+      "url": "https://giftghor.world/products/1333107",
+      "title": "Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet - Gift Ghor | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 58,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:51.696Z",
+      "contentSummary": "Title: Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet - Gift Ghor | GIFT GHOR\nDescription: প্রতিদিনের ব্যবহারে সোবার ও কিউট লুক পেতে 'Gift Ghor' নিয়ে এলো Cute Daisy Flower Mini Folding Ladies Wallet। স্মুথ সফট লেদার ফিনিশিং, কিউট 3D থ্রি-ডি ডেইজি ফ…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ec/d7/1000015316-5963013554645959/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/6f/7f/1000015317-7943304189606917/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/24/70/1000015318-5963276751559446/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/8c/3c/1000015319-5963277816588202/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f"
+    },
+    {
+      "id": "945885",
+      "url": "https://giftghor.world/products/945885",
+      "title": "2in1 Trifold wallet | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 44,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:50.538Z",
+      "contentSummary": "Title: 2in1 Trifold wallet | GIFT GHOR\nDescription: Premium Quality 2-in-1 Ladies Wallet.Premium PU leather.Cute design with Coin Purse & Card Holder facility. Available in 5 colors. Durable and stylish choice…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f5/1000015308-5962779286591719/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/image-picker-e5c02833-516d-4224-9334-d437cd8ddbef-1417-0000004cd8aff7c3-6695983940400228/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ed/ce/image-picker-8eb5dfae-8da3-4d33-8708-85fae5aa4049-1417-0000004f39254060-6696447756932996/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e4/11/image-picker-9026c575-4842-47b4-8758-1af673472097-2162-0000004f29bbce36-6093901768610138/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/1"
+    },
+    {
+      "id": "1328420",
+      "url": "https://giftghor.world/products/1328420",
+      "title": "Ladies Wallet with Removable Card Holder & Zipper Pocket - Gift Ghor | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 54,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:56.421Z",
+      "contentSummary": "Title: Ladies Wallet with Removable Card Holder & Zipper Pocket - Gift Ghor | GIFT GHOR\nDescription: স্মার্ট স্টাইল ও সর্বোচ্চ ইউটিলিটির অপূর্ব কম্বিনেশন! 'Gift Ghor' নিয়ে এলো Detachable Card Holder সহ Multifunctional Short Ladies Wallet। আলাদা জিপার পকেট, স…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d4/a5/1000015001-5793547171110197/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/a4/53/1000015000-5793548258118453/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f5/1000015308-5962779286591719/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/image-picker-e5c02833-516d-4224-9334-d437cd8ddbef-1417-0000004cd8aff7c3-6695983940400228/original.jpg\nImage: h"
+    },
+    {
+      "id": "1330560",
+      "url": "https://giftghor.world/products/1330560",
+      "title": "Cute Bear & Paw Print Mini Folding Ladies Wallet - Gift Ghor | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 57,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:41:54.575Z",
+      "contentSummary": "Title: Cute Bear & Paw Print Mini Folding Ladies Wallet - Gift Ghor | GIFT GHOR\nDescription: আপনার প্রতিদিনের ক্যাজুয়াল লুকের সঙ্গী হতে 'Gift Ghor' নিয়ে এলো Cute 3D Bear & Paw Print Mini Folding Ladies Wallet। স্মুথ লেদার ফিনিশিং, কিউटनेসে ভরপুর ৩ডি…\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/6f/9b/1000015258-5875660112663909/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/9e/72/1000015259-5875661202347473/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/6b/79/1000015260-5875401062401578/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/87/94/1000015261-5875402349213871/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f5/1000015308-5962779286591719/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/b4/4f/imag"
+    },
+    {
+      "id": "204461",
+      "url": "https://giftghor.world/collections/204461",
+      "title": "Female wallet | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 130,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:42:00.143Z",
+      "contentSummary": "Title: Female wallet | GIFT GHOR\nDescription: Shop GIFT GHOR online — browse the collection and order with fast, reliable delivery.\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/de/62/image-picker-290557e0-76dc-4a89-bff4-df7f6578ef1b-2026-00000045011c76c5-6091722409519477/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/3c/f5/1000015308-5962779286591719/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/f1/1000015298-5962796072674774/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/5f/4a/1000015269-5878928412366485/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/81/69/1000015262-5879007990855406/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/ab/5a/1000015257-5875397834413626/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/d7/63/1000015229-5793944320254016/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/70/20/1000014999-5793284811847738/original.jpg\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/4e/19/1000015042-5793204401034536/original.jpg\nProduct Details: Skip to main contentFemale wallet2in1 Trifold walletBDT 550Add to CartSaleCute Bear & Bunny Foldable Mini Wallet for Women & Girls | Compact Card & Money Purse – Gift GhorBDT 490BDT 600Add to CartSaleCute Daisy Flower 3D Patch Mini Folding Ladies Wallet - Gift GhorBDT 350BDT 500Add to CartSaleCute Sweet Bow Printed Mini Folding Ladies Wallet - Gift GhorBDT 490BDT 599Out of StockSaleCute Cat Embroidery Short Zipper Ladies Wallet - Gift GhorBDT 550BDT 750Add to CartSaleVintage Sunflower Embroidery Zipper Short Ladies Wallet - Gift GhorBDT 550BDT 650Add to CartSaleCute Flower Print Mini Folding Ladies Wallet - Gift GhorBDT 330BDT 500Ad"
+    },
+    {
+      "id": "217915",
+      "url": "https://giftghor.world/collections/217915",
+      "title": "Hand Bag | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 81,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:42:00.507Z",
+      "contentSummary": "Title: Hand Bag | GIFT GHOR\nDescription: Shop GIFT GHOR online — browse the collection and order with fast, reliable delivery.\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e9/cc/1000015272-5879341020069728/original.jpg\nProduct Details: Skip to main contentHand BagSaleTrendy Crossbody & Shoulder Vanity Bag for Women - Stylish Party & Casual Sling Bag by Gift GhorBDT 600BDT 850Add to CartSaleVintage Leather Shoulder Bag Baguette Handbag for Women - Gift GhorBDT 850BDT 1,000Add to CartSalePremium Curved Flap Shoulder Bag for WomenBDT 1,150BDT 1,750Add to CartSaleShoulder Crossbody Large Capacity Bucket BagBDT 550BDT 790Add to Cart"
+    },
+    {
+      "id": "204464",
+      "url": "https://giftghor.world/collections/204464",
+      "title": "Purse | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 46,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:42:04.206Z",
+      "contentSummary": "Title: Purse | GIFT GHOR\nDescription: Shop GIFT GHOR online — browse the collection and order with fast, reliable delivery.\nImage: https://assets.zatiqeasy.com/easy/uploads/166014/inventories/e4/11/image-picker-9026c575-4842-47b4-8758-1af673472097-2162-0000004f29bbce36-6093901768610138/original.jpg\nProduct Details: Skip to main contentPurseSaleElegant Embossed Floral Long Leather Wallet for Women | Multi-Card Holder & Zipper Clutch Purse – Gift GhorBDT 890BDT 1,100Add to Cart"
+    },
+    {
+      "id": "collections",
+      "url": "https://giftghor.world/collections",
+      "title": "Collections | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 19,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:42:06.879Z",
+      "contentSummary": "Title: Collections | GIFT GHOR\nDescription: Browse collections from GIFT GHOR.\nProduct Details: Skip to main contentAll Categories (3)Female walletHand BagPurse"
+    },
+    {
+      "id": "contact-us",
+      "url": "https://giftghor.world/contact-us",
+      "title": "Contact | GIFT GHOR",
+      "pageType": "page",
+      "status": "success",
+      "wordCount": 42,
+      "itemsFound": 1,
+      "crawledAt": "2026-09-24T16:42:07.238Z",
+      "contentSummary": "Title: Contact | GIFT GHOR\nDescription: Shop GIFT GHOR online — browse the collection and order with fast, reliable delivery.\nProduct Details: Skip to main contentContact GIFT GHORQuestions about a product or an order? Reach the shop using the contact details below.AddressMogBazar,DhakaPhone+8801522126525Emailsupport@giftghorbd.comFollow the shopfacebookinstagramtiktok"
+    }
+  ],
+  "uploadedFiles": [],
+  "faqs": [
+    {
+      "question": "Trade",
+      "answer": "সরকারি নিবন্ধনপ্রাপ্ত, ভেরিফায়েড ট্রেড লাইসেন্স, TIN ও BIN সমৃদ্ধ একটি বিশ্বস্ত প্রতিষ্ঠান হিসেবে আমরা দিচ্ছি সর্বোচ্চ নিরাপত্তা। আমাদের ওয়েবসাইট ও ইনবক্সে বিকাশ, নগদ, কার্ড বা ব্যাংক ট্রান্সফারের মাধ্যমে অগ্রিম পেমেন্টের সুবিধা রয়েছে। তবে আপনার সুবিধার্থে রয়েছে সম্পূর্ণ ক্যাশ অন ডেলিভারি—এক টাকাও আগে দিতে হবে না, পণ্য হাতে পেয়েই মূল্য পরিশোধ করুন!",
+      "category": "general",
+      "id": "faq-1789413779501",
+      "updatedAt": "2026-09-14T19:22:59.501Z"
+    },
+    {
+      "question": "PAYMENT",
+      "answer": "আমাদের ওয়েবসাইট এবং ইনবক্সে আপনার সুবিধার জন্য সব ধরনের পেমেন্ট মাধ্যম যুক্ত রয়েছে—\n মোবাইল ব্যাংকিং (MFS): বিকাশ, নগদ, রকেট, উপায়সহ দেশের সকল শীর্ষস্থানীয় এমএফএস।\n কার্ড ও ইন্টারনেট ব্যাংকিং: যেকোনো ভিসা, মাস্টারকার্ড কিংবা ব্যাংক ট্রান্সফার।\n১০০% ঝুঁকিমুক্ত কেনাকাটার নিশ্চয়তা:\nঅনলাইনে অগ্রিম পেমেন্ট নিয়ে সামান্যতম দ্বিধা বা আস্থার অভাব থাকলে একদম নিশ্চিন্ত থাকুন! আমাদের এখানে রয়েছে সম্পূর্ণ ক্যাশ অন ডেলিভারি (Cash on Delivery) সুবিধা। অর্থাৎ, অর্ডার করার সময় আপনাকে এক টাকাও অগ্রিম দিতে হবে না—পণ্য হাতে পেয়ে দেখে-শুনে তারপর সম্পূর্ণ মূল্য পরিশোধ করুন।",
+      "category": "payment",
+      "id": "faq-1789413653166",
+      "updatedAt": "2026-09-14T19:20:53.166Z"
+    },
+    {
+      "question": "ক্যাশ অন ডেলিভারি কি আছে?",
+      "answer": "হ্যাঁ, সারা বাংলাদেশে ক্যাশ অন ডেলিভারি (COD) সুবিধা আছে।",
+      "category": "payment",
+      "id": "faq-1789106099594",
+      "updatedAt": "2026-09-11T05:54:59.594Z"
+    },
+    {
+      "id": "faq-1",
+      "question": "ডেলিভারি চার্জ কত এবং কতদিন সময় লাগে?",
+      "answer": "ঢাকার ভিতরে ডেলিভারি চার্জ ৭০ টাকা (২৪ থেকে ৪৮ ঘণ্টার মধ্যে ডেলিভারি)। ঢাকার বাইরে ডেলিভারি চার্জ ১৩০ টাকা (২ থেকে ৪ দিনের মধ্যে ডেলিভারি)। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি সুবিধা রয়েছে।",
+      "category": "delivery",
+      "updatedAt": "2026-09-11T05:47:37.621Z"
+    },
+    {
+      "id": "faq-2",
+      "question": "অর্ডার কনফার্ম করতে কি কি তথ্য লাগে?",
+      "answer": "অর্ডার করতে আপনার পূর্ণ নাম, সম্পূর্ণ ঠিকানা (জেলা ও থানা সহ), সচল মোবাইল নম্বর এবং আপনি কোন প্রোডাক্টটি নিতে চান তা লিখে আমাদের চ্যাটে পাঠালেই হবে।",
+      "category": "order",
+      "updatedAt": "2026-09-11T05:47:37.621Z"
+    },
+    {
+      "id": "faq-4",
+      "question": "অগ্রিম কোনো টাকা দিতে হবে কি?",
+      "answer": "আমাদের সকল প্রোডাক্ট কোনো প্রকার অগ্রিম ছাড়াই সম্পূর্ণ ক্যাশ অন ডেলিভারিতে নিতে পারবেন।",
+      "category": "payment",
+      "updatedAt": "2026-09-11T05:47:37.621Z"
+    }
+  ],
+  "sessions": {
+    "ghor-jwusy2a-mtwjbij9": {
+      "id": "ghor-jwusy2a-mtwjbij9",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-11T05:51:03.489Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789105863489-s1f36",
+          "sessionId": "ghor-jwusy2a-mtwjbij9",
+          "sender": "user",
+          "text": "অর্ডার করতে চাই 🎁",
+          "timestamp": "2026-09-11T05:51:03.489Z"
+        },
+        {
+          "id": "msg-1789105877344-2wf9h",
+          "sessionId": "ghor-jwusy2a-mtwjbij9",
+          "sender": "bot",
+          "text": "আসসালামু আলাইকুম! **Gift Ghor**-এ আপনাকে স্বাগতম। ❤️ \n\nআমাদের থেকে অর্ডার কনফার্ম করতে অনুগ্রহ করে নিচের তথ্যগুলো লিখে আমাদের পাঠিয়ে দিন:\n\n• **আপনার নাম:** \n• **সচল মোবাইল নম্বর:** \n• **সম্পূর্ণ ঠিকানা (জেলা, থানা, এলাকা ও বাসা নম্বর সহ):** \n• **প্রোডাক্টের নাম ও কালার/ভ্যারিয়েন্ট:** \n\n🚚 **ডেলিভারি চার্জ ও পেমেন্ট ডিটেইলস:**\n- **ঢাকার ভিতরে:** ৳৭০ (২৪-৪৮ ঘণ্টার মধ্যে ডেলিভারি)\n- **ঢাকার বাইরে (সারা বাংলাদেশ):** ৳১৩০ (২-৪ কার্যদিবসের মধ্যে ডেলিভারি)\n- **ক্যাশ অন ডেলিভারি (COD):** কোনো প্রকার অগ্রিম টাকা ছাড়াই পার্সেল হাতে পেয়ে দেখে মূল্য পরিশোধ করতে পারবেন।\n\nআপনি নির্দিষ্ট কোন প্রোডাক্টটি অর্ডার করতে চাচ্ছেন তা আমাদের জানিয়ে দিন, ধন্যবাদ! 🌸",
+          "timestamp": "2026-09-11T05:51:17.343Z"
+        }
+      ]
+    },
+    "ghor-9xh3l5w-mtwp6ugq": {
+      "id": "ghor-9xh3l5w-mtwp6ugq",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-11T08:51:46.483Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789115541161-yi4gh",
+          "sessionId": "ghor-9xh3l5w-mtwp6ugq",
+          "sender": "user",
+          "text": "assalamu alaikum order korte chacchi",
+          "timestamp": "2026-09-11T08:32:21.161Z"
+        },
+        {
+          "id": "msg-1789116706483-dnsx9",
+          "sessionId": "ghor-9xh3l5w-mtwp6ugq",
+          "sender": "user",
+          "text": "apndr terms and condition ki",
+          "timestamp": "2026-09-11T08:51:46.483Z"
+        }
+      ],
+      "updatedAt": "2026-09-11T18:13:02.812Z"
+    },
+    "ghor-63lmhjy-mtwqow4q": {
+      "id": "ghor-63lmhjy-mtwqow4q",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-11T09:14:46.828Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789118070679-fbhgm",
+          "sessionId": "ghor-63lmhjy-mtwqow4q",
+          "sender": "user",
+          "text": "name:seyam,01799949455,cumilla,bucket bag green",
+          "timestamp": "2026-09-11T09:14:30.679Z"
+        },
+        {
+          "id": "msg-1789118078284-efyhz",
+          "sessionId": "ghor-63lmhjy-mtwqow4q",
+          "sender": "bot",
+          "text": "আসসালামু আলাইকুম সিয়াম (Seyam) ভাইয়া! **Gift Ghor**-এ আপনাকে স্বাগতম। 🌸\n\nআপনার অর্ডারের তথ্যগুলো আমরা পেয়েছি। নিচে আপনার অর্ডারের সামারি দেওয়া হলো:\n\n📋 **অর্ডার সামারি:**\n- **নাম:** Seyam\n- **ফোন নম্বর:** 01799949455\n- **ঠিকানা:** Cumilla (কুমিল্লা)\n- **প্রোডাক্ট:** Shoulder Crossbody Large Capacity Bucket Bag (Green)\n- **প্রোডাক্টের দাম:** ৳650 BDT\n- **ডেলিভারি চার্জ (ঢাকার বাইরে):** ৳130 BDT\n- 💰 **সর্বমোট (Total Bill):** ৳780 BDT\n\n🚚 **ক্যাশ অন ডেলিভারি:** কোনো প্রকার অগ্রিম টাকা ছাড়াই সম্পূর্ণ ক্যাশ অন ডেলিভারিতে অর্ডারটি কনফার্ম করা হবে। পার্সেল হাতে পেয়ে ডেলিভারিম্যানের সামনে চেক করে ৳780 পরিশোধ করতে পারবেন। ২-৪ কার্যদিবসের মধ্যে ডেলিভারি পেয়ে যাবেন।\n\nআপনার এই অর্ডারটি কি ফাইনাল কনফার্ম করে দেব? দয়া করে জানাবেন। 😊",
+          "timestamp": "2026-09-11T09:14:38.283Z",
+          "orderData": {
+            "customerPhone": "01799949455",
+            "customerName": "seyam",
+            "productDetails": "Premium Curved Flap Shoulder Bag for Women",
+            "productPrice": 1150,
+            "collectedAt": "2026-09-11T09:14:30.679Z",
+            "orderStatus": "lead"
+          }
+        },
+        {
+          "id": "msg-1789118086828-3bk1z",
+          "sessionId": "ghor-63lmhjy-mtwqow4q",
+          "sender": "user",
+          "text": "confirm",
+          "timestamp": "2026-09-11T09:14:46.828Z"
+        }
+      ],
+      "orderExtracted": {
+        "customerPhone": "01799949455",
+        "customerName": "seyam",
+        "productDetails": "Premium Curved Flap Shoulder Bag for Women",
+        "productPrice": 1150,
+        "collectedAt": "2026-09-11T09:14:46.829Z",
+        "orderStatus": "lead"
+      },
+      "customerName": "seyam",
+      "customerPhone": "01799949455",
+      "updatedAt": "2026-09-11T18:12:55.024Z"
+    },
+    "ghor-6c42tzb-mtwq8sud": {
+      "id": "ghor-6c42tzb-mtwq8sud",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-11T09:02:38.757Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789117319498-5ucn7",
+          "sessionId": "ghor-6c42tzb-mtwq8sud",
+          "sender": "user",
+          "text": "name:maruf,address:cumilla,product:bucket bag black,",
+          "timestamp": "2026-09-11T09:01:59.498Z"
+        },
+        {
+          "id": "msg-1789117347818-53hza",
+          "sessionId": "ghor-6c42tzb-mtwq8sud",
+          "sender": "bot",
+          "text": "আসসালামু আলাইকুম মারুফ ভাইয়া! Gift Ghor-এ আপনাকে স্বাগতম। 🌸\n\nআপনার অর্ডারের বিবরণটি নিচে দেওয়া হলো:\n\n* 🛍️ **প্রোডাক্ট:** Shoulder Crossbody Large Capacity Bucket Bag (Black) — ৳৬৫০\n* 📍 **ঠিকানা:** কুমিল্লা (ঢাকার বাইরে)\n* 🚚 **ডেলিভারি চার্জ:** ৳১৩০\n* 💰 **সর্বমোট বিল:** **৳৭৮০ BDT**\n\nঅর্ডারটি কনফার্ম করার জন্য অনুগ্রহ করে আপনার **সচল মোবাইল নম্বরটি** আমাদের জানান। \n\nনম্বরটি পেয়ে গেলেই আমরা আপনার অর্ডারটি প্রসেস করে দেবো। আমাদের সারা বাংলাদেশে ক্যাশ অন ডেলিভারি সুবিধা রয়েছে, পার্সেল হাতে পেয়েই মূল্য পরিশোধ করতে পারবেন (২-৪ কার্যদিবসের মধ্যে ডেলিভারি)। 😊",
+          "timestamp": "2026-09-11T09:02:27.817Z",
+          "orderData": {
+            "customerName": "maruf",
+            "customerAddress": "cumilla,product:bucket bag black",
+            "productDetails": "Premium Curved Flap Shoulder Bag for Women",
+            "productPrice": 1150,
+            "collectedAt": "2026-09-11T09:01:59.498Z",
+            "orderStatus": "lead"
+          }
+        },
+        {
+          "id": "msg-1789117358757-5ri3x",
+          "sessionId": "ghor-6c42tzb-mtwq8sud",
+          "sender": "user",
+          "text": "01799949455",
+          "timestamp": "2026-09-11T09:02:38.757Z"
+        }
+      ],
+      "orderExtracted": {
+        "customerName": "maruf",
+        "customerAddress": "cumilla,product:bucket bag black",
+        "productDetails": "Premium Curved Flap Shoulder Bag for Women",
+        "productPrice": 1150,
+        "collectedAt": "2026-09-11T09:02:38.757Z",
+        "orderStatus": "confirmed",
+        "customerPhone": "01799949455"
+      },
+      "customerName": "maruf",
+      "customerAddress": "cumilla,product:bucket bag black",
+      "customerPhone": "01799949455",
+      "updatedAt": "2026-09-11T18:12:58.681Z"
+    },
+    "ghor-9lx4p0a-mtx311g8": {
+      "id": "ghor-9lx4p0a-mtx311g8",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-11T15:00:01.624Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789138801624-b95fk",
+          "sessionId": "ghor-9lx4p0a-mtx311g8",
+          "sender": "user",
+          "text": "ডেলিভারি চার্জ কত? 🚚",
+          "timestamp": "2026-09-11T15:00:01.624Z"
+        }
+      ],
+      "updatedAt": "2026-09-11T18:49:27.585Z"
+    },
+    "ghor-age1dbp-mtx33zwb": {
+      "id": "ghor-age1dbp-mtx33zwb",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-11T15:02:55.014Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789138975014-3i77l",
+          "sessionId": "ghor-age1dbp-mtx33zwb",
+          "sender": "user",
+          "text": "ডেলিভারি চার্জ কত? 🚚",
+          "timestamp": "2026-09-11T15:02:55.014Z"
+        }
+      ],
+      "updatedAt": "2026-09-12T07:23:23.518Z"
+    },
+    "ghor-mvjlute-mty5a6jv": {
+      "id": "ghor-mvjlute-mty5a6jv",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-12T08:53:39.698Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789203057556-8xe87",
+          "sessionId": "ghor-mvjlute-mty5a6jv",
+          "sender": "user",
+          "text": "apndr ki ki product ache sob peoduct r name and price den",
+          "timestamp": "2026-09-12T08:50:57.556Z"
+        },
+        {
+          "id": "msg-1789203060619-k6k8p",
+          "sessionId": "ghor-mvjlute-mty5a6jv",
+          "sender": "bot",
+          "text": "আমাদের বর্তমান জনপ্রিয় প্রোডাক্টসমূহ:\n• Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet (৳350)\n• Premium Curved Flap Shoulder Bag for Women (৳1150)\n• Shoulder Crossbody Large Capacity Bucket Bag (৳650)\n• Trendy Crossbody & Shoulder Vanity Bag for Women - Stylish Party & Casual Sling Bag by Gift Ghor (৳600)\n\nকোনটি অর্ডার করতে চান?",
+          "timestamp": "2026-09-12T08:51:00.618Z",
+          "orderData": {
+            "customerName": "and price den",
+            "collectedAt": "2026-09-12T08:50:57.556Z",
+            "orderStatus": "lead"
+          }
+        },
+        {
+          "id": "msg-1789203082907-egnst",
+          "sessionId": "ghor-mvjlute-mty5a6jv",
+          "sender": "user",
+          "text": "aro product dekhaw sobgulo",
+          "timestamp": "2026-09-12T08:51:22.907Z"
+        },
+        {
+          "id": "msg-1789203085711-nqyey",
+          "sessionId": "ghor-mvjlute-mty5a6jv",
+          "sender": "bot",
+          "text": "আমাদের বর্তমান জনপ্রিয় প্রোডাক্টসমূহ:\n• Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet (৳350)\n• Premium Curved Flap Shoulder Bag for Women (৳1150)\n• Shoulder Crossbody Large Capacity Bucket Bag (৳650)\n• Trendy Crossbody & Shoulder Vanity Bag for Women - Stylish Party & Casual Sling Bag by Gift Ghor (৳600)\n\nকোনটি অর্ডার করতে চান?",
+          "timestamp": "2026-09-12T08:51:25.710Z",
+          "orderData": {
+            "customerName": "and price den",
+            "collectedAt": "2026-09-12T08:51:22.907Z",
+            "orderStatus": "lead"
+          }
+        },
+        {
+          "id": "msg-1789203092613-jdpg4",
+          "sessionId": "ghor-mvjlute-mty5a6jv",
+          "sender": "user",
+          "text": "kmn achho",
+          "timestamp": "2026-09-12T08:51:32.613Z"
+        },
+        {
+          "id": "msg-1789203095345-f1e18",
+          "sessionId": "ghor-mvjlute-mty5a6jv",
+          "sender": "bot",
+          "text": "জি! Gift Ghor-এ আপনাকে ধন্যবাদ। আমরা সুন্দর সুন্দর লেডিজ ব্যাগ ও মানিব্যাগ বিক্রি করি। বিস্তারিত জানতে আপনার পছন্দের প্রোডাক্টটির নাম বলুন।",
+          "timestamp": "2026-09-12T08:51:35.344Z",
+          "orderData": {
+            "customerName": "and price den",
+            "collectedAt": "2026-09-12T08:51:32.613Z",
+            "orderStatus": "lead"
+          }
+        },
+        {
+          "id": "msg-1789203102471-2vdri",
+          "sessionId": "ghor-mvjlute-mty5a6jv",
+          "sender": "user",
+          "text": "hello",
+          "timestamp": "2026-09-12T08:51:42.471Z"
+        },
+        {
+          "id": "msg-1789203105290-9w1io",
+          "sessionId": "ghor-mvjlute-mty5a6jv",
+          "sender": "bot",
+          "text": "জি! Gift Ghor-এ আপনাকে ধন্যবাদ। আমরা সুন্দর সুন্দর লেডিজ ব্যাগ ও মানিব্যাগ বিক্রি করি। বিস্তারিত জানতে আপনার পছন্দের প্রোডাক্টটির নাম বলুন।",
+          "timestamp": "2026-09-12T08:51:45.289Z",
+          "orderData": {
+            "customerName": "and price den",
+            "collectedAt": "2026-09-12T08:51:42.471Z",
+            "orderStatus": "lead"
+          }
+        },
+        {
+          "id": "msg-1789203118098-sm58i",
+          "sessionId": "ghor-mvjlute-mty5a6jv",
+          "sender": "user",
+          "text": "gift ghor kototuku legal",
+          "timestamp": "2026-09-12T08:51:58.098Z"
+        },
+        {
+          "id": "msg-1789203121069-i9p9s",
+          "sessionId": "ghor-mvjlute-mty5a6jv",
+          "sender": "bot",
+          "text": "জি! Gift Ghor-এ আপনাকে ধন্যবাদ। আমরা সুন্দর সুন্দর লেডিজ ব্যাগ ও মানিব্যাগ বিক্রি করি। বিস্তারিত জানতে আপনার পছন্দের প্রোডাক্টটির নাম বলুন।",
+          "timestamp": "2026-09-12T08:52:01.068Z",
+          "orderData": {
+            "customerName": "and price den",
+            "collectedAt": "2026-09-12T08:51:58.098Z",
+            "orderStatus": "lead"
+          }
+        },
+        {
+          "id": "msg-1789203219698-iosyt",
+          "sessionId": "ghor-mvjlute-mty5a6jv",
+          "sender": "user",
+          "text": "hello",
+          "timestamp": "2026-09-12T08:53:39.698Z"
+        },
+        {
+          "id": "msg-1789203222550-urg7r",
+          "sessionId": "ghor-mvjlute-mty5a6jv",
+          "sender": "bot",
+          "text": "জি! Gift Ghor-এ আপনাকে ধন্যবাদ। আমরা সুন্দর সুন্দর লেডিজ ব্যাগ ও মানিব্যাগ বিক্রি করি। বিস্তারিত জানতে আপনার পছন্দের প্রোডাক্টটির নাম বলুন।",
+          "timestamp": "2026-09-12T08:53:42.549Z",
+          "orderData": {
+            "customerName": "and price den",
+            "collectedAt": "2026-09-12T08:53:39.698Z",
+            "orderStatus": "lead"
+          }
+        }
+      ],
+      "orderExtracted": {
+        "customerName": "and price den",
+        "collectedAt": "2026-09-12T08:53:39.698Z",
+        "orderStatus": "lead"
+      },
+      "customerName": "and price den",
+      "updatedAt": "2026-09-12T10:33:11.277Z"
+    },
+    "ghor-qnpz55v-mtx2rgl4": {
+      "id": "ghor-qnpz55v-mtx2rgl4",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-11T14:52:05.830Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789138325830-kjtxs",
+          "sessionId": "ghor-qnpz55v-mtx2rgl4",
+          "sender": "user",
+          "text": "ডেলিভারি চার্জ কত? 🚚",
+          "timestamp": "2026-09-11T14:52:05.830Z"
+        }
+      ],
+      "updatedAt": "2026-09-11T18:12:46.406Z"
+    },
+    "ghor-vcv23la-mty5nm3p": {
+      "id": "ghor-vcv23la-mty5nm3p",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-12T09:00:51.165Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789203651165-dgl10",
+          "sessionId": "ghor-vcv23la-mty5nm3p",
+          "sender": "user",
+          "text": "hello",
+          "timestamp": "2026-09-12T09:00:51.165Z"
+        }
+      ],
+      "updatedAt": "2026-09-12T10:33:08.909Z"
+    },
+    "ghor-y3sphi4-mtx13a9a": {
+      "id": "ghor-y3sphi4-mtx13a9a",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-11T14:06:29.936Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789135532095-kqnms",
+          "sessionId": "ghor-y3sphi4-mtx13a9a",
+          "sender": "user",
+          "text": "ডেলিভারি চার্জ কত? 🚚",
+          "timestamp": "2026-09-11T14:05:32.095Z"
+        },
+        {
+          "id": "msg-1789135589936-mjadt",
+          "sessionId": "ghor-y3sphi4-mtx13a9a",
+          "sender": "user",
+          "text": "অর্ডার করতে চাই 🎁",
+          "timestamp": "2026-09-11T14:06:29.936Z"
+        }
+      ],
+      "updatedAt": "2026-09-11T18:12:51.541Z"
+    },
+    "test_session_123": {
+      "id": "test_session_123",
+      "unreadCount": 2,
+      "lastActivity": "2026-09-12T15:31:17.963Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789226974322-57s63",
+          "sessionId": "test_session_123",
+          "sender": "user",
+          "text": "Hello",
+          "timestamp": "2026-09-12T15:29:34.322Z"
+        },
+        {
+          "id": "msg-1789227077963-b3jy5",
+          "sessionId": "test_session_123",
+          "sender": "user",
+          "text": "Hello",
+          "timestamp": "2026-09-12T15:31:17.963Z"
+        }
+      ],
+      "updatedAt": "2026-09-12T15:31:17.967Z"
+    },
+    "ghor-dksdg0d-mtye7yw8": {
+      "id": "ghor-dksdg0d-mtye7yw8",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-12T15:27:53.614Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789226873614-nsby0",
+          "sessionId": "ghor-dksdg0d-mtye7yw8",
+          "sender": "user",
+          "text": "hello",
+          "timestamp": "2026-09-12T15:27:53.614Z"
+        }
+      ],
+      "updatedAt": "2026-09-12T15:27:53.617Z"
+    },
+    "ghor-xlogpzl-mtyjyjj6": {
+      "id": "ghor-xlogpzl-mtyjyjj6",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-12T15:41:15.354Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789227675354-k8762",
+          "sessionId": "ghor-xlogpzl-mtyjyjj6",
+          "sender": "user",
+          "text": "hi",
+          "timestamp": "2026-09-12T15:41:15.354Z"
+        }
+      ],
+      "updatedAt": "2026-09-12T15:41:15.358Z"
+    },
+    "ghor-k0r8bha-mu1dw12a": {
+      "id": "ghor-k0r8bha-mu1dw12a",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-14T15:15:48.701Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789398948701-pnwuc",
+          "sessionId": "ghor-k0r8bha-mu1dw12a",
+          "sender": "user",
+          "text": "ডেলিভারি চার্জ কত? 🚚",
+          "timestamp": "2026-09-14T15:15:48.701Z"
+        }
+      ],
+      "updatedAt": "2026-09-14T18:30:26.527Z"
+    },
+    "ghor-oqar1zz-mu0tjsa7": {
+      "id": "ghor-oqar1zz-mu0tjsa7",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-14T05:45:17.999Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789364717999-wwjae",
+          "sessionId": "ghor-oqar1zz-mu0tjsa7",
+          "sender": "user",
+          "text": "hello",
+          "timestamp": "2026-09-14T05:45:17.999Z"
+        }
+      ],
+      "updatedAt": "2026-09-14T05:45:18.003Z"
+    },
+    "ghor-u3bicng-mu1m7vjv": {
+      "id": "ghor-u3bicng-mu1m7vjv",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-14T19:08:20.289Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789412900289-ox4i2",
+          "sessionId": "ghor-u3bicng-mu1m7vjv",
+          "sender": "user",
+          "text": "hlw",
+          "timestamp": "2026-09-14T19:08:20.289Z"
+        }
+      ],
+      "updatedAt": "2026-09-16T10:53:49.306Z"
+    },
+    "ghor-fpdhps4-mu8hz006": {
+      "id": "ghor-fpdhps4-mu8hz006",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-19T14:43:35.940Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789829015940-3txt7",
+          "sessionId": "ghor-fpdhps4-mu8hz006",
+          "sender": "user",
+          "text": "apndr payment method ki ki ache",
+          "timestamp": "2026-09-19T14:43:35.940Z"
+        }
+      ],
+      "updatedAt": "2026-09-19T14:43:36.009Z"
+    },
+    "ghor-sq4etre-mtx4m0hf": {
+      "id": "ghor-sq4etre-mtx4m0hf",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-17T18:46:07.496Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789670767496-6qp4u",
+          "sessionId": "ghor-sq4etre-mtx4m0hf",
+          "sender": "user",
+          "text": "Delivery ki sudhu Dhakar modhe den?",
+          "timestamp": "2026-09-17T18:46:07.496Z"
+        }
+      ],
+      "updatedAt": "2026-09-17T18:46:07.590Z"
+    },
+    "ghor-0mrwlfk-mu6yooqp": {
+      "id": "ghor-0mrwlfk-mu6yooqp",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-24T04:59:12.233Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789971189990-137na",
+          "sessionId": "ghor-0mrwlfk-mu6yooqp",
+          "sender": "user",
+          "text": "Ami order krci 3 din hyce ekno products pai nai",
+          "timestamp": "2026-09-21T06:13:09.990Z"
+        },
+        {
+          "id": "admin-msg-1790094210942",
+          "sessionId": "ghor-0mrwlfk-mu6yooqp",
+          "sender": "admin",
+          "text": "assalamu alaikum ",
+          "timestamp": "2026-09-22T16:23:30.942Z"
+        },
+        {
+          "id": "admin-msg-1790094220559",
+          "sessionId": "ghor-0mrwlfk-mu6yooqp",
+          "sender": "admin",
+          "text": "kibabe help korte pari apu",
+          "timestamp": "2026-09-22T16:23:40.559Z"
+        },
+        {
+          "id": "tg-admin-1790188251385",
+          "sessionId": "ghor-0mrwlfk-mu6yooqp",
+          "sender": "admin",
+          "text": "assalamu alaikkum apu,apnk kibabe sahajjo korte pari",
+          "timestamp": "2026-09-23T18:30:51.385Z"
+        },
+        {
+          "id": "tg-admin-1790225778635",
+          "sessionId": "ghor-0mrwlfk-mu6yooqp",
+          "sender": "admin",
+          "text": "assalamu alaikum ami gift ghor theke safin bolchilam",
+          "timestamp": "2026-09-24T04:56:18.635Z"
+        },
+        {
+          "id": "bot-handover-1790225952234",
+          "sessionId": "ghor-0mrwlfk-mu6yooqp",
+          "sender": "bot",
+          "text": "🤖 এআই অ্যাসিস্ট্যান্ট পুনরায় সক্রিয় করা হয়েছে। আমি কীভাবে সাহায্য করতে পারি?",
+          "timestamp": "2026-09-24T04:59:12.234Z"
+        }
+      ],
+      "updatedAt": "2026-09-24T04:59:13.633Z",
+      "adminConnected": false,
+      "adminRepliedAt": "2026-09-24T04:56:18.635Z",
+      "requestedHuman": false,
+      "needsAttention": false
+    },
+    "ghor-14qy2dg-mucaq4o1": {
+      "id": "ghor-14qy2dg-mucaq4o1",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-22T06:32:25.067Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790058745067-lbccz",
+          "sessionId": "ghor-14qy2dg-mucaq4o1",
+          "sender": "user",
+          "text": "অর্ডার করতে চাই 🎁",
+          "timestamp": "2026-09-22T06:32:25.067Z"
+        }
+      ],
+      "updatedAt": "2026-09-22T16:23:11.165Z"
+    },
+    "ghor-1btbuii-mucvzgy9": {
+      "id": "ghor-1btbuii-mucvzgy9",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-22T16:26:50.339Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790094410339-dhyse",
+          "sessionId": "ghor-1btbuii-mucvzgy9",
+          "sender": "user",
+          "text": "ami order korechi 3 din hoise,akhno paini",
+          "timestamp": "2026-09-22T16:26:50.339Z"
+        }
+      ],
+      "updatedAt": "2026-09-22T16:26:50.347Z"
+    },
+    "ghor-22mgjli-mu8l8iic": {
+      "id": "ghor-22mgjli-mu8l8iic",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-19T16:14:46.094Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789834486094-egsp1",
+          "sessionId": "ghor-22mgjli-mu8l8iic",
+          "sender": "user",
+          "text": "hle",
+          "timestamp": "2026-09-19T16:14:46.094Z"
+        }
+      ],
+      "updatedAt": "2026-09-22T16:23:03.361Z"
+    },
+    "ghor-if3kcab-mucw0laa": {
+      "id": "ghor-if3kcab-mucw0laa",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-22T16:28:33.616Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790094513616-25e0o",
+          "sessionId": "ghor-if3kcab-mucw0laa",
+          "sender": "user",
+          "text": "apndr sathe direct contact korar way ki",
+          "timestamp": "2026-09-22T16:28:33.616Z"
+        }
+      ],
+      "updatedAt": "2026-09-22T16:28:33.620Z"
+    },
+    "ghor-kyju420-mu8kdbgs": {
+      "id": "ghor-kyju420-mu8kdbgs",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-19T15:51:07.293Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1789833067293-z1bmu",
+          "sessionId": "ghor-kyju420-mu8kdbgs",
+          "sender": "user",
+          "text": "ডেলিভারি চার্জ কত? 🚚",
+          "timestamp": "2026-09-19T15:51:07.293Z"
+        }
+      ],
+      "updatedAt": "2026-09-22T16:23:06.021Z"
+    },
+    "ghor-bt61qns-mucxxzti": {
+      "id": "ghor-bt61qns-mucxxzti",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-22T17:21:33.905Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790097693905-i7fbc",
+          "sessionId": "ghor-bt61qns-mucxxzti",
+          "sender": "user",
+          "text": "hello",
+          "timestamp": "2026-09-22T17:21:33.905Z"
+        }
+      ],
+      "updatedAt": "2026-09-22T17:21:33.914Z"
+    },
+    "ghor-i0eqj7g-mucx9tht": {
+      "id": "ghor-i0eqj7g-mucx9tht",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-22T17:02:51.258Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790096571258-gnmq8",
+          "sessionId": "ghor-i0eqj7g-mucx9tht",
+          "sender": "user",
+          "text": "ami 3 din age order korechi,akhno asheni kno",
+          "timestamp": "2026-09-22T17:02:51.258Z"
+        }
+      ],
+      "updatedAt": "2026-09-22T17:02:51.261Z"
+    },
+    "ghor-jh2cp1p-mudw5bup": {
+      "id": "ghor-jh2cp1p-mudw5bup",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T18:15:54.357Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790155152954-khtyp",
+          "sessionId": "ghor-jh2cp1p-mudw5bup",
+          "sender": "user",
+          "text": "লাইভ প্রতিনিধির সাথে কথা বলতে চাই",
+          "timestamp": "2026-09-23T09:19:12.954Z"
+        },
+        {
+          "id": "msg-1790155152961-1bpl6",
+          "sessionId": "ghor-jh2cp1p-mudw5bup",
+          "sender": "bot",
+          "text": "ধন্যবাদ! আমাদের একজন কাস্টমার সাপোর্ট প্রতিনিধি/অ্যাডমিন আপনার সাথে সরাসরি যুক্ত হচ্ছেন। অনুগ্রহ করে একটু অপেক্ষা করুন।\n\nজরুরি প্রয়োজনে সরাসরি আমাদের কল বা WhatsApp করুন:\n📞 01799949455",
+          "timestamp": "2026-09-23T09:19:12.960Z"
+        },
+        {
+          "id": "tg-admin-1790186649176",
+          "sessionId": "ghor-jh2cp1p-mudw5bup",
+          "sender": "admin",
+          "text": "ji apu apni kon product ti order korte chacchen aktu kindly janaben please",
+          "timestamp": "2026-09-23T18:04:09.176Z"
+        },
+        {
+          "id": "bot-handover-1790187354357",
+          "sessionId": "ghor-jh2cp1p-mudw5bup",
+          "sender": "bot",
+          "text": "🤖 এআই অ্যাসিস্ট্যান্ট পুনরায় সক্রিয় করা হয়েছে। আমি কীভাবে সাহায্য করতে পারি?",
+          "timestamp": "2026-09-23T18:15:54.357Z"
+        }
+      ],
+      "needsAttention": false,
+      "updatedAt": "2026-09-23T18:15:54.360Z",
+      "adminConnected": false,
+      "adminRepliedAt": "2026-09-23T18:04:09.176Z",
+      "requestedHuman": false
+    },
+    "ghor-u28mdiu-mucxufpi": {
+      "id": "ghor-u28mdiu-mucxufpi",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-22T17:18:44.360Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790097524360-9s9ig",
+          "sessionId": "ghor-u28mdiu-mucxufpi",
+          "sender": "user",
+          "text": "অর্ডার করতে চাই 🎁",
+          "timestamp": "2026-09-22T17:18:44.360Z"
+        }
+      ],
+      "updatedAt": "2026-09-22T17:18:44.362Z"
+    },
+    "ghor-vjom5gk-mucxjsfw": {
+      "id": "ghor-vjom5gk-mucxjsfw",
+      "unreadCount": 3,
+      "lastActivity": "2026-09-23T18:16:12.593Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790097461814-vlxcp",
+          "sessionId": "ghor-vjom5gk-mucxjsfw",
+          "sender": "user",
+          "text": "লাইভ প্রতিনিধির সাথে কথা বলতে চাই",
+          "timestamp": "2026-09-22T17:17:41.814Z"
+        },
+        {
+          "id": "msg-1790097461819-97sge",
+          "sessionId": "ghor-vjom5gk-mucxjsfw",
+          "sender": "bot",
+          "text": "ধন্যবাদ! আমাদের একজন কাস্টমার সাপোর্ট প্রতিনিধি/অ্যাডমিন আপনার সাথে সরাসরি যুক্ত হচ্ছেন। অনুগ্রহ করে একটু অপেক্ষা করুন।\n\nজরুরি প্রয়োজনে সরাসরি আমাদের কল বা WhatsApp করুন:\n📞 01799949455",
+          "timestamp": "2026-09-22T17:17:41.818Z"
+        },
+        {
+          "id": "msg-1790097485612-5qyfw",
+          "sessionId": "ghor-vjom5gk-mucxjsfw",
+          "sender": "user",
+          "text": "অর্ডার করতে চাই 🎁",
+          "timestamp": "2026-09-22T17:18:05.612Z"
+        },
+        {
+          "id": "msg-1790097489666-vtdrx",
+          "sessionId": "ghor-vjom5gk-mucxjsfw",
+          "sender": "user",
+          "text": "লাইভ প্রতিনিধির সাথে কথা বলতে চাই",
+          "timestamp": "2026-09-22T17:18:09.666Z"
+        },
+        {
+          "id": "msg-1790097489670-ep7me",
+          "sessionId": "ghor-vjom5gk-mucxjsfw",
+          "sender": "bot",
+          "text": "ধন্যবাদ! আমাদের একজন কাস্টমার সাপোর্ট প্রতিনিধি/অ্যাডমিন আপনার সাথে সরাসরি যুক্ত হচ্ছেন। অনুগ্রহ করে একটু অপেক্ষা করুন।\n\nজরুরি প্রয়োজনে সরাসরি আমাদের কল বা WhatsApp করুন:\n📞 01799949455",
+          "timestamp": "2026-09-22T17:18:09.669Z"
+        },
+        {
+          "id": "bot-handover-1790187372593",
+          "sessionId": "ghor-vjom5gk-mucxjsfw",
+          "sender": "bot",
+          "text": "🤖 এআই অ্যাসিস্ট্যান্ট পুনরায় সক্রিয় করা হয়েছে। আমি কীভাবে সাহায্য করতে পারি?",
+          "timestamp": "2026-09-23T18:16:12.593Z"
+        }
+      ],
+      "needsAttention": false,
+      "updatedAt": "2026-09-23T18:16:12.596Z",
+      "requestedHuman": false,
+      "adminConnected": false
+    },
+    "test-verification-session-1": {
+      "id": "test-verification-session-1",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-22T16:44:08.679Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790095448679-gkfuj",
+          "sessionId": "test-verification-session-1",
+          "sender": "user",
+          "text": "ami order korechi 3 din hoise, delivery kobe pabo?",
+          "timestamp": "2026-09-22T16:44:08.679Z"
+        }
+      ],
+      "updatedAt": "2026-09-22T16:59:34.228Z"
+    },
+    "test-verification-session-2": {
+      "id": "test-verification-session-2",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-22T16:44:38.801Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790095478801-ymy7u",
+          "sessionId": "test-verification-session-2",
+          "sender": "user",
+          "text": "ami order korechi 3 din hoise, delivery kobe pabo?",
+          "timestamp": "2026-09-22T16:44:38.801Z"
+        }
+      ],
+      "updatedAt": "2026-09-22T16:44:38.806Z"
+    },
+    "ghor-78qshi2-mtvh1ijl": {
+      "id": "ghor-78qshi2-mtvh1ijl",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T14:35:42.073Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790174142073-qers5",
+          "sessionId": "ghor-78qshi2-mtvh1ijl",
+          "sender": "user",
+          "text": "Woalaikum assalam",
+          "timestamp": "2026-09-23T14:35:42.073Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T14:35:42.076Z"
+    },
+    "ghor-an1v2oj-mudwhb3x": {
+      "id": "ghor-an1v2oj-mudwhb3x",
+      "unreadCount": 0,
+      "lastActivity": "2026-09-23T10:18:13.304Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790158693304-wigwy",
+          "sessionId": "ghor-an1v2oj-mudwhb3x",
+          "sender": "user",
+          "text": "hello",
+          "timestamp": "2026-09-23T10:18:13.304Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T12:04:54.844Z"
+    },
+    "ghor-fpxnr4j-mue7pteg": {
+      "id": "ghor-fpxnr4j-mue7pteg",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T14:42:57.267Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790174577267-fenom",
+          "sessionId": "ghor-fpxnr4j-mue7pteg",
+          "sender": "user",
+          "text": "ডেলিভারি চার্জ কত? 🚚",
+          "timestamp": "2026-09-23T14:42:57.267Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T14:42:57.270Z"
+    },
+    "test-session-1790175328223": {
+      "id": "test-session-1790175328223",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T14:55:28.246Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790175328246-qo56y",
+          "sessionId": "test-session-1790175328223",
+          "sender": "user",
+          "text": "আপনাদের লেডিস ওয়ালেট কি কি আছে আর দাম কত?",
+          "timestamp": "2026-09-23T14:55:28.246Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T14:55:28.251Z"
+    },
+    "test-session-multiturn": {
+      "id": "test-session-multiturn",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T14:56:14.709Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790175374709-4mhlo",
+          "sessionId": "test-session-multiturn",
+          "sender": "user",
+          "text": "আমি কি ক্যাশ অন ডেলিভারিতে অর্ডার করতে পারবো? ঢাকার বাইরে ডেলিভারি চার্জ কত?",
+          "timestamp": "2026-09-23T14:56:14.709Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T14:56:14.711Z"
+    },
+    "test-speed-1790178883476": {
+      "id": "test-speed-1790178883476",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T15:54:43.508Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790178883508-cjmlw",
+          "sessionId": "test-speed-1790178883476",
+          "sender": "user",
+          "text": "ডেলিভারি চার্জ কত?",
+          "timestamp": "2026-09-23T15:54:43.508Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T15:54:43.513Z"
+    },
+    "ghor-5x47o1t-mue9l4if": {
+      "id": "ghor-5x47o1t-mue9l4if",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T15:35:17.899Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790177717899-l4rl1",
+          "sessionId": "ghor-5x47o1t-mue9l4if",
+          "sender": "user",
+          "text": "লাইভ প্রতিনিধির সাথে কথা বলতে চাই",
+          "timestamp": "2026-09-23T15:35:17.899Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T15:35:17.902Z"
+    },
+    "ghor-l9roxv0-mue9cgos": {
+      "id": "ghor-l9roxv0-mue9cgos",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T15:28:35.678Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790177315678-fwaam",
+          "sessionId": "ghor-l9roxv0-mue9cgos",
+          "sender": "user",
+          "text": "Kmn achen",
+          "timestamp": "2026-09-23T15:28:35.678Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T15:28:35.681Z"
+    },
+    "test-speed-1790178917003": {
+      "id": "test-speed-1790178917003",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T15:55:17.036Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790178917036-2ue73",
+          "sessionId": "test-speed-1790178917003",
+          "sender": "user",
+          "text": "ডেলিভারি চার্জ কত?",
+          "timestamp": "2026-09-23T15:55:17.036Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T15:55:17.039Z"
+    },
+    "test-product-1790178924827": {
+      "id": "test-product-1790178924827",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T15:55:24.849Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790178924849-6ws3b",
+          "sessionId": "test-product-1790178924827",
+          "sender": "user",
+          "text": "লেডিস ওয়ালেট কি কি আছে আপনাদের কাছে?",
+          "timestamp": "2026-09-23T15:55:24.849Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T15:55:24.852Z"
+    },
+    "test-tg-1790178942393": {
+      "id": "test-tg-1790178942393",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T15:55:42.415Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790178942415-pa4ik",
+          "sessionId": "test-tg-1790178942393",
+          "sender": "user",
+          "text": "Ami ki black color pabo?",
+          "timestamp": "2026-09-23T15:55:42.415Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T15:55:42.418Z"
+    },
+    "ghor-1u6eptw-muefrq42": {
+      "id": "ghor-1u6eptw-muefrq42",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T18:28:20.613Z",
+      "status": "active",
+      "mode": "admin_takeover",
+      "messages": [
+        {
+          "id": "msg-1790188100613-k7his",
+          "sessionId": "ghor-1u6eptw-muefrq42",
+          "sender": "user",
+          "text": "লাইভ প্রতিনিধির সাথে কথা বলতে চাই",
+          "timestamp": "2026-09-23T18:28:20.613Z"
+        },
+        {
+          "id": "msg-1790188100618-06xdx",
+          "sessionId": "ghor-1u6eptw-muefrq42",
+          "sender": "bot",
+          "text": "ধন্যবাদ! আমাদের একজন লাইভ প্রতিনিধি (Admin Specialist) আপনার সাথে যুক্ত হচ্ছেন। অনুগ্রহ করে ১ মিনিট অপেক্ষা করুন... ⏱️\n\nজরুরি প্রয়োজনে সরাসরি কল বা WhatsApp করতে পারেন:\n📞 01799949455",
+          "timestamp": "2026-09-23T18:28:20.617Z"
+        }
+      ],
+      "requestedHuman": true,
+      "humanRequestedAt": "2026-09-23T18:28:20.617Z",
+      "adminConnected": false,
+      "needsAttention": true,
+      "updatedAt": "2026-09-23T18:28:20.619Z"
+    },
+    "ghor-7gh3oq5-muf172tq": {
+      "id": "ghor-7gh3oq5-muf172tq",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-24T04:53:00.955Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790225580955-syrwg",
+          "sessionId": "ghor-7gh3oq5-muf172tq",
+          "sender": "user",
+          "text": "hello",
+          "timestamp": "2026-09-24T04:53:00.955Z"
+        }
+      ],
+      "updatedAt": "2026-09-24T04:53:01.023Z"
+    },
+    "ghor-9o1b3e8-mueb4tt6": {
+      "id": "ghor-9o1b3e8-mueb4tt6",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T16:18:37.592Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790180317592-qk7pi",
+          "sessionId": "ghor-9o1b3e8-mueb4tt6",
+          "sender": "user",
+          "text": "hello",
+          "timestamp": "2026-09-23T16:18:37.592Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T16:18:37.608Z"
+    },
+    "ghor-i4l1z4h-muec5ehe": {
+      "id": "ghor-i4l1z4h-muec5ehe",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T17:26:01.955Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790184361955-2py84",
+          "sessionId": "ghor-i4l1z4h-muec5ehe",
+          "sender": "user",
+          "text": "kmn achen",
+          "timestamp": "2026-09-23T17:26:01.955Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T17:26:02.041Z"
+    },
+    "ghor-scidl51-mufc8gd0": {
+      "id": "ghor-scidl51-mufc8gd0",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-24T09:37:11.004Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790242631004-nv3dy",
+          "sessionId": "ghor-scidl51-mufc8gd0",
+          "sender": "user",
+          "text": "assalamu alaikum",
+          "timestamp": "2026-09-24T09:37:11.004Z"
+        }
+      ],
+      "updatedAt": "2026-09-24T09:37:11.038Z"
+    },
+    "ghor-vwlaa1i-muebgjve": {
+      "id": "ghor-vwlaa1i-muebgjve",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T16:27:36.631Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790180856631-0q2n4",
+          "sessionId": "ghor-vwlaa1i-muebgjve",
+          "sender": "user",
+          "text": "ডেলিভারি চার্জ কত? 🚚",
+          "timestamp": "2026-09-23T16:27:36.631Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T16:27:36.635Z"
+    },
+    "ghor-w4rneic-muedzbpu": {
+      "id": "ghor-w4rneic-muedzbpu",
+      "unreadCount": 1,
+      "lastActivity": "2026-09-23T17:38:15.333Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790185095333-vr0zn",
+          "sessionId": "ghor-w4rneic-muedzbpu",
+          "sender": "user",
+          "text": "kmn achen",
+          "timestamp": "2026-09-23T17:38:15.333Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T17:38:15.338Z"
+    },
+    "ghor-xnpfytc-mueehc7n": {
+      "id": "ghor-xnpfytc-mueehc7n",
+      "unreadCount": 4,
+      "lastActivity": "2026-09-23T18:03:00.468Z",
+      "status": "active",
+      "mode": "ai",
+      "messages": [
+        {
+          "id": "msg-1790185936736-b2mik",
+          "sessionId": "ghor-xnpfytc-mueehc7n",
+          "sender": "user",
+          "text": "assalamu alaikum",
+          "timestamp": "2026-09-23T17:52:16.736Z"
+        },
+        {
+          "id": "msg-1790186437866-r5p91",
+          "sessionId": "ghor-xnpfytc-mueehc7n",
+          "sender": "user",
+          "text": "লাইভ প্রতিনিধির সাথে কথা বলতে চাই",
+          "timestamp": "2026-09-23T18:00:37.866Z"
+        },
+        {
+          "id": "msg-1790186437933-cfbk3",
+          "sessionId": "ghor-xnpfytc-mueehc7n",
+          "sender": "bot",
+          "text": "ধন্যবাদ! আমাদের একজন লাইভ প্রতিনিধি (Admin Specialist) আপনার সাথে যুক্ত হচ্ছেন। অনুগ্রহ করে ১ মিনিট অপেক্ষা করুন... ⏱️\n\nজরুরি প্রয়োজনে সরাসরি কল বা WhatsApp করতে পারেন:\n📞 01799949455",
+          "timestamp": "2026-09-23T18:00:37.932Z"
+        },
+        {
+          "id": "tg-admin-1790186475149",
+          "sessionId": "ghor-xnpfytc-mueehc7n",
+          "sender": "admin",
+          "text": "assalamu alaikum apu,ami gift ghor theke jahid bolchilam,apnk kibabe sahajjo korte pari",
+          "timestamp": "2026-09-23T18:01:15.149Z"
+        },
+        {
+          "id": "bot-handover-1790186493157",
+          "sessionId": "ghor-xnpfytc-mueehc7n",
+          "sender": "bot",
+          "text": "🤖 এআই অ্যাসিস্ট্যান্ট পুনরায় সক্রিয় করা হয়েছে। আমি কীভাবে সাহায্য করতে পারি?",
+          "timestamp": "2026-09-23T18:01:33.157Z"
+        },
+        {
+          "id": "msg-1790186510263-ijtpe",
+          "sessionId": "ghor-xnpfytc-mueehc7n",
+          "sender": "user",
+          "text": "ami order korte chacchilam",
+          "timestamp": "2026-09-23T18:01:50.263Z"
+        },
+        {
+          "id": "msg-1790186580468-iqwve",
+          "sessionId": "ghor-xnpfytc-mueehc7n",
+          "sender": "user",
+          "text": "order korte chacchilam",
+          "timestamp": "2026-09-23T18:03:00.468Z"
+        }
+      ],
+      "updatedAt": "2026-09-23T18:03:00.486Z",
+      "requestedHuman": false,
+      "humanRequestedAt": "2026-09-23T18:00:37.932Z",
+      "adminConnected": false,
+      "needsAttention": false,
+      "adminRepliedAt": "2026-09-23T18:01:15.149Z"
+    }
+  },
+  "lastTrainedAt": "2026-09-11T05:47:37.621Z",
+  "trainingVersion": 1,
+  "orders": {
+    "ord-1789115623939-3qay": {
+      "id": "ord-1789115623939-3qay",
+      "orderNumber": "GG-1001",
+      "sessionId": "ghor-9xh3l5w-mtwp6ugq",
+      "customerName": "Customer",
+      "customerPhone": "01893533728",
+      "customerAddress": "Address pending in chat",
+      "productName": "Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet",
+      "quantity": 1,
+      "codAmount": 350,
+      "deliveryLocation": "outside_dhaka",
+      "deliveryCharge": 130,
+      "totalAmount": 480,
+      "status": "steadfast_booked",
+      "source": "chat",
+      "notes": "Captured from chat session: ghor-9xh3l5w-mtwp6ugq",
+      "createdAt": "2026-09-11T08:33:43.939Z",
+      "updatedAt": "2026-09-11T08:58:08.644Z"
+    },
+    "ord-1789117270641-ycow": {
+      "id": "ord-1789117270641-ycow",
+      "orderNumber": "GG-1002",
+      "customerName": "md jahid",
+      "customerPhone": "01893533728",
+      "customerAddress": "nangolkot,cumilla",
+      "productName": "Gift Ghor Product",
+      "quantity": 1,
+      "codAmount": 790,
+      "deliveryLocation": "inside_dhaka",
+      "deliveryCharge": 70,
+      "totalAmount": 860,
+      "status": "confirmed",
+      "source": "manual",
+      "notes": "",
+      "createdAt": "2026-09-11T09:01:10.641Z",
+      "updatedAt": "2026-09-11T09:01:10.642Z"
+    },
+    "ord-1789117358757-2v3p": {
+      "id": "ord-1789117358757-2v3p",
+      "orderNumber": "GG-1003",
+      "sessionId": "ghor-6c42tzb-mtwq8sud",
+      "customerName": "maruf",
+      "customerPhone": "01799949455",
+      "customerAddress": "cumilla,product:bucket bag black",
+      "productName": "Premium Curved Flap Shoulder Bag for Women",
+      "quantity": 1,
+      "codAmount": 1150,
+      "deliveryLocation": "outside_dhaka",
+      "deliveryCharge": 130,
+      "totalAmount": 1280,
+      "status": "confirmed",
+      "source": "chat",
+      "notes": "Captured from chat session: ghor-6c42tzb-mtwq8sud",
+      "createdAt": "2026-09-11T09:02:38.757Z",
+      "updatedAt": "2026-09-11T09:02:38.757Z"
+    },
+    "ord-1789118070680-yufy": {
+      "id": "ord-1789118070680-yufy",
+      "orderNumber": "GG-1004",
+      "sessionId": "ghor-63lmhjy-mtwqow4q",
+      "customerName": "seyam",
+      "customerPhone": "01799949455",
+      "customerAddress": "Address pending in chat",
+      "productName": "Premium Curved Flap Shoulder Bag for Women",
+      "quantity": 1,
+      "codAmount": 1150,
+      "deliveryLocation": "outside_dhaka",
+      "deliveryCharge": 130,
+      "totalAmount": 1280,
+      "status": "pending",
+      "source": "chat",
+      "notes": "Captured from chat session: ghor-63lmhjy-mtwqow4q",
+      "createdAt": "2026-09-11T09:14:30.680Z",
+      "updatedAt": "2026-09-11T09:14:46.829Z"
+    },
+    "ord-1789971227837-ppob": {
+      "id": "ord-1789971227837-ppob",
+      "orderNumber": "GG-1005",
+      "sessionId": "ghor-0mrwlfk-mu6yooqp",
+      "customerName": "hocce tanha",
+      "customerPhone": "01819201279",
+      "customerAddress": "Address pending in chat",
+      "productName": "Gift Ghor Item",
+      "quantity": 1,
+      "codAmount": 790,
+      "deliveryLocation": "outside_dhaka",
+      "deliveryCharge": 130,
+      "totalAmount": 920,
+      "status": "pending",
+      "source": "chat",
+      "notes": "Captured from chat session: ghor-0mrwlfk-mu6yooqp",
+      "createdAt": "2026-09-21T06:13:47.837Z",
+      "updatedAt": "2026-09-21T06:15:07.214Z"
+    },
+    "ord-1790097575712-nq77": {
+      "id": "ord-1790097575712-nq77",
+      "orderNumber": "GG-1006",
+      "sessionId": "ghor-u28mdiu-mucxufpi",
+      "customerName": "Customer",
+      "customerPhone": "01893533728",
+      "customerAddress": "Address pending in chat",
+      "productName": "Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet",
+      "quantity": 1,
+      "codAmount": 350,
+      "deliveryLocation": "outside_dhaka",
+      "deliveryCharge": 130,
+      "totalAmount": 480,
+      "status": "pending",
+      "source": "chat",
+      "notes": "Captured from chat session: ghor-u28mdiu-mucxufpi",
+      "createdAt": "2026-09-22T17:19:35.712Z",
+      "updatedAt": "2026-09-22T17:20:14.646Z"
+    },
+    "ord-1790184533677-5a39": {
+      "id": "ord-1790184533677-5a39",
+      "orderNumber": "GG-1007",
+      "sessionId": "ghor-i4l1z4h-muec5ehe",
+      "customerName": "Customer",
+      "customerPhone": "01893533728",
+      "customerAddress": "Address pending in chat",
+      "productName": "Gift Ghor Item",
+      "quantity": 1,
+      "codAmount": 790,
+      "deliveryLocation": "outside_dhaka",
+      "deliveryCharge": 130,
+      "totalAmount": 920,
+      "status": "pending",
+      "source": "chat",
+      "notes": "Captured from chat session: ghor-i4l1z4h-muec5ehe",
+      "createdAt": "2026-09-23T17:28:53.677Z",
+      "updatedAt": "2026-09-23T17:30:31.920Z"
+    },
+    "ord-1790225659763": {
+      "id": "ord-1790225659763",
+      "orderNumber": "GG-53459",
+      "sessionId": "ghor-7gh3oq5-muf172tq",
+      "customerName": "MD JAHIDUL ISLAM",
+      "customerPhone": "01893533728",
+      "customerAddress": "nangolkot,cumilla",
+      "productName": "Gift Ghor Special Item",
+      "quantity": 1,
+      "codAmount": 790,
+      "deliveryLocation": "outside_dhaka",
+      "deliveryCharge": 130,
+      "totalAmount": 920,
+      "status": "confirmed",
+      "source": "chat",
+      "notes": "Captured from chat session: ghor-7gh3oq5-muf172tq",
+      "createdAt": "2026-09-24T04:54:19.763Z",
+      "updatedAt": "2026-09-24T04:56:00.755Z"
+    }
+  },
+  "adminSettings": {
+    "twoFactorEnabled": false,
+    "twoFactorEmail": "giftghor6525@gmail.com",
+    "gmailUser": "giftghor6525@gmail.com",
+    "gmailAppPassword": "giftghor...@@6525...@",
+    "steadfastApiKey": "9r0m8yfu0h2hfqw0bjy1jhpow4ql5yns",
+    "steadfastSecretKey": "z9rw0jamg5epsfrnond8ja2p",
+    "telegramBotToken": "8835500509:AAGKjQzL2obRhgUoujjdd5jVaWZ0nYu8nuA",
+    "telegramChatId": "8032148453,-5487582348,6473377248",
+    "whatsappNumber": "01799949455"
+  },
+  "teamMembers": [
+    {
+      "id": "user_1790158491756_axb8x",
+      "name": "MD JAHIDUL ISLAM",
+      "email": "jahidulislammozumder@outlook.com",
+      "passwordHash": "jahid1234",
+      "role": "support",
+      "createdAt": "2026-09-23T10:14:51.756Z",
+      "status": "active",
+      "permissions": {
+        "canManageOrders": true,
+        "canChat": true,
+        "canManageProducts": false,
+        "canManageKnowledge": false,
+        "canManageSettings": false,
+        "canManageTeam": false
+      },
+      "lastLoginAt": "2026-09-23T10:15:18.899Z"
+    }
+  ],
+  "whatsappState": {
+    "connected": false,
+    "whatsappNumber": "01522126525",
+    "accountName": "Gift Ghor Official",
+    "autoReplyEnabled": true,
+    "replyDelaySeconds": 2,
+    "sessionStatus": "disconnected"
+  },
+  "whatsappLogs": []
+}
