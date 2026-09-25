@@ -395,6 +395,17 @@ export const AdminWhatsAppView: React.FC<AdminWhatsAppViewProps> = ({ authToken,
         </div>
       </div>
 
+      {/* 24/7 Keep-Alive & Render Sleep Fix Notice */}
+      <div className="bg-amber-950/40 border border-amber-500/30 rounded-xl p-4 flex items-start gap-3 text-amber-200 text-xs md:text-sm">
+        <Zap className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+        <div>
+          <span className="font-bold text-amber-300">⚡ ২৪/৭ অটো-রিকানেক্ট ও Render Free Tier স্লিপ ফিক্স অ্যাক্টিভ:</span>
+          <p className="mt-1 text-amber-200/90 leading-relaxed">
+            ব্যাকএন্ডে প্রতি ২০ সেকেন্ডে স্বয়ংক্রিয় <b>Watchdog Auto-Reconnect</b> চালু আছে। কানেকশন ড্রপ করলেও এটি মানুষের সাহায্য ছাড়াই স্বয়ংক্রিয়ভাবে হোয়াটসঅ্যাপ রিকানেক্ট করবে। Render-এর ফ্রী সার্ভার ২৪ ঘন্টা জাগিয়ে রাখতে <code className="bg-amber-900/60 text-amber-300 px-1.5 py-0.5 rounded font-mono">cron-job.org</code> অথবা <code className="bg-amber-900/60 text-amber-300 px-1.5 py-0.5 rounded font-mono">UptimeRobot</code> এ ফ্রিতে প্রতি ৫ মিনিটে <span className="font-mono text-emerald-400 font-bold">https://&lt;your-render-app&gt;.onrender.com/api/ping</span> লিংকে Ping সেটআপ করে দিন।
+          </p>
+        </div>
+      </div>
+
       {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Column: Device Connection Wizard */}

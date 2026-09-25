@@ -45,6 +45,31 @@ let getSystemKnowledgeFn: (db: any) => string = () => '';
 
 const logger = pino({ level: 'silent' });
 
+// Periodic Watchdog loop to guarantee 24/7 WhatsApp Auto-Reconnect
+setInterval(async () => {
+  try {
+    const authExists = fs.existsSync(AUTH_FOLDER) && fs.readdirSync(AUTH_FOLDER).length > 0;
+    if (!authExists) return; // Not paired yet
+
+    const wsState = (waSock as any)?.ws?.readyState;
+    // WebSocket readyStates: 0 = CONNECTING, 1 = OPEN, 2 = CLOSING, 3 = CLOSED
+    const isOpen = waSock && wsState === 1;
+
+    if (!isOpen && !initPromise) {
+      console.warn(`[WhatsApp Watchdog] ⚠️ Connection dropped or stale socket detected (wsState: ${wsState}). Auto-reconnecting now...`);
+      await initWhatsAppSocket();
+    } else if (isOpen) {
+      // Periodically update lastSyncedAt timestamp in DB
+      const db = getSystemDb();
+      if (db && db.whatsappState && db.whatsappState.connected) {
+        db.whatsappState.lastSyncedAt = new Date().toISOString();
+      }
+    }
+  } catch (err) {
+    console.error('[WhatsApp Watchdog Error]', err);
+  }
+}, 20000); // Check every 20 seconds
+
 export function setupWhatsAppService(
   getDb: () => any,
   saveDb: (db: any) => void,

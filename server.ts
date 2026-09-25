@@ -1017,6 +1017,25 @@ app.get('/api/admin/insights-dashboard', adminAuthMiddleware, async (req, res) =
 // Note: Strictly no admin endpoints, credentials, or training tokens exposed.
 // -------------------------------------------------------------
 
+// 24/7 Keep-Alive & Health Check Endpoints (Prevents Render Free Tier Sleeping)
+app.get(['/api/ping', '/api/health', '/healthz'], (req, res) => {
+  res.json({
+    status: 'ok',
+    app: 'Gift Ghor AI Engine',
+    uptimeSeconds: Math.floor(process.uptime()),
+    timestamp: new Date().toISOString(),
+    whatsappConnected: !!DB.whatsappState?.connected,
+  });
+});
+
+// Self Keep-Alive interval to prevent process idling
+setInterval(async () => {
+  try {
+    const selfUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:3000`;
+    await fetch(`${selfUrl}/api/ping`).catch(() => {});
+  } catch (e) {}
+}, 3 * 60 * 1000); // Ping every 3 minutes
+
 
 // Sitemap XML endpoint
 app.get('/api/sitemaps.xml', (req, res) => {
