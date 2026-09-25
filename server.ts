@@ -781,7 +781,7 @@ function buildSystemKnowledgeContext(db: SystemDB): string {
   const productsList = db.products
     .map(
       (p) =>
-        `- ${p.title} | ৳${p.price} BDT | ${p.category} | ${p.stockStatus === 'in_stock' ? 'In Stock' : 'Stock Check'}`
+        `- [Product #${p.id}] ${p.title} | Price: ৳${p.price} BDT | Stock: ${p.stockStatus === 'in_stock' ? 'In Stock (স্টকে আছে)' : 'Stock Check'} | Image: ${p.imageUrl || 'https://giftghor.world/assets/logo.png'} | URL: ${p.url || `https://giftghor.world/products/${p.id}`} | Details: ${(p.description || '').replace(/\s+/g, ' ').substring(0, 200)}`
     )
     .join('\n');
 
