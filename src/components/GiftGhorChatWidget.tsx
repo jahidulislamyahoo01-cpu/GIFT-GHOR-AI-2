@@ -15,6 +15,7 @@ import {
   ChevronRight,
   ShieldCheck,
   Headset,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChatMessage, OrderDetails } from '../types';
@@ -224,6 +225,22 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 8 * 1024 * 1024) {
+      alert('ছবির সাইজ সর্বোচ্চ 8MB হতে পারবে।');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setSelectedImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   // Initialize or restore session ID
   useEffect(() => {
@@ -328,8 +345,10 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
 
   const handleSendMessage = async (textToSend?: string) => {
     const messageText = (textToSend || inputVal).trim();
-    if (!messageText || isTyping) return;
+    if ((!messageText && !selectedImage) || isTyping) return;
 
+    const imageToSend = selectedImage;
+    setSelectedImage(null);
     setInputVal('');
     setShowTeaser(false);
 
@@ -337,7 +356,8 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
       id: 'temp-' + Date.now(),
       sessionId,
       sender: 'user',
-      text: messageText,
+      text: messageText || 'ছবি সংযুক্ত করা হয়েছে',
+      image: imageToSend || undefined,
       timestamp: new Date().toISOString(),
     };
 
@@ -351,11 +371,11 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
         body: JSON.stringify({
           sessionId,
           text: messageText,
+          imageBase64: imageToSend,
           sender: 'user',
           pageContext: {
             url: window.location.href,
             title: document.title,
-            // Extract some text from the body to give context on what the user is looking at (limit to 1000 chars to avoid huge payloads)
             content: document.body.innerText.substring(0, 1000)
           }
         }),
@@ -673,6 +693,12 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                           </div>
                         )}
 
+                        {msg.image && (
+                          <div className="mb-2 overflow-hidden rounded-xl border border-white/20 shadow-sm max-w-[220px]">
+                            <img src={msg.image} alt="Uploaded" className="w-full h-auto max-h-48 object-cover rounded-xl" />
+                          </div>
+                        )}
+
                         <div className="whitespace-pre-line text-[13.5px]">
                           {msg.text}
                         </div>
@@ -784,6 +810,23 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
               ))}
             </div>
 
+            {/* Image Preview Banner if Image Selected */}
+            {selectedImage && (
+              <div className="px-3 py-2 bg-amber-50 border-t border-amber-200 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <img src={selectedImage} alt="Selected" className="w-10 h-10 object-cover rounded-lg border border-amber-300 shadow-xs" />
+                  <span className="text-xs font-semibold text-amber-900">ছবি যুক্ত করা হয়েছে</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedImage(null)}
+                  className="p-1 rounded-full text-amber-700 hover:text-rose-600 hover:bg-amber-100 transition"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
             {/* Input Bar */}
             <form
               onSubmit={(e) => {
@@ -793,19 +836,34 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
               className="p-3 bg-white border-t border-[#ECECEC] flex items-center gap-2"
             >
               <input
+                type="file"
+                ref={fileInputRef}
+                accept="image/*"
+                onChange={handleImageSelect}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                title="ছবি পাঠান (Attach Image)"
+                className="p-2 rounded-xl text-gray-500 hover:text-[#ECA548] hover:bg-amber-50 border border-gray-200 transition-colors shrink-0"
+              >
+                <ImageIcon className="w-5 h-5" />
+              </button>
+              <input
                 ref={inputRef}
                 type="text"
                 id="giftghor-chat-input"
                 value={inputVal}
                 onChange={(e) => setInputVal(e.target.value)}
-                placeholder={isTyping ? "AI উত্তর তৈরি করছে..." : "এখানে মেসেজ লিখুন (বাংলা / English)..."}
+                placeholder={isTyping ? "AI উত্তর তৈরি করছে..." : "মেসেজ বা ছবি পাঠান (বাংলা / English)..."}
                 disabled={isTyping}
                 className="flex-1 text-sm bg-gray-50 border border-[#ECECEC] rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-[#ECA548] focus:bg-white text-[#262626] transition-all disabled:opacity-70 disabled:cursor-wait"
               />
               <button
                 type="submit"
                 id="giftghor-chat-send-btn"
-                disabled={!inputVal.trim() || isTyping}
+                disabled={(!inputVal.trim() && !selectedImage) || isTyping}
                 className="w-10 h-10 rounded-xl flex items-center justify-center text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed shrink-0 relative overflow-hidden"
                 style={{ backgroundColor: branding.primaryColor }}
               >

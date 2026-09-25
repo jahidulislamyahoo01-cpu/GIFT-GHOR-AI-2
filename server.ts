@@ -1345,10 +1345,12 @@ const generateFallbackReply = (userInput: string, db: SystemDB): { text: string;
 
 // 3. Post chat message from customer widget
 app.post('/api/chat/message', async (req, res) => {
-  const { sessionId, text, sender = 'user', pageContext } = req.body;
+  const { sessionId, text, sender = 'user', pageContext, imageBase64, imageUrl } = req.body;
 
-  if (!sessionId || !text) {
-    return res.status(400).json({ error: 'sessionId and text are required' });
+  const messageText = text || (imageBase64 || imageUrl ? 'গ্রাহক একটি ছবি পাঠিয়েছেন।' : '');
+
+  if (!sessionId || !messageText) {
+    return res.status(400).json({ error: 'sessionId and message content or image are required' });
   }
 
   // Find or create session
@@ -1423,7 +1425,8 @@ app.post('/api/chat/message', async (req, res) => {
     id: userMsgId,
     sessionId,
     sender: 'user',
-    text,
+    text: messageText,
+    image: imageBase64 || imageUrl,
     timestamp: userTimestamp,
   });
 
@@ -1538,9 +1541,27 @@ app.post('/api/chat/message', async (req, res) => {
       chatHistory.shift();
     }
 
-    // Ensure history ends with the current user message
-    if (chatHistory.length === 0 || chatHistory[chatHistory.length - 1].role !== 'user') {
-      chatHistory.push({ role: 'user', parts: [{ text }] });
+    // Ensure history ends with the current user message including image part if available
+    let cleanBase64 = imageBase64 || imageUrl || null;
+    if (cleanBase64 && typeof cleanBase64 === 'string' && cleanBase64.includes('base64,')) {
+      cleanBase64 = cleanBase64.split('base64,')[1];
+    }
+
+    const currentParts: any[] = [];
+    if (cleanBase64) {
+      currentParts.push({
+        inlineData: {
+          mimeType: 'image/jpeg',
+          data: cleanBase64,
+        },
+      });
+    }
+    currentParts.push({ text: messageText });
+
+    if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1].role === 'user') {
+      chatHistory[chatHistory.length - 1].parts = currentParts;
+    } else {
+      chatHistory.push({ role: 'user', parts: currentParts });
     }
 
     let botReplyText = await callGeminiAI(chatHistory, systemInstruction, 1000, 0.7);

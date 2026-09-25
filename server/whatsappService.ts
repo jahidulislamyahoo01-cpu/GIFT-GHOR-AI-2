@@ -4,6 +4,7 @@ import baileysModule, {
   Browsers,
   DisconnectReason,
   fetchLatestBaileysVersion,
+  downloadMediaMessage,
   type WASocket,
 } from '@whiskeysockets/baileys';
 import pino from 'pino';
@@ -195,13 +196,41 @@ export async function initWhatsAppSocket(forceResetAuth = false): Promise<WASock
           const senderJid = msg.key.remoteJid;
           if (!senderJid || senderJid.endsWith('@g.us')) continue; // Skip group chats
 
-          const text =
+          const imageMsg =
+            msg.message.imageMessage ||
+            (msg.message as any)?.ephemeralMessage?.message?.imageMessage ||
+            (msg.message as any)?.viewOnceMessage?.message?.imageMessage;
+
+          let text =
             msg.message.conversation ||
             msg.message.extendedTextMessage?.text ||
-            msg.message.imageMessage?.caption ||
+            imageMsg?.caption ||
             '';
 
-          if (!text || text.trim().length === 0) continue;
+          let imageBase64: string | null = null;
+          if (imageMsg) {
+            try {
+              console.log('[WhatsApp Media] Downloading incoming image for Vision analysis...');
+              const buffer = await downloadMediaMessage(
+                msg,
+                'buffer',
+                {},
+                {
+                  logger: pino({ level: 'silent' }) as any,
+                  reConnectRequest: sock.ws,
+                }
+              );
+              if (buffer && buffer.length > 0) {
+                imageBase64 = buffer.toString('base64');
+                console.log(`[WhatsApp Media] Downloaded image (${(buffer.length / 1024).toFixed(1)} KB) successfully!`);
+              }
+            } catch (mediaErr) {
+              console.warn('[WhatsApp Media] Failed to download media image:', mediaErr);
+            }
+          }
+
+          // If neither text nor image exists, skip
+          if ((!text || text.trim().length === 0) && !imageBase64) continue;
 
           const db = getSystemDb();
           if (!db.whatsappState?.autoReplyEnabled) continue;
@@ -209,11 +238,17 @@ export async function initWhatsAppSocket(forceResetAuth = false): Promise<WASock
           const pushName = msg.pushName || 'WhatsApp Contact';
           const cleanNumber = '+' + senderJid.replace('@s.whatsapp.net', '').replace(/[^0-9]/g, '');
 
-          console.log(`[WhatsApp Incoming] From ${pushName} (${cleanNumber}): "${text}"`);
+          // If customer sent photo with no caption, set default prompt for Gemini
+          if (!text || text.trim().length === 0) {
+            text = 'গ্রাহক একটি ছবি পাঠিয়েছেন। ছবিটি বিশ্লেষণ করুন এবং আমাদের শপ ক্যাটালগের ব্যাগের সাথে মিলিয়ে কাস্টমারকে উত্তর দিন।';
+          }
+
+          console.log(`[WhatsApp Incoming] From ${pushName} (${cleanNumber}): "${text}" (Has Image: ${!!imageBase64})`);
 
           // Generate AI response
           const knowledgePrompt =
             `You are the official WhatsApp AI Assistant for 'Gift Ghor' (website: giftghor.world). Answer the customer's question politely, completely, and accurately in Bengali (বাংলা) or English.
+If the customer has sent an image, carefully analyze the photo (e.g. identify bag type, color, material, pattern, or product details) and match it with Gift Ghor's catalog items, prices, and features.
 
 CRITICAL RESPONSE RULES:
 - ALWAYS complete all sentences fully. NEVER stop or cut off mid-sentence.
@@ -221,7 +256,19 @@ CRITICAL RESPONSE RULES:
 - Use WhatsApp formatting like *bold* for key product names, prices, and delivery charges.
 - End your response with a friendly closing (e.g. "Gift Ghor-এর সাথে থাকার জন্য ধন্যবাদ! ❤️").\n\n` +
             getSystemKnowledgeFn(db);
-          const contents = [{ role: 'user', parts: [{ text }] }];
+
+          const parts: any[] = [];
+          if (imageBase64) {
+            parts.push({
+              inlineData: {
+                mimeType: 'image/jpeg',
+                data: imageBase64,
+              },
+            });
+          }
+          parts.push({ text });
+
+          const contents = [{ role: 'user', parts }];
 
           let aiReply = await callGeminiFn(contents, knowledgePrompt, 1200);
           if (!aiReply) {

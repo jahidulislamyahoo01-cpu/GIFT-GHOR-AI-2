@@ -82,6 +82,7 @@ export interface ChatMessage {
   sessionId: string;
   sender: 'user' | 'bot' | 'admin';
   text: string;
+  image?: string;
   timestamp: string;
   orderData?: OrderDetails;
 }
