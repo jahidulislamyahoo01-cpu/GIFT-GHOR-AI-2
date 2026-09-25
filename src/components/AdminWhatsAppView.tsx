@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   MessageCircle,
   QrCode,
@@ -45,7 +45,7 @@ export const AdminWhatsAppView: React.FC<AdminWhatsAppViewProps> = ({ authToken,
   // Connection Mode tab: 'qr' | 'phone'
   const [connectionMode, setConnectionMode] = useState<'qr' | 'phone'>('qr');
   const [phoneNumberInput, setPhoneNumberInput] = useState('');
-  const [hasUserEditedPhone, setHasUserEditedPhone] = useState(false);
+  const hasUserEditedPhoneRef = useRef(false);
   const [isGeneratingCode, setIsGeneratingCode] = useState(false);
   const [pairingCode, setPairingCode] = useState<string | null>(null);
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
@@ -73,7 +73,8 @@ export const AdminWhatsAppView: React.FC<AdminWhatsAppViewProps> = ({ authToken,
       if (data.success) {
         if (data.whatsappState) {
           setWaState(data.whatsappState);
-          if (!hasUserEditedPhone && data.whatsappState.whatsappNumber) {
+          // Only set phone number if user has NOT edited/cleared it and input is currently empty
+          if (!hasUserEditedPhoneRef.current && data.whatsappState.whatsappNumber) {
             setPhoneNumberInput(data.whatsappState.whatsappNumber);
           }
           if (data.whatsappState.pairingCode) {
@@ -571,8 +572,8 @@ export const AdminWhatsAppView: React.FC<AdminWhatsAppViewProps> = ({ authToken,
                             type="text"
                             value={phoneNumberInput}
                             onChange={(e) => {
+                              hasUserEditedPhoneRef.current = true;
                               setPhoneNumberInput(e.target.value);
-                              setHasUserEditedPhone(true);
                             }}
                             placeholder="01712345678"
                             className="w-full bg-neutral-900 border border-neutral-700 text-white font-mono text-base tracking-wider rounded-xl pl-10 pr-10 py-3 focus:outline-none focus:border-emerald-500 shadow-inner"
@@ -581,8 +582,9 @@ export const AdminWhatsAppView: React.FC<AdminWhatsAppViewProps> = ({ authToken,
                             <button
                               type="button"
                               onClick={() => {
+                                hasUserEditedPhoneRef.current = true;
                                 setPhoneNumberInput('');
-                                setHasUserEditedPhone(true);
+                                setPairingCode(null);
                               }}
                               className="absolute right-3 p-1 rounded-full text-neutral-400 hover:text-rose-400 hover:bg-neutral-800 transition"
                               title="Clear input"
