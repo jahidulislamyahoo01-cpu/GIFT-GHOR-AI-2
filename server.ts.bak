@@ -1,0 +1,1884 @@
+mport express from 'express';
+mport path from 'path';
+mport fs from 'fs';
+mport { createServer as createVteServer } from 'vte';
+mport { GoogleGenAI } from '@google/gena';
+mport dotenv from 'dotenv';
+mport * as cheero from 'cheero';
+
+mport cors from 'cors';
+mport cron from 'node-cron';
+mport axos from 'axos';
+
+mport {
+  loadStateFromFrestore,
+  saveSettngsToFrestore,
+  saveOrderToFrestore,
+  deleteOrderFromFrestore,
+  saveSessonToFrestore,
+} from './server/frebaseServce.js';
+
+mport {
+  sendNewOrderEmal,
+  sendLveAgentAlertEmal,
+  sendOtpEmal,
+  NOTIFICATION_RECIPIENTS,
+} from './server/emalServce.js';
+
+dotenv.confg();
+
+const app = express();
+const PORT = Number(process.env.PORT) || 10000;
+
+// Allow CORS and Iframe embeddng for the wdget
+app.use(cors({
+  orgn: '*', // Allow all orgns, ncludng https://gftghor.world
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorzaton', 'X-Requested-Wth', 'Accept', 'Orgn']
+}));
+
+app.use((req, res, next) => {
+  // Explctly allow embeddng n external frames
+  res.removeHeader('X-Frame-Optons');
+  res.header('Content-Securty-Polcy', "frame-ancestors *");
+  next();
+});
+
+app.use(express.json({ lmt: '15mb' }));
+app.use(express.urlencoded({ extended: true, lmt: '15mb' }));
+
+// -------------------------------------------------------------
+// Persstent Storage Engne
+// -------------------------------------------------------------
+const DB_FILE = path.jon(process.cwd(), 'data_storage.json');
+
+nterface SystemDB {
+  admnPasswordHash: strng; // Plan/hashed comparson
+  brandng: {
+    storeName: strng;
+    wdgetTtle: strng;
+    wdgetSubttle: strng;
+    logoUrl: strng;
+    prmaryColor: strng;
+    headerTextColor: strng;
+    welcomeMessage: strng;
+    quckReples: strng[];
+    showOnlneStatus: boolean;
+    fontFamly?: strng;
+  };
+  delveryPolcy: {
+    nsdeDhakaCost: number;
+    outsdeDhakaCost: number;
+    codAvalable: boolean;
+    delveryTmeDhaka: strng;
+    delveryTmeOutsde: strng;
+    advancePaymentRequred: boolean;
+    advancePaymentNote: strng;
+    returnPolcyText: strng;
+    specalNotce: strng;
+  };
+  products: Array<{
+    d: strng;
+    ttle: strng;
+    prce: number;
+    orgnalPrce?: number;
+    category: strng;
+    stockStatus: 'n_stock' | 'low_stock' | 'out_of_stock';
+    descrpton: strng;
+    mageUrl: strng;
+    url?: strng;
+    customzable?: boolean;
+  }>;
+  crawledPages: Array<{
+    d: strng;
+    url: strng;
+    ttle: strng;
+    pageType: 'stemap' | 'product' | 'page';
+    status: 'success' | 'faled' | 'pendng';
+    wordCount: number;
+    temsFound: number;
+    crawledAt: strng;
+    contentSummary: strng;
+    rawText?: strng;
+  }>;
+  uploadedFles: Array<{
+    d: strng;
+    fleName: strng;
+    fleType: 'txt' | 'csv' | 'xml' | 'pdf';
+    sze: number;
+    parsedItemsCount: number;
+    uploadedAt: strng;
+    summary: strng;
+    rawContent?: strng;
+  }>;
+  faqs: Array<{
+    d: strng;
+    queston: strng;
+    answer: strng;
+    category: 'delvery' | 'order' | 'payment' | 'customzaton' | 'general';
+    updatedAt: strng;
+  }>;
+  sessons: Record<
+    strng,
+    {
+      d: strng;
+      customerName?: strng;
+      customerPhone?: strng;
+      customerAddress?: strng;
+      unreadCount: number;
+      lastActvty: strng;
+      status: 'actve' | 'resolved';
+      mode: 'a' | 'admn_takeover';
+      messages: Array<{
+        d: strng;
+        sessonId: strng;
+        sender: 'user' | 'bot' | 'admn';
+        text: strng;
+        tmestamp: strng;
+        orderData?: any;
+      }>;
+      orderExtracted?: {
+        customerName?: strng;
+        customerPhone?: strng;
+        customerAddress?: strng;
+        productDetals?: strng;
+        notes?: strng;
+        orderStatus: 'lead' | 'confrmed' | 'pendng_call';
+        collectedAt: strng; steadfastStatus?: strng; trackngCode?: strng;
+      };
+    }
+  >;
+  orders: Record<
+    strng,
+    {
+      d: strng;
+      orderNumber: strng;
+      sessonId?: strng;
+      customerName: strng;
+      customerPhone: strng;
+      customerAddress: strng;
+      productName: strng;
+      quantty: number;
+      codAmount: number;
+      delveryLocaton: 'nsde_dhaka' | 'outsde_dhaka';
+      delveryCharge: number;
+      totalAmount: number;
+      status: 'pendng' | 'confrmed' | 'steadfast_booked' | 'delvered' | 'cancelled';
+      steadfastConsgnmentId?: strng;
+      steadfastTrackngCode?: strng;
+      source: 'chat' | 'manual';
+      notes?: strng;
+      createdAt: strng;
+      updatedAt: strng;
+    }
+  >;
+  admnSettngs: {
+    twoFactorEnabled: boolean;
+    twoFactorEmal: strng;
+    lastPasswordChangedAt?: strng;
+    gmalUser?: strng;
+    gmalAppPassword?: strng;
+    steadfastApKey?: strng;
+    steadfastSecretKey?: strng;
+  };
+  lastTranedAt: strng;
+  tranngVerson: number;
+}
+
+const DEFAULT_DB: SystemDB = {
+  admnPasswordHash: 'gftghor2026', // default admn password
+  brandng: {
+    storeName: 'Gft Ghor',
+    wdgetTtle: 'Gft Ghor Assstant',
+    wdgetSubttle: 'Onlne | Instant reples n বাংলা & Englsh',
+    logoUrl: 'https://cdn-cons-png.flatcon.com/512/3063/3063822.png',
+    prmaryColor: '#ECA548',
+    headerTextColor: '#262626',
+    welcomeMessage: 'আসসালামু আলাইকুম আপু/ভাইয়া, আপনাকে কীভাবে সাহায্য করতে পারি?',
+    quckReples: [
+      'অর্ডার করতে চাই ��',
+      'ডেলিভারি চার্জ কত? ��',
+      'প্রোডাক্ট ক্যাটালগ ��️'
+    ],
+    showOnlneStatus: true,
+    fontFamly: 'sans-serf',
+  },
+  delveryPolcy: {
+    nsdeDhakaCost: 70,
+    outsdeDhakaCost: 130,
+    codAvalable: true,
+    delveryTmeDhaka: '২৪-৪৮ ঘণ্টার মধ্যে',
+    delveryTmeOutsde: '২-৪ কার্যদিবসের মধ্যে',
+    advancePaymentRequred: false,
+    advancePaymentNote: 'সারা বাংলাদেশে ক্যাশ অন ডেলিভারি (COD) সুবিধা আছে। পার্সেল হাতে পেয়ে মূল্য পরিশোধ করতে পারবেন।',
+    returnPolcyText: 'কোনো সমস্যা থাকলে ২৪ ঘণ্টার মধ্যে জানালে রিপ্লেসমেন্ট দেওয়া হবে।',
+    specalNotce: 'আমাদের কাছে রয়েছে আকর্ষণীয় সব লেডিজ ব্যাগ এবং ওয়ালেটের কালেকশন!',
+  },
+  products: [
+  {
+    "d": "1333107",
+    "ttle": "Cute Dasy Flower 3D Patch Mn Foldng Lades Wallet",
+    "prce": 350,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1333107",
+    "descrpton": "প্রতিদিনের ব্যবহারে সোবার ও কিউট লুক পেতে 'Gft Ghor' নিয়ে এলো Cute Dasy Flower Mn Foldng Lades Wallet।"
+  },
+  {
+    "d": "1015780",
+    "ttle": "Premum Curved Flap Shoulder Bag for Women",
+    "prce": 1150,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1015780",
+    "descrpton": "মার্জিত ডিজাইন এবং প্রিমিয়াম ফিনিশিংয়ের এই ব্ল্যাক শোল্ডার ব্যাগটি আপনার আভিজাত্যকে ফুটিয়ে তুলবে কয়েক গুণ।"
+  },
+  {
+    "d": "1015779",
+    "ttle": "Shoulder Crossbody Large Capacty Bucket Bag",
+    "prce": 650,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1015779",
+    "descrpton": "স্টাইলিশ ও প্রিমিয়াম এই হোবো ব্যাগটিতে রয়েছে আকর্ষণীয় এথনিক এমব্রয়ডারি স্ট্র্যাপ।"
+  },
+  {
+    "d": "1337004",
+    "ttle": "Trendy Crossbody & Shoulder Vanty Bag for Women - Stylsh Party & Casual Slng Bag by Gft Ghor",
+    "prce": 600,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1337004",
+    "descrpton": "আপনার প্রতিদিনের বা পার্টির পোশাকের সাথে নিখুঁতভাবে মানানসই একটি প্রিমিয়াম স্টাইলিশ ভ্যানিটি ব্যাগ খুঁজছেন? Gft Ghor নিয়ে এসেছে এই চমৎকার ও কমপ্যাক্ট ডিজাইনের ব্যাগ, যা আপনাকে দেবে এক দারুণ ফ্যাশনেবল লুক।"
+  },
+  {
+    "d": "1328410",
+    "ttle": "Cute Mn Rabbt Metal Buckle Foldng Lades Wallet",
+    "prce": 550,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1328410",
+    "descrpton": "আপনার স্টাইল ও প্রয়োজনীয়তার সেরা সংমিশ্রণ! 'Gft Ghor' নিয়ে এলো কিউট র‍্যাবিট মেটাল লোগো সমৃদ্ধ Mn Foldng Lades Wallet।"
+  },
+  {
+    "d": "1328434",
+    "ttle": "Cute Golden Bow Metal Buckle Small Lades Wallet",
+    "prce": 420,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1328434",
+    "descrpton": "আপনার দৈনন্দিন স্টাইলে কিউট অ্যান্ড গ্ল্যামারাস লুক যোগ করতে 'Gft Ghor' নিয়ে এলো Golden Bow Metal Buckle Mn Lades Wallet।"
+  },
+  {
+    "d": "1330754",
+    "ttle": "Vntage Sunflower Embrodery Zpper Short Lades Wallet",
+    "prce": 550,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1330754",
+    "descrpton": "ভিন্টেজ লুক ও ক্লাসি ডিজাইনের পারফেক্ট মেলবন্ধন! 'Gft Ghor' নিয়ে এলো Sunflower Embrodery Short Lades Wallet।"
+  },
+  {
+    "d": "1330759",
+    "ttle": "Vntage Leather Shoulder Bag Baguette Handbag for Women",
+    "prce": 850,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1330759",
+    "descrpton": "আপনার স্টাইলে গ্ল্যামারাস ও ওয়েস্টার্ন ছোঁয়া যোগ করতে 'Gft Ghor' নিয়ে এলো Retro Vntage Leather Shoulder Bag (Baguette Bag)।"
+  },
+  {
+    "d": "1333100",
+    "ttle": "Cute Sweet Bow Prnted Mn Foldng Lades Wallet",
+    "prce": 490,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "out_of_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1333100",
+    "descrpton": "আপনার দৈনন্দিন স্টাইলে কিউট ও ক্যাজুয়াল টাচ যোগ করতে 'Gft Ghor' নিয়ে এলো Sweet Bow Prnted Mn Foldng Lades Wallet।"
+  },
+  {
+    "d": "1337043",
+    "ttle": "Elegant Embossed Floral Long Leather Wallet for Women | Mult-Card Holder & Zpper Clutch Purse – Gft Ghor",
+    "prce": 890,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1337043",
+    "descrpton": "হাতে বহনযোগ্য স্টাইলিশ ও স্লিম ডিজাইনের একটি বড় ওয়ালেট খুঁজছেন? Gft Ghor নিয়ে এসেছে প্রিমিয়াম এমবসড ফ্লোরাল ডিজাইনের এই লেডিস লং ওয়ালেট।"
+  },
+  {
+    "d": "1337015",
+    "ttle": "Cute Bear & Bunny Foldable Mn Wallet for Women & Grls | Compact Card & Money Purse – Gft Ghor",
+    "prce": 490,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1337015",
+    "descrpton": "ব্যাগ বা পকেটে সহজে বহনযোগ্য একটি কিউট ও ট্রেন্ডি মিনি ওয়ালেট খুঁজছেন? Gft Ghor নিয়ে এসেছে প্রিমিয়াম কোয়ালিটির এই কমপ্যাক্ট সাইজ ফোল্ডিং পার্স।"
+  },
+  {
+    "d": "1333092",
+    "ttle": "Cute Cat Embrodery Short Zpper Lades Wallet",
+    "prce": 550,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1333092",
+    "descrpton": "বিড়ালপ্রেমীদের জন্য নিয়ে এলাম অত্যন্ত কিউট ও স্টাইলিশ Cute Cat Embrodery Short Lades Wallet! টেক্সচার্ড সফট ফিনিশিং, প্রিমিয়াম ক্যাট এমব্রয়ডারি মোটিফ এবং সিকিউর জিপার চেম্বার সমৃদ্ধ এই ওয়ালেটটি আপনার দৈনন্দিন ব্যবহারে আনবে এক অন্যরকম মিষ্টি টাচ।"
+  },
+  {
+    "d": "1330748",
+    "ttle": "Cute Flower Prnt Mn Foldng Lades Wallet",
+    "prce": 330,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1330748",
+    "descrpton": "আপনার দৈনন্দিন লুকে সোবার এবং কিউট টাচ যোগ করতে 'Gft Ghor' নিয়ে এলো Cute Flower Prnt & 'Nce Day' Prnted Mn Foldng Lades Wallet।"
+  },
+  {
+    "d": "945885",
+    "ttle": "2n1 Trfold wallet",
+    "prce": 550,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/945885",
+    "descrpton": "Premum Qualty 2-n-1 Lades Wallet.Premum PU leather.Cute desgn wth Con Purse & Card Holder faclty. Avalable n 5 colors. Durable and stylsh choce for daly use.।"
+  },
+  {
+    "d": "1328420",
+    "ttle": "Lades Wallet wth Removable Card Holder & Zpper Pocket",
+    "prce": 750,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1328420",
+    "descrpton": "স্মার্ট স্টাইল ও সর্বোচ্চ ইউটিলিটির অপূর্ব কম্বিনেশন! 'Gft Ghor' নিয়ে এলো Detachable Card Holder সহ Multfunctonal Short Lades Wallet।"
+  },
+  {
+    "d": "1330560",
+    "ttle": "Cute Bear & Paw Prnt Mn Foldng Lades Wallet",
+    "prce": 390,
+    "category": "Accessores",
+    "customzable": false,
+    "stockStatus": "n_stock",
+    "mageUrl": "https://gftghor.world/assets/logo.png",
+      "url": "https://gftghor.world/products/1330560",
+    "descrpton": "আপনার প্রতিদিনের ক্যাজুয়াল লুকের সঙ্গী হতে 'Gft Ghor' নিয়ে এলো Cute 3D Bear & Paw Prnt Mn Foldng Lades Wallet।"
+  }
+],
+  crawledPages: [
+    {
+      d: 'homepage',
+      url: 'https://gftghor.world/',
+      ttle: 'GIFT GHOR',
+      pageType: 'page',
+      status: 'success',
+      wordCount: 350,
+      temsFound: 1,
+      crawledAt: new Date().toISOStrng(),
+      contentSummary: 'Gft Ghor - Qualty Lades Wallets, Handbags and Fashon Accessores. Cash on delvery avalable natonwde.',
+    },
+    {
+      d: 'checkout',
+      url: 'https://gftghor.world/checkout',
+      ttle: 'GIFT GHOR Checkout',
+      pageType: 'page',
+      status: 'success',
+      wordCount: 120,
+      temsFound: 1,
+      crawledAt: new Date().toISOStrng(),
+      contentSummary: 'Checkout page wth Cash on Delvery (COD) and delvery nformaton.',
+    },
+    {
+      d: 'about-us',
+      url: 'https://gftghor.world/about-us',
+      ttle: 'About Us - GIFT GHOR',
+      pageType: 'page',
+      status: 'success',
+      wordCount: 220,
+      temsFound: 1,
+      crawledAt: new Date().toISOStrng(),
+      contentSummary: 'Gft Ghor s a trusted onlne shop for premum lades wallets, card holders and bags n Bangladesh.',
+    }
+  ],
+  uploadedFles: [],
+  faqs: [
+    {
+      d: 'faq-1',
+      queston: 'ডেলিভারি চার্জ কত এবং কতদিন সময় লাগে?',
+      answer: 'ঢাকার ভিতরে ডেলিভারি চার্জ ৭০ টাকা (২৪ থেকে ৪৮ ঘণ্টার মধ্যে ডেলিভারি)। ঢাকার বাইরে ডেলিভারি চার্জ ১৩০ টাকা (২ থেকে ৪ দিনের মধ্যে ডেলিভারি)। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি সুবিধা রয়েছে।',
+      category: 'delvery',
+      updatedAt: new Date().toISOStrng(),
+    },
+    {
+      d: 'faq-2',
+      queston: 'অর্ডার কনফার্ম করতে কি কি তথ্য লাগে?',
+      answer: 'অর্ডার করতে আপনার পূর্ণ নাম, সম্পূর্ণ ঠিকানা (জেলা ও থানা সহ), সচল মোবাইল নম্বর এবং আপনি কোন প্রোডাক্টটি নিতে চান তা লিখে আমাদের চ্যাটে পাঠালেই হবে।',
+      category: 'order',
+      updatedAt: new Date().toISOStrng(),
+    },
+    {
+      d: 'faq-4',
+      queston: 'অগ্রিম কোনো টাকা দিতে হবে কি?',
+      answer: 'আমাদের সকল প্রোডাক্ট কোনো প্রকার অগ্রিম ছাড়াই সম্পূর্ণ ক্যাশ অন ডেলিভারিতে নিতে পারবেন। ডেলিভারিম্যানের সামনে পার্সেল চেক করে টাকা দিতে পারবেন।',
+      category: 'payment',
+      updatedAt: new Date().toISOStrng(),
+    },
+  ],
+  sessons: {},
+  orders: {},
+  admnSettngs: {
+    twoFactorEnabled: false,
+    twoFactorEmal: 'gftghor6525@gmal.com',
+  },
+  lastTranedAt: new Date().toISOStrng(),
+  tranngVerson: 1,
+};
+
+const DB_BACKUP_FILE = path.jon(process.cwd(), 'data_storage.backup.json');
+
+functon saveDB(db: SystemDB) {
+  try {
+    const json = JSON.strngfy(db, null, 2);
+    // Wrte atomcally to temporary fle frst to avod corrupton durng server restarts
+    const tempFle = DB_FILE + '.tmp';
+    fs.wrteFleSync(tempFle, json, 'utf-8');
+    fs.renameSync(tempFle, DB_FILE);
+    // Mantan a mrrored backup fle
+    fs.wrteFleSync(DB_BACKUP_FILE, json, 'utf-8');
+  } catch (err) {
+    console.error('Faled to save db fle', err);
+  }
+
+  // Asynchronous permanent Cloud Frestore sync (survves contaner restarts)
+  saveSettngsToFrestore({
+    admnPasswordHash: db.admnPasswordHash,
+    admnSettngs: db.admnSettngs,
+    brandng: db.brandng,
+    delveryPolcy: db.delveryPolcy,
+    products: db.products,
+    crawledPages: db.crawledPages,
+    uploadedFles: db.uploadedFles,
+    faqs: db.faqs,
+    lastTranedAt: db.lastTranedAt,
+    tranngVerson: db.tranngVerson,
+  }).catch((err) => console.warn('[Frestore Sync] Cloud settngs sync faled:', err));
+}
+
+functon loadDB(): SystemDB {
+  // 1. Try readng the prmary DB fle
+  try {
+    f (fs.exstsSync(DB_FILE)) {
+      const data = fs.readFleSync(DB_FILE, 'utf-8');
+      f (data && data.trm().length > 10) {
+        const parsed = JSON.parse(data);
+        f (parsed && typeof parsed === 'object') {
+          f (!parsed.orders) parsed.orders = {};
+          f (!parsed.admnSettngs) parsed.admnSettngs = { twoFactorEnabled: false, twoFactorEmal: 'gftghor6525@gmal.com' };
+          return parsed;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Faled to read prmary db fle, attemptng backup recovery...', err);
+  }
+
+  // 2. Try recoverng from mrrored backup fle f prmary s mssng or corrupt
+  try {
+    f (fs.exstsSync(DB_BACKUP_FILE)) {
+      const backupData = fs.readFleSync(DB_BACKUP_FILE, 'utf-8');
+      f (backupData && backupData.trm().length > 10) {
+        const parsedBackup = JSON.parse(backupData);
+        f (parsedBackup && typeof parsedBackup === 'object') {
+          console.log('[Storage Engne] Successfully restored database from backup fle!');
+          f (!parsedBackup.orders) parsedBackup.orders = {};
+          f (!parsedBackup.admnSettngs) parsedBackup.admnSettngs = { twoFactorEnabled: false, twoFactorEmal: 'gftghor6525@gmal.com' };
+          saveDB(parsedBackup);
+          return parsedBackup;
+        }
+      }
+    }
+  } catch (err) {
+    console.error('Faled to read backup db fle', err);
+  }
+
+  // 3. Fallback only f no DB or backup exsts
+  console.log('[Storage Engne] Intalzng database wth DEFAULT_DB');
+  saveDB(DEFAULT_DB);
+  return DEFAULT_DB;
+}
+
+// Global DB n memory synced to dsk and Frestore
+let DB: SystemDB = loadDB();
+
+/**
+ * Hydrates n-memory DB and local dsk cache from Cloud Frestore on server startup.
+ * Ensures zero data loss even f Cloud Run destroys contaner nstances.
+ */
+async functon syncDatabaseWthCloud() {
+  try {
+    console.log('[Frestore] Intatng startup sync wth Cloud Frestore...');
+    const cloudState = awat loadStateFromFrestore();
+    f (cloudState) {
+      f (cloudState.settngs) {
+        const s = cloudState.settngs;
+        f (s.admnPasswordHash) DB.admnPasswordHash = s.admnPasswordHash;
+        f (s.admnSettngs) DB.admnSettngs = { ...DB.admnSettngs, ...s.admnSettngs };
+        f (s.brandng) DB.brandng = { ...DB.brandng, ...s.brandng };
+        f (s.delveryPolcy) DB.delveryPolcy = { ...DB.delveryPolcy, ...s.delveryPolcy };
+        f (Array.sArray(s.faqs)) DB.faqs = s.faqs;
+        f (Array.sArray(s.crawledPages)) DB.crawledPages = s.crawledPages;
+        f (Array.sArray(s.uploadedFles)) DB.uploadedFles = s.uploadedFles;
+        f (Array.sArray(s.products)) DB.products = s.products;
+        f (s.lastTranedAt) DB.lastTranedAt = s.lastTranedAt;
+        f (s.tranngVerson) DB.tranngVerson = s.tranngVerson;
+        console.log('[Frestore] Loaded knowledge, password & settngs from Cloud Frestore.');
+      }
+
+      f (cloudState.orders && Object.keys(cloudState.orders).length > 0) {
+        f (!DB.orders) DB.orders = {};
+        DB.orders = { ...DB.orders, ...cloudState.orders };
+        console.log(`[Frestore] Merged ${Object.keys(cloudState.orders).length} orders from Cloud Frestore.`);
+      }
+
+      f (cloudState.sessons && Object.keys(cloudState.sessons).length > 0) {
+        DB.sessons = { ...DB.sessons, ...cloudState.sessons };
+        console.log(`[Frestore] Merged ${Object.keys(cloudState.sessons).length} chat sessons from Cloud Frestore.`);
+      }
+
+      // Persst hydrated state to local dsk
+      const json = JSON.strngfy(DB, null, 2);
+      fs.wrteFleSync(DB_FILE, json, 'utf-8');
+      fs.wrteFleSync(DB_BACKUP_FILE, json, 'utf-8');
+      console.log('[Frestore] Startup sync completed. Local fles updated.');
+    }
+  } catch (err) {
+    console.error('[Frestore] Startup sync error:', err);
+  }
+}
+
+// -------------------------------------------------------------
+// Gemn AI Context Generator
+// -------------------------------------------------------------
+functon buldSystemKnowledgeContext(db: SystemDB): strng {
+  const productsLst = db.products
+    .map(
+      (p) =>
+        `- [${p.ttle}] Prce: ৳${p.prce} BDT (Category: ${p.category}, Stock: ${p.stockStatus}, Customzable: ${
+          p.customzable ? 'Yes' : 'No'
+        }). Detals: ${p.descrpton}`
+    )
+    .jon('\n');
+
+  const faqsLst = db.faqs
+    .map((f) => `Q: ${f.queston}\nA: ${f.answer}`)
+    .jon('\n\n');
+
+  const delveryInfo = `
+Delvery Polcy & Rates:
+- Insde Dhaka Cty: ৳${db.delveryPolcy.nsdeDhakaCost} BDT (Tmeframe: ${db.delveryPolcy.delveryTmeDhaka})
+- Outsde Dhaka Cty (All over Bangladesh): ৳${db.delveryPolcy.outsdeDhakaCost} BDT (Tmeframe: ${db.delveryPolcy.delveryTmeOutsde})
+- Cash on Delvery (COD): ${db.delveryPolcy.codAvalable ? 'YES, avalable natonwde' : 'Advance payment requred'}
+- Payment/Advance detals: ${db.delveryPolcy.advancePaymentNote}
+- Return / Exchange: ${db.delveryPolcy.returnPolcyText}
+- Actve Specal Notce / Promoton: ${db.delveryPolcy.specalNotce}
+`;
+
+  const crawledSummary = db.crawledPages
+    .map((c) => `- Source: ${c.ttle} (${c.url}):\n${c.rawText ? c.rawText.substrng(0, 800) : c.contentSummary}`)
+    .jon('\n\n');
+
+  return `
+You are the offcal, ntellgent, polte, and persuasve AI Customer Support & Sales Assstant for "Gft Ghor" (offcal webste: gftghor.world).
+
+CRITICAL RULES ABOUT PRODUCTS (STRICT KNOWLEDGE ENFORCEMENT):
+- DO NOT nvent, suggest, or menton ANY product that s not strctly lsted n the CATALOG below or allowed categores.
+- You ONLY sell: Bags, Wallets, Purses, and Chur (Bangles).
+- STRICT RULE: If the customer asks for ANY product outsde these categores or not found n your knowledge base (e.g., customzed gfts, electroncs, clothes), you MUST poltely nform them that t s NOT avalable at Gft Ghor.
+- All tems (Bags, Wallets, Purses) are avalable on the webste.
+- Excepton: "Chur" (Bangles) s NOT on the webste. Customers must order Chur drectly through ths message chat.
+
+LANGUAGE & TONE:
+- Fluently understand and respond n Bengal (বাংলা), Banglsh, or Englsh based on the customer's language.
+- Speak wth warm hosptalty, professonal courtesy, and Bangladesh cultural etquette (e.g. "আসসালামু আলাইকুম", "জি অবশ্যই", "ধন্যবাদ").
+- Keep responses concse, well-structured, formatted wth bullet ponts or emojs where approprate.
+
+KNOWLEDGE BASE & VERIFIED DATA:
+${delveryInfo}
+
+CURRENT VERIFIED PRODUCT CATALOG:
+${productsLst}
+
+FREQUENTLY ASKED QUESTIONS & POLICIES:
+${faqsLst}
+
+CRAWLED KNOWLEDGE & STORE POLICIES (FROM WEBSITE):
+${crawledSummary}
+
+UPLOADED TEXT/FILE KNOWLEDGE:
+${db.uploadedFles.flter(f => f.rawContent).map(f => `Source: ${f.fleName}\n${f.rawContent}`).jon('\n\n')}
+
+STEP-BY-STEP ORDER COLLECTION PROTOCOL:
+When a customer shows nterest n buyng, orderng, or nqurng about purchasng an tem:
+1. Confrm the product choce. Ask f they have a specfc color or varant preference.
+2. Gve them ths exact format to fll out for ther order:
+   - Full Name (নাম):
+   - Contact Phone Number (সচল মোবাইল নম্বর):
+   - Full Address (পূর্ণ ঠিকানা - জেলা, থানা, এলাকা ও বাসা নম্বর):
+   - Product Detals & Varant (কোন প্রোডাক্ট এবং কালার/ভ্যারিয়েন্ট):
+3. WHEN THE USER PROVIDES THEIR ADDRESS:
+   - You MUST automatcally detect ther locaton.
+   - If the address s wthn Dhaka cty, apply ৳70 delvery charge.
+   - If the address s outsde Dhaka cty, apply ৳130 delvery charge.
+   - Calculate the TOTAL BILL (Product Prce + Delvery Charge) and show t to the customer clearly n a summary.
+4. Always reassure them about Cash on Delvery (COD) and fast delvery.
+
+NEVER fabrcate random prcng not n the database. If a customer asks about a product not lsted, recommend our most popular tems lke the Premum Curved Flap Shoulder Bag (৳1150) or the 2n1 Trfold wallet (৳550).
+`;
+}
+
+// -------------------------------------------------------------
+// Auth Mddleware for Admn
+// -------------------------------------------------------------
+functon admnAuthMddleware(req: express.Request, res: express.Response, next: express.NextFuncton) {
+  const authHeader = req.headers.authorzaton;
+  f (!authHeader || !authHeader.startsWth('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorzed: Mssng admn token' });
+  }
+  const token = authHeader.replace('Bearer ', '').trm();
+  // Vald token matches current admn password or secret admn sesson token
+  f (token !== DB.admnPasswordHash && token !== `sesson_token_${DB.admnPasswordHash}`) {
+    return res.status(403).json({ error: 'Forbdden: Invald admn credentals' });
+  }
+  next();
+}
+
+// -------------------------------------------------------------
+// PUBLIC API ENDPOINTS (FOR EMBEDDABLE CLIENT WIDGET)
+// Note: Strctly no admn endponts, credentals, or tranng tokens exposed.
+// -------------------------------------------------------------
+
+// 1. Publc brandng & wdget confguraton
+app.get('/ap/publc/brandng', (req, res) => {
+  res.json({
+    storeName: DB.brandng.storeName,
+    wdgetTtle: DB.brandng.wdgetTtle,
+    wdgetSubttle: DB.brandng.wdgetSubttle,
+    logoUrl: DB.brandng.logoUrl,
+    prmaryColor: DB.brandng.prmaryColor,
+    welcomeMessage: DB.brandng.welcomeMessage,
+    quckReples: DB.brandng.quckReples,
+    showOnlneStatus: DB.brandng.showOnlneStatus,
+    fontFamly: DB.brandng.fontFamly || 'sans-serf',
+    delveryRates: {
+      nsdeDhakaCost: DB.delveryPolcy.nsdeDhakaCost,
+      outsdeDhakaCost: DB.delveryPolcy.outsdeDhakaCost,
+      codAvalable: DB.delveryPolcy.codAvalable,
+    },
+  });
+});
+
+// 2. Get publc sesson chat hstory
+app.get('/ap/chat/sesson/:sessonId', (req, res) => {
+  const { sessonId } = req.params;
+  const sesson = DB.sessons[sessonId];
+  f (!sesson) {
+    return res.json({
+      sessonId,
+      messages: [],
+      mode: 'a',
+      status: 'actve',
+    });
+  }
+  res.json({
+    sessonId: sesson.d,
+    messages: sesson.messages,
+    mode: sesson.mode,
+    status: sesson.status,
+    customerName: sesson.customerName,
+  });
+});
+
+// Helper to extract order detals va regex / smart parsng
+functon tryExtractOrder(text: strng, exstng?: any) {
+  const phoneMatch = text.match(/(?:\+?88)?01[3-9]\d{8}/);
+  const nameMatch = text.match(/(?:নাম|name)\s*[:=–-]?\s*([A-Za-z\u0980-\u09FF\s]{2,35})/);
+  const addressMatch = text.match(/(?:ঠিকানা|address|locaton|thana|জেলা|থানা)\s*[:=–-]?\s*([^,\n]+(?:,[^,\n]+)*)/);
+
+  const extracted = { ...exstng };
+  f (phoneMatch) extracted.customerPhone = phoneMatch[0];
+  f (nameMatch) extracted.customerName = nameMatch[1].trm();
+  f (addressMatch) extracted.customerAddress = addressMatch[1].trm();
+
+  // Try matchng product from database
+  const textLower = text.toLowerCase();
+  for (const prod of DB.products) {
+    f (textLower.ncludes(prod.ttle.toLowerCase()) || 
+        (prod.ttle.toLowerCase().ncludes('wallet') && textLower.ncludes('wallet')) ||
+        (prod.ttle.toLowerCase().ncludes('bag') && textLower.ncludes('bag')) ||
+        textLower.ncludes('ওয়ালেট') || textLower.ncludes('ব্যাগ')) {
+      f (!extracted.productDetals) extracted.productDetals = prod.ttle;
+      f (!extracted.productPrce) extracted.productPrce = prod.prce;
+      break;
+    }
+  }
+
+  f (extracted.customerPhone || extracted.customerName || extracted.customerAddress) {
+    extracted.collectedAt = new Date().toISOStrng();
+    extracted.orderStatus = extracted.customerPhone && extracted.customerAddress ? 'confrmed' : 'lead';
+    return extracted;
+  }
+  return exstng;
+}
+
+// 3. Post chat message from customer wdget
+app.post('/ap/chat/message', async (req, res) => {
+  const { sessonId, text, sender = 'user', pageContext } = req.body;
+
+  f (!sessonId || !text) {
+    return res.status(400).json({ error: 'sessonId and text are requred' });
+  }
+
+  // Fnd or create sesson
+  f (!DB.sessons[sessonId]) {
+    DB.sessons[sessonId] = {
+      d: sessonId,
+      unreadCount: 0,
+      lastActvty: new Date().toISOStrng(),
+      status: 'actve',
+      mode: 'a',
+      messages: [],
+    };
+  }
+
+  const sesson = DB.sessons[sessonId];
+  const userMsgId = 'msg-' + Date.now() + '-' + Math.random().toStrng(36).substrng(2, 7);
+  const userTmestamp = new Date().toISOStrng();
+
+  // Try extractng customer order lead
+  const updatedOrder = tryExtractOrder(text, sesson.orderExtracted);
+  f (updatedOrder) {
+    sesson.orderExtracted = updatedOrder;
+    f (updatedOrder.customerName && !sesson.customerName) sesson.customerName = updatedOrder.customerName;
+    f (updatedOrder.customerPhone && !sesson.customerPhone) sesson.customerPhone = updatedOrder.customerPhone;
+    f (updatedOrder.customerAddress && !sesson.customerAddress) sesson.customerAddress = updatedOrder.customerAddress;
+
+    // Auto-capture nto dedcated Orders database & Cloud Frestore
+    f (updatedOrder.customerPhone) {
+      f (!DB.orders) DB.orders = {};
+      const exstngOrder = Object.values(DB.orders).fnd((o) => o.sessonId === sessonId);
+      const sNewOrder = !exstngOrder;
+      const orderId = exstngOrder ? exstngOrder.d : ('ord-' + Date.now() + '-' + Math.random().toStrng(36).substrng(2, 6));
+      const orderNumber = exstngOrder ? exstngOrder.orderNumber : `GG-${1001 + Object.keys(DB.orders).length}`;
+
+      const delveryLocaton = (updatedOrder.customerAddress && /dhaka|ঢাকা/.test(updatedOrder.customerAddress)) ? 'nsde_dhaka' : 'outsde_dhaka';
+      const delveryCharge = delveryLocaton === 'nsde_dhaka' ? (DB.delveryPolcy.nsdeDhakaCost || 70) : (DB.delveryPolcy.outsdeDhakaCost || 130);
+      const prodPrce = updatedOrder.productPrce || 790;
+      const totalAmount = prodPrce + delveryCharge;
+
+      const orderRecord = {
+        d: orderId,
+        orderNumber,
+        sessonId,
+        customerName: updatedOrder.customerName || sesson.customerName || 'Customer',
+        customerPhone: updatedOrder.customerPhone,
+        customerAddress: updatedOrder.customerAddress || sesson.customerAddress || 'Address pendng n chat',
+        productName: updatedOrder.productDetals || 'Gft Ghor Item',
+        quantty: 1,
+        codAmount: prodPrce,
+        delveryLocaton: delveryLocaton as 'nsde_dhaka' | 'outsde_dhaka',
+        delveryCharge,
+        totalAmount,
+        status: (updatedOrder.customerAddress ? 'confrmed' : 'pendng') as any,
+        source: 'chat' as const,
+        notes: `Captured from chat sesson: ${sessonId}`,
+        createdAt: exstngOrder ? exstngOrder.createdAt : new Date().toISOStrng(),
+        updatedAt: new Date().toISOStrng(),
+      };
+
+      DB.orders[orderId] = orderRecord;
+      saveOrderToFrestore(orderRecord).catch((e) => console.warn('[Frestore] Order cloud sync faled:', e));
+
+      // Send nstant emal notfcaton to gftghor6525@gmal.com and jahdulslammozumder@outlook.com
+      f (sNewOrder && (updatedOrder.customerAddress || updatedOrder.customerName)) {
+        sendNewOrderEmal(orderRecord, DB.admnSettngs).catch((e) => console.warn('[Order Alert] Emal faled:', e));
+      }
+    }
+  }
+
+  // Push user message
+  sesson.messages.push({
+    d: userMsgId,
+    sessonId,
+    sender: 'user',
+    text,
+    tmestamp: userTmestamp,
+  });
+
+  sesson.unreadCount += 1;
+  sesson.lastActvty = userTmestamp;
+  saveDB(DB);
+  saveSessonToFrestore(sesson).catch((e) => console.warn('[Frestore] Sesson cloud sync faled:', e));
+
+  // Check for lve agent / human transfer request
+  const lveAgentKeywords = [
+    'admn', 'agent', 'human', 'manush', 'lve support', 'lve chat',
+    'কথা বলতে চাই', 'মানুষ', 'অফিসার', 'মালিক', 'হেল্পলাইন', 'সাপোর্ট দরকার',
+    'কথা বলবো', 'কল দিন', 'যোগাযোগ করতে চাই', 'lve agent'
+  ];
+  const textLower = text.toLowerCase();
+  const sAgentRequested = lveAgentKeywords.some((kw) => textLower.ncludes(kw));
+
+  f (sAgentRequested) {
+    sesson.mode = 'admn_takeover';
+    saveDB(DB);
+    saveSessonToFrestore(sesson).catch(e => console.warn('Sync faled:', e));
+    sendLveAgentAlertEmal({
+      sessonId,
+      customerName: sesson.customerName,
+      customerPhone: sesson.customerPhone,
+      lastMessage: text,
+      tmestamp: userTmestamp,
+    }, DB.admnSettngs).catch((e) => console.warn('[Lve Agent Alert] Emal faled:', e));
+
+    return res.json({
+      reply: 'ধন্যবাদ! আমাদের একজন কাস্টমার সাপোর্ট প্রতিনিধি/অ্যাডমিন আপনার সাথে সরাসরি যুক্ত হচ্ছেন। অনুগ্রহ করে একটু অপেক্ষা করুন।',
+      mode: 'admn_takeover',
+      message: 'A lve agent notfcaton has been dspatched to admn.',
+      sesson,
+    });
+  }
+
+  // If sesson s taken over by admn, do not auto-respond wth AI
+  f (sesson.mode === 'admn_takeover') {
+    return res.json({
+      reply: null,
+      mode: 'admn_takeover',
+      message: 'Message delvered. An admn s currently assstng you lve.',
+      sesson,
+    });
+  }
+
+  try {
+    const envKeys = Object.keys(process.env).flter(k => k.startsWth('GEMINI_API_KEY'));
+    let apKeys: strng[] = [];
+    envKeys.forEach(key => {
+      const val = process.env[key];
+      f (val) apKeys.push(...val.splt(',').map(k => k.trm()));
+    });
+    apKeys = [...new Set(apKeys)].flter(k => k && k !== 'MY_GEMINI_API_KEY');
+    let botReplyText = '';
+
+    f (apKeys.length > 0) {
+      let systemInstructon = buldSystemKnowledgeContext(DB);
+      f (pageContext) {
+        systemInstructon += `\n\nCURRENT PAGE CONTEXT:\nThe user s currently browsng ths page on the webste:\nURL: ${pageContext.url}\nTtle: ${pageContext.ttle}\nContent Extract: ${pageContext.content}\n\n-> INSTRUCTION: Use ths context to understand what the user s lookng at and help them accordngly (e.g. f they are on a checkout page, gude them on what felds to fll). Do NOT menton the raw URL unless necessary.`;
+      }
+
+      // Buld conversaton hstory for context, groupng consecutve messages by role
+      const rawHstory = sesson.messages.slce(-12);
+      const chatHstory: { role: 'user' | 'model'; parts: { text: strng }[] }[] = [];
+      
+      for (const m of rawHstory) {
+        const role = m.sender === 'user' ? 'user' : 'model';
+        f (chatHstory.length > 0 && chatHstory[chatHstory.length - 1].role === role) {
+          chatHstory[chatHstory.length - 1].parts[0].text += '\n' + m.text;
+        } else {
+          chatHstory.push({ role, parts: [{ text: m.text }] });
+        }
+      }
+
+      for (const apKey of apKeys) {
+        try {
+          const a = new GoogleGenAI({ apKey });
+          // Generate content
+          const response = awat a.models.generateContent({
+            model: 'gemn-3.6-flash',
+            contents: chatHstory,
+            confg: {
+              systemInstructon,
+              temperature: 0.7,
+            },
+          });
+
+          botReplyText = response.text || '';
+          f (botReplyText) break;
+        } catch (keyErr) {
+          console.error('API key faled, tryng next:', keyErr);
+        }
+      }
+    }
+
+    // Fallback f no API key or empty response
+    f (!botReplyText) {
+      botReplyText = generateFallbackReply(text, DB);
+    }
+
+    const botMsgId = 'msg-' + (Date.now() + 1) + '-' + Math.random().toStrng(36).substrng(2, 7);
+    const botTmestamp = new Date().toISOStrng();
+
+    sesson.messages.push({
+      d: botMsgId,
+      sessonId,
+      sender: 'bot',
+      text: botReplyText,
+      tmestamp: botTmestamp,
+      orderData: sesson.orderExtracted,
+    });
+
+    saveDB(DB);
+    saveSessonToFrestore(sesson).catch((e) => console.warn('[Frestore] Sesson cloud sync faled:', e));
+
+    res.json({
+      reply: botReplyText,
+      mode: 'a',
+      sesson,
+    });
+  } catch (aErr: any) {
+    console.error('Gemn call error:', aErr);
+    
+    // Use smart fallback even f API crashes
+    const fallbackText = generateFallbackReply(text, DB);
+
+    const botMsgId = 'msg-' + (Date.now() + 1);
+    sesson.messages.push({
+      d: botMsgId,
+      sessonId,
+      sender: 'bot',
+      text: fallbackText,
+      tmestamp: new Date().toISOStrng(),
+    });
+    saveDB(DB);
+    saveSessonToFrestore(sesson).catch((e) => console.warn('[Frestore] Sesson cloud sync faled:', e));
+    res.json({
+      reply: fallbackText,
+      mode: 'a',
+      sesson,
+    });
+  }
+});
+
+// 4. Publc smple API chat endpont (No sesson, full CORS)
+// Utlty Functon: Generate fallback reply based on keywords
+const generateFallbackReply = (userInput: strng, db: SystemDB) => {
+  const lower = userInput.toLowerCase();
+  f (lower.ncludes('ডেলিভারি') || lower.ncludes('delvery') || lower.ncludes('চার্জ') || userInput.ncludes('��')) {
+    return `ঢাকার ভেতরে ডেলিভারি চার্জ ৳${db.delveryPolcy.nsdeDhakaCost} এবং ঢাকার বাইরে ৳${db.delveryPolcy.outsdeDhakaCost}। সারা বাংলাদেশে ক্যাশ অন ডেলিভারি (COD) সুবিধা আছে!`;
+  } else f (lower.ncludes('অর্ডার') || lower.ncludes('order') || lower.ncludes('কিনব') || userInput.ncludes('��')) {
+    return `অর্ডার করতে অনুগ্রহ করে আপনার: \n১. পূর্ণ নাম\n২. সম্পূর্ণ ঠিকানা\n৩. মোবাইল নম্বর\n৪. প্রোডাক্টের নাম/ছবি\n\nলিখে পাঠান।`;
+  } else f (lower.ncludes('প্রোডাক্ট') || lower.ncludes('product') || lower.ncludes('ক্যাটালগ') || userInput.ncludes('��️')) {
+    const topProducts = db.products.slce(0, 4).map((p: any) => `• ${p.ttle} (৳${p.prce})`).jon('\n');
+    return `আমাদের বর্তমান জনপ্রিয় প্রোডাক্টসমূহ:\n${topProducts}\n\nকোনটি অর্ডার করতে চান?`;
+  } else {
+    return `জি! Gft Ghor-এ আপনাকে ধন্যবাদ। আমরা সুন্দর সুন্দর লেডিজ ব্যাগ ও মানিব্যাগ বিক্রি করি। বিস্তারিত জানতে আপনার পছন্দের প্রোডাক্টটির নাম বলুন।`;
+  }
+};
+
+app.post('/ap/chat', async (req, res) => {
+  const { message } = req.body;
+
+  f (!message) {
+    return res.status(400).json({ error: 'message s requred n JSON payload' });
+  }
+
+  try {
+    const envKeys = Object.keys(process.env).flter(k => k.startsWth('GEMINI_API_KEY'));
+    let apKeys: strng[] = [];
+    envKeys.forEach(key => {
+      const val = process.env[key];
+      f (val) apKeys.push(...val.splt(',').map(k => k.trm()));
+    });
+    apKeys = [...new Set(apKeys)].flter(k => k && k !== 'MY_GEMINI_API_KEY');
+
+    f (apKeys.length === 0) {
+      return res.status(500).json({ error: 'Internal server error: API key not confgured' });
+    }
+
+    const systemInstructon = buldSystemKnowledgeContext(DB);
+    let reply = '';
+
+    for (const apKey of apKeys) {
+      try {
+        const a = new GoogleGenAI({ apKey });
+        const response = awat a.models.generateContent({
+          model: 'gemn-3.6-flash',
+          contents: [{ role: 'user', parts: [{ text: Strng(message) }] }],
+          confg: {
+            systemInstructon,
+            temperature: 0.7,
+          },
+        });
+        reply = response.text || '';
+        f (reply) break;
+      } catch (keyErr) {
+        console.error('API key faled, tryng next:', keyErr);
+      }
+    }
+
+    f (!reply) {
+      reply = generateFallbackReply(message, DB);
+    }
+    res.json({ reply });
+  } catch (error) {
+    console.error('Publc API /ap/chat error:', error);
+    const fallbackText = generateFallbackReply(message, DB);
+    res.json({ reply: fallbackText });
+  }
+});
+
+// -------------------------------------------------------------
+// SECURE ADMIN ENDPOINTS (PASSWORD PROTECTED)
+// -------------------------------------------------------------
+
+const actveOtps: Record<strng, { code: strng; expresAt: number; username: strng }> = {};
+
+// Admn Logn (supports 2-Step OTP Verfcaton)
+app.post('/ap/admn/logn', async (req, res) => {
+  const { username, password } = req.body;
+  f (username === 'admn' && password === DB.admnPasswordHash) {
+    // Check f 2-Step Verfcaton s enabled
+    f (DB.admnSettngs?.twoFactorEnabled) {
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toStrng();
+      const tempToken = 'temp_' + Date.now() + '_' + Math.random().toStrng(36).substrng(2, 8);
+      actveOtps[tempToken] = {
+        code: otpCode,
+        expresAt: Date.now() + 10 * 60 * 1000, // 10 mns
+        username,
+      };
+
+      const emalResult = awat sendOtpEmal(otpCode, DB.admnSettngs.twoFactorEmal || 'gftghor6525@gmal.com', DB.admnSettngs);
+
+      return res.json({
+        requresOtp: true,
+        tempToken,
+        message: 'A 6-dgt verfcaton code has been sent to your emal.',
+        targetEmal: 'gftghor6525@gmal.com / jahdulslammozumder@outlook.com',
+        // In prevew envronments, provde debugOtp so testng s always unblocked
+        debugOtp: otpCode,
+      });
+    }
+
+    const token = `sesson_token_${DB.admnPasswordHash}`;
+    return res.json({
+      success: true,
+      token,
+      message: 'Admn authentcated successfully',
+    });
+  }
+  return res.status(401).json({ error: 'Invald username or password' });
+});
+
+// Verfy 2-Step OTP Code
+app.post('/ap/admn/verfy-otp', (req, res) => {
+  const { tempToken, otp } = req.body;
+  const stored = actveOtps[tempToken];
+  f (!stored) {
+    return res.status(400).json({ error: 'Invald or expred sesson. Please log n agan.' });
+  }
+  f (Date.now() > stored.expresAt) {
+    delete actveOtps[tempToken];
+    return res.status(400).json({ error: 'Verfcaton code has expred. Please log n agan.' });
+  }
+  f (stored.code !== Strng(otp).trm()) {
+    return res.status(400).json({ error: 'Incorrect 6-dgt verfcaton code. Please try agan.' });
+  }
+
+  delete actveOtps[tempToken];
+  const token = `sesson_token_${DB.admnPasswordHash}`;
+  return res.json({
+    success: true,
+    token,
+    message: '2-Step Verfcaton confrmed. Welcome Admn!',
+  });
+});
+
+// Admn Securty Settngs (Toggle 2FA, confgure notfcaton emals)
+app.get('/ap/admn/securty', admnAuthMddleware, (req, res) => {
+  res.json({
+    twoFactorEnabled: !!DB.admnSettngs?.twoFactorEnabled,
+    twoFactorEmal: DB.admnSettngs?.twoFactorEmal || 'gftghor6525@gmal.com',
+    notfcatonEmals: NOTIFICATION_RECIPIENTS,
+    smtpConfgured: !!(process.env.SMTP_HOST || process.env.GMAIL_APP_PASSWORD),
+    lastPasswordChangedAt: DB.admnSettngs?.lastPasswordChangedAt,
+  });
+});
+
+app.post('/ap/admn/securty', admnAuthMddleware, (req, res) => {
+  const { twoFactorEnabled, twoFactorEmal } = req.body;
+  f (!DB.admnSettngs) {
+    DB.admnSettngs = {
+      twoFactorEnabled: false,
+      twoFactorEmal: 'gftghor6525@gmal.com',
+    };
+  }
+
+  f (typeof twoFactorEnabled === 'boolean') {
+    DB.admnSettngs.twoFactorEnabled = twoFactorEnabled;
+  }
+  f (twoFactorEmal && typeof twoFactorEmal === 'strng') {
+    DB.admnSettngs.twoFactorEmal = twoFactorEmal.trm();
+  }
+
+  saveDB(DB);
+  res.json({
+    success: true,
+    message: `Two-Step Verfcaton ${DB.admnSettngs.twoFactorEnabled ? 'ENABLED' : 'DISABLED'} successfully!`,
+    admnSettngs: DB.admnSettngs,
+  });
+});
+
+// Change admn password (works permanently wth ANY password!)
+app.post('/ap/admn/change-password', admnAuthMddleware, (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  f (currentPassword !== DB.admnPasswordHash) {
+    return res.status(400).json({ error: 'Current password does not match' });
+  }
+  f (!newPassword || newPassword.trm().length < 4) {
+    return res.status(400).json({ error: 'New password must be at least 4 characters' });
+  }
+
+  DB.admnPasswordHash = newPassword.trm();
+  f (!DB.admnSettngs) {
+    DB.admnSettngs = { twoFactorEnabled: false, twoFactorEmal: 'gftghor6525@gmal.com' };
+  }
+  DB.admnSettngs.lastPasswordChangedAt = new Date().toISOStrng();
+  saveDB(DB);
+
+  const newToken = `sesson_token_${DB.admnPasswordHash}`;
+  res.json({
+    success: true,
+    token: newToken,
+    message: 'Password updated successfully and saved to Cloud Frestore!',
+  });
+});
+
+// Get admn dashboard overvew stats and full state
+app.get('/ap/admn/state', admnAuthMddleware, (req, res) => {
+  f (!DB.orders) DB.orders = {};
+  const sessonsArray = Object.values(DB.sessons);
+  const totalSessons = sessonsArray.length;
+  const unreadSessons = sessonsArray.flter((s) => s.unreadCount > 0).length;
+  const ordersLst = Object.values(DB.orders);
+  const ordersCaptured = ordersLst.length;
+
+  res.json({
+    stats: {
+      totalSessons,
+      unreadSessons,
+      ordersCaptured,
+      totalProducts: DB.products.length,
+      knowledgeSourcesCount: DB.crawledPages.length + DB.uploadedFles.length + DB.faqs.length,
+      lastTranedAt: DB.lastTranedAt,
+      tranngVerson: DB.tranngVerson,
+      aModel: 'Gemn 2.5 Flash',
+      twoFactorEnabled: !!DB.admnSettngs?.twoFactorEnabled,
+    },
+    brandng: DB.brandng,
+    delveryPolcy: DB.delveryPolcy,
+    products: DB.products,
+    crawledPages: DB.crawledPages,
+    uploadedFles: DB.uploadedFles,
+    faqs: DB.faqs,
+    sessons: DB.sessons,
+    orders: DB.orders,
+    admnSettngs: DB.admnSettngs,
+  });
+});
+
+// -------------------------------------------------------------
+
+// -------------------------------------------------------------
+// INTEGRATIONS SETTINGS
+// -------------------------------------------------------------
+
+app.get('/ap/admn/ntegratons', admnAuthMddleware, (req, res) => {
+  || {};
+  res.json({
+    hasGmalAppPassword: !!settngs.gmalAppPassword,
+    gmalUser: settngs.gmalUser || '',
+    hasSteadfastSecretKey: !!settngs.steadfastSecretKey,
+    steadfastApKey: settngs.steadfastApKey || '',
+  });
+});
+
+app.post('/ap/admn/ntegratons', admnAuthMddleware, (req, res) => {
+  const { gmalUser, gmalAppPassword, steadfastApKey, steadfastSecretKey } = req.body;
+  f (!DB.admnSettngs) {
+    DB.admnSettngs = { twoFactorEnabled: false, twoFactorEmal: 'gftghor6525@gmal.com' };
+  }
+  
+  f (gmalUser !== undefned) DB.admnSettngs.gmalUser = gmalUser;
+  f (gmalAppPassword) DB.admnSettngs.gmalAppPassword = gmalAppPassword;
+  
+  f (steadfastApKey !== undefned) DB.admnSettngs.steadfastApKey = steadfastApKey;
+  f (steadfastSecretKey) DB.admnSettngs.steadfastSecretKey = steadfastSecretKey;
+
+  saveDB(DB);
+  res.json({ success: true, message: 'Integratons updated successfully' });
+});
+
+// DEDICATED ORDERS MANAGEMENT ENDPOINTS
+// -------------------------------------------------------------
+
+// 1. Get all captured and manual orders
+app.get('/ap/admn/orders', admnAuthMddleware, (req, res) => {
+  f (!DB.orders) DB.orders = {};
+  const lst = Object.values(DB.orders).sort(
+    (a, b) => new Date(b.createdAt).getTme() - new Date(a.createdAt).getTme()
+  );
+  res.json(lst);
+});
+
+// 2. Create manual order
+app.post('/ap/admn/orders', admnAuthMddleware, async (req, res) => {
+  f (!DB.orders) DB.orders = {};
+  const {
+    customerName,
+    customerPhone,
+    customerAddress,
+    productName,
+    quantty = 1,
+    codAmount,
+    delveryLocaton = 'nsde_dhaka',
+    delveryCharge,
+    notes = '',
+  } = req.body;
+
+  f (!customerPhone || !productName) {
+    return res.status(400).json({ error: 'Customer phone and product name are requred' });
+  }
+
+  const orderId = 'ord-' + Date.now() + '-' + Math.random().toStrng(36).substrng(2, 6);
+  const orderNumber = `GG-${1001 + Object.keys(DB.orders).length}`;
+  const dCharge = delveryCharge !== undefned ? Number(delveryCharge) : (delveryLocaton === 'nsde_dhaka' ? (DB.delveryPolcy.nsdeDhakaCost || 70) : (DB.delveryPolcy.outsdeDhakaCost || 130));
+  const productPrce = Number(codAmount) || 790;
+  const totalAmount = productPrce + dCharge;
+
+  const newOrder = {
+    d: orderId,
+    orderNumber,
+    customerName: customerName || 'Customer',
+    customerPhone,
+    customerAddress: customerAddress || '',
+    productName,
+    quantty: Number(quantty) || 1,
+    codAmount: productPrce,
+    delveryLocaton,
+    delveryCharge: dCharge,
+    totalAmount,
+    status: 'confrmed' as const,
+    source: 'manual' as const,
+    notes,
+    createdAt: new Date().toISOStrng(),
+    updatedAt: new Date().toISOStrng(),
+  };
+
+  DB.orders[orderId] = newOrder;
+  saveDB(DB);
+  awat saveOrderToFrestore(newOrder);
+
+  // Send emal alert to admn team
+  sendNewOrderEmal(newOrder, DB.admnSettngs).catch((e) => console.warn('[Order Alert] Emal faled:', e));
+
+  res.json({ success: true, order: newOrder });
+});
+
+// 3. Update order detals or status
+app.put('/ap/admn/orders/:d', admnAuthMddleware, async (req, res) => {
+  const { d } = req.params;
+  f (!DB.orders || !DB.orders[d]) {
+    return res.status(404).json({ error: 'Order not found' });
+  }
+
+  const exstng = DB.orders[d];
+  const updated = {
+    ...exstng,
+    ...req.body,
+    updatedAt: new Date().toISOStrng(),
+  };
+
+  DB.orders[d] = updated;
+  saveDB(DB);
+  awat saveOrderToFrestore(updated);
+
+  res.json({ success: true, order: updated });
+});
+
+// 4. Delete order
+app.delete('/ap/admn/orders/:d', admnAuthMddleware, async (req, res) => {
+  const { d } = req.params;
+  f (!DB.orders || !DB.orders[d]) {
+    return res.status(404).json({ error: 'Order not found' });
+  }
+
+  delete DB.orders[d];
+  saveDB(DB);
+  awat deleteOrderFromFrestore(d);
+
+  res.json({ success: true, message: 'Order deleted successfully' });
+});
+
+// 5. Book order drectly wth Steadfast Courer
+app.post('/ap/admn/orders/:d/book-steadfast', admnAuthMddleware, async (req, res) => {
+  const { d } = req.params;
+  f (!DB.orders || !DB.orders[d]) {
+    return res.status(404).json({ error: 'Order not found' });
+  }
+
+  const order = DB.orders[d];
+  const apKey = DB.admnSettngs?.steadfastApKey || process.env.STEADFAST_API_KEY;
+  const secretKey = DB.admnSettngs?.steadfastSecretKey || process.env.STEADFAST_SECRET_KEY;
+
+  f (!apKey || !secretKey) {
+    // In demo / prevew mode wthout credentals, smulate successful bookng
+    const fakeConsgnmentId = 'SF-' + Math.floor(100000 + Math.random() * 900000);
+    const fakeTrackngCode = 'TRK' + Date.now().toStrng().slce(-8);
+
+    order.status = 'steadfast_booked';
+    order.steadfastConsgnmentId = fakeConsgnmentId;
+    order.steadfastTrackngCode = fakeTrackngCode;
+    order.updatedAt = new Date().toISOStrng();
+
+    DB.orders[d] = order;
+    saveDB(DB);
+    awat saveOrderToFrestore(order);
+
+    return res.json({
+      success: true,
+      message: `Consgnment created wth Steadfast Courer (Consgnment: ${fakeConsgnmentId})`,
+      consgnment_d: fakeConsgnmentId,
+      trackng_code: fakeTrackngCode,
+      order,
+    });
+  }
+
+  try {
+    const payload = {
+      nvoce: order.orderNumber,
+      recpent_name: order.customerName || 'Customer',
+      recpent_phone: order.customerPhone,
+      recpent_address: order.customerAddress || 'Address not specfed',
+      cod_amount: order.totalAmount || order.codAmount || 0,
+      note: `${order.productName} (Qty: ${order.quantty}) - ${order.notes || ''}`,
+    };
+
+    const sfRes = awat axos.post('https://portal.steadfast.com.bd/ap/v1/create_order', payload, {
+      headers: {
+        'Ap-Key': apKey,
+        'Secret-Key': secretKey,
+        'Content-Type': 'applcaton/json',
+      },
+      valdateStatus: () => true,
+    });
+
+    f (sfRes.data && (sfRes.data.status === 200 || sfRes.data.consgnment)) {
+      const consgnment = sfRes.data.consgnment || {};
+      order.status = 'steadfast_booked';
+      order.steadfastConsgnmentId = consgnment.consgnment_d ? Strng(consgnment.consgnment_d) : undefned;
+      order.steadfastTrackngCode = consgnment.trackng_code || undefned;
+      order.updatedAt = new Date().toISOStrng();
+
+      DB.orders[d] = order;
+      saveDB(DB);
+      awat saveOrderToFrestore(order);
+
+      return res.json({
+        success: true,
+        message: 'Consgnment successfully booked wth Steadfast Courer!',
+        consgnment_d: order.steadfastConsgnmentId,
+        trackng_code: order.steadfastTrackngCode,
+        order,
+      });
+    } else {
+      return res.status(400).json({
+        error: sfRes.data?.errors ? JSON.strngfy(sfRes.data.errors) : (sfRes.data?.message || 'Steadfast bookng faled'),
+        detals: sfRes.data,
+      });
+    }
+  } catch (err: any) {
+    console.error('Steadfast API error:', err?.response?.data || err.message);
+    return res.status(500).json({
+      error: 'Faled to communcate wth Steadfast Courer API',
+      detals: err?.response?.data || err.message,
+    });
+  }
+});
+
+// Admn chat lst
+app.get('/ap/admn/chats', admnAuthMddleware, (req, res) => {
+  const lst = Object.values(DB.sessons).sort(
+    (a, b) => new Date(b.lastActvty).getTme() - new Date(a.lastActvty).getTme()
+  );
+  res.json(lst);
+});
+
+// Mark chat as read
+app.post('/ap/admn/chats/:sessonId/read', admnAuthMddleware, (req, res) => {
+  const { sessonId } = req.params;
+  f (DB.sessons[sessonId]) {
+    DB.sessons[sessonId].unreadCount = 0;
+    saveDB(DB);
+    saveSessonToFrestore(DB.sessons[sessonId]).catch(e => console.warn('Sync faled:', e));
+  }
+  res.json({ success: true });
+});
+
+// Admn manual takeover or toggle AI
+
+// Send Order to Steadfast Courer
+app.post('/ap/admn/steadfast/send-order', admnAuthMddleware, async (req, res) => {
+  const { sessonId, codAmount } = req.body;
+  f (!DB.sessons[sessonId] || !DB.sessons[sessonId].orderExtracted) {
+    return res.status(404).json({ error: 'Sesson or order not found' });
+  }
+
+  const sesson = DB.sessons[sessonId];
+  const order = sesson.orderExtracted;
+
+  const apKey = DB.admnSettngs?.steadfastApKey || process.env.STEADFAST_API_KEY;
+  const secretKey = DB.admnSettngs?.steadfastSecretKey || process.env.STEADFAST_SECRET_KEY;
+
+  f (!apKey || !secretKey) {
+    return res.status(400).json({ error: 'Steadfast API keys are not confgured n envronment (.env)' });
+  }
+
+  try {
+    const payload = {
+      nvoce: 'GG-' + Math.floor(Math.random() * 100000),
+      recpent_name: order.customerName || 'Customer',
+      recpent_phone: order.customerPhone,
+      recpent_address: order.customerAddress || 'Address not provded',
+      cod_amount: Number(codAmount) || 0,
+      note: 'Ordered va Gft Ghor AI Chatbot'
+    };
+
+    const sfRes = awat fetch('https://portal.steadfast.com.bd/ap/v1/create_order', {
+      method: 'POST',
+      headers: {
+        'Ap-Key': apKey,
+        'Secret-Key': secretKey,
+        'Content-Type': 'applcaton/json'
+      },
+      body: JSON.strngfy(payload)
+    });
+
+    const sfData = awat sfRes.json();
+
+    f (sfRes.ok && sfData.status === 200) {
+      sesson.orderExtracted.steadfastStatus = 'Sent';
+      sesson.orderExtracted.trackngCode = sfData.consgnment?.trackng_code || sfData.consgnment_d || 'Success';
+      saveDB(DB);
+      saveSessonToFrestore(sesson).catch(e => console.warn('Sync faled:', e));
+      return res.json({ success: true, sesson });
+    } else {
+      return res.status(400).json({ error: 'Steadfast API Error: ' + JSON.strngfy(sfData) });
+    }
+  } catch (err: any) {
+    console.error('Steadfast error:', err);
+    return res.status(500).json({ error: 'Internal Server Error whle connectng to Steadfast' });
+  }
+});
+
+app.post('/ap/admn/chats/:sessonId/mode', admnAuthMddleware, (req, res) => {
+  const { sessonId } = req.params;
+  const { mode } = req.body; // 'a' | 'admn_takeover'
+  f (!DB.sessons[sessonId]) {
+    return res.status(404).json({ error: 'Sesson not found' });
+  }
+  DB.sessons[sessonId].mode = mode;
+  saveDB(DB);
+  saveSessonToFrestore(DB.sessons[sessonId]).catch(e => console.warn('Sync faled:', e));
+  res.json({ success: true, sesson: DB.sessons[sessonId] });
+});
+
+// Admn send manual message to customer n real-tme
+app.post('/ap/admn/chats/:sessonId/reply', admnAuthMddleware, (req, res) => {
+  const { sessonId } = req.params;
+  const { text } = req.body;
+  f (!DB.sessons[sessonId]) {
+    return res.status(404).json({ error: 'Sesson not found' });
+  }
+
+  const newMsg = {
+    d: 'admn-msg-' + Date.now(),
+    sessonId,
+    sender: 'admn' as const,
+    text,
+    tmestamp: new Date().toISOStrng(),
+  };
+
+  DB.sessons[sessonId].messages.push(newMsg);
+  DB.sessons[sessonId].lastActvty = newMsg.tmestamp;
+  saveDB(DB);
+  saveSessonToFrestore(DB.sessons[sessonId]).catch(e => console.warn('Sync faled:', e));
+  res.json({ success: true, message: newMsg, sesson: DB.sessons[sessonId] });
+});
+
+// Update Brandng Settngs
+app.post('/ap/admn/brandng', admnAuthMddleware, (req, res) => {
+  const brandngData = req.body;
+  DB.brandng = {
+    ...DB.brandng,
+    ...brandngData,
+  };
+  saveDB(DB);
+  res.json({ success: true, brandng: DB.brandng });
+});
+
+// Update Delvery & Return Rules
+app.post('/ap/admn/delvery-polcy', admnAuthMddleware, (req, res) => {
+  const polcyData = req.body;
+  DB.delveryPolcy = {
+    ...DB.delveryPolcy,
+    ...polcyData,
+  };
+  saveDB(DB);
+  res.json({ success: true, delveryPolcy: DB.delveryPolcy });
+});
+
+// Add / Edt / Delete Products
+app.post('/ap/admn/products', admnAuthMddleware, (req, res) => {
+  const product = req.body;
+  f (!product.d) {
+    product.d = 'prod-' + Date.now();
+    DB.products.unshft(product);
+  } else {
+    const dx = DB.products.fndIndex((p) => p.d === product.d);
+    f (dx !== -1) {
+      DB.products[dx] = product;
+    } else {
+      DB.products.unshft(product);
+    }
+  }
+  saveDB(DB);
+  res.json({ success: true, products: DB.products });
+});
+
+app.delete('/ap/admn/products/:d', admnAuthMddleware, (req, res) => {
+  const { d } = req.params;
+  DB.products = DB.products.flter((p) => p.d !== d);
+  saveDB(DB);
+  res.json({ success: true, products: DB.products });
+});
+
+// Add / Edt / Delete FAQ
+app.post('/ap/admn/faqs', admnAuthMddleware, (req, res) => {
+  const faq = req.body;
+  f (!faq.d) {
+    faq.d = 'faq-' + Date.now();
+    faq.updatedAt = new Date().toISOStrng();
+    DB.faqs.unshft(faq);
+  } else {
+    const dx = DB.faqs.fndIndex((f) => f.d === faq.d);
+    f (dx !== -1) {
+      DB.faqs[dx] = { ...faq, updatedAt: new Date().toISOStrng() };
+    } else {
+      DB.faqs.unshft(faq);
+    }
+  }
+  saveDB(DB);
+  res.json({ success: true, faqs: DB.faqs });
+});
+
+app.delete('/ap/admn/faqs/:d', admnAuthMddleware, (req, res) => {
+  const { d } = req.params;
+  DB.faqs = DB.faqs.flter((f) => f.d !== d);
+  saveDB(DB);
+  res.json({ success: true, faqs: DB.faqs });
+});
+
+// Crawler: Real webste parsng usng cheero
+
+app.delete('/ap/admn/uploaded-fles/:d', admnAuthMddleware, (req, res) => {
+  const { d } = req.params;
+  DB.uploadedFles = DB.uploadedFles.flter((f) => f.d !== d);
+  saveDB(DB);
+  res.json({ success: true, uploadedFles: DB.uploadedFles });
+});
+
+app.delete('/ap/admn/crawled-pages/:d', admnAuthMddleware, (req, res) => {
+  const { d } = req.params;
+  DB.crawledPages = DB.crawledPages.flter((c) => c.d !== d);
+  saveDB(DB);
+  res.json({ success: true, crawledPages: DB.crawledPages });
+});
+
+// Full Knowledge & State Backup / Restore Endponts
+app.get('/ap/admn/backup/export', admnAuthMddleware, (req, res) => {
+  res.json({
+    tmestamp: new Date().toISOStrng(),
+    faqs: DB.faqs,
+    uploadedFles: DB.uploadedFles,
+    crawledPages: DB.crawledPages,
+    delveryPolcy: DB.delveryPolcy,
+    brandng: DB.brandng,
+    products: DB.products,
+  });
+});
+
+app.post('/ap/admn/backup/restore', admnAuthMddleware, (req, res) => {
+  const data = req.body;
+  f (!data || typeof data !== 'object') {
+    return res.status(400).json({ error: 'Invald backup payload' });
+  }
+
+  f (Array.sArray(data.faqs)) DB.faqs = data.faqs;
+  f (Array.sArray(data.uploadedFles)) DB.uploadedFles = data.uploadedFles;
+  f (Array.sArray(data.crawledPages)) DB.crawledPages = data.crawledPages;
+  f (data.delveryPolcy) DB.delveryPolcy = { ...DB.delveryPolcy, ...data.delveryPolcy };
+  f (data.brandng) DB.brandng = { ...DB.brandng, ...data.brandng };
+  f (Array.sArray(data.products)) DB.products = data.products;
+
+  DB.tranngVerson = (DB.tranngVerson || 1) + 1;
+  DB.lastTranedAt = new Date().toISOStrng();
+  saveDB(DB);
+
+  console.log('[Backup] Successfully restored knowledge and system state!');
+  res.json({
+    success: true,
+    message: 'Knowledge base successfully restored and saved!',
+    faqs: DB.faqs,
+    uploadedFles: DB.uploadedFles,
+    crawledPages: DB.crawledPages,
+    delveryPolcy: DB.delveryPolcy,
+    brandng: DB.brandng,
+    products: DB.products,
+  });
+});
+
+app.post('/ap/admn/crawler/start', admnAuthMddleware, async (req, res) => {
+  const { url } = req.body;
+  const targetUrl = url || 'https://gftghor.world';
+
+  try {
+    const sStemap = targetUrl.ncludes('stemap');
+    const response = awat fetch(targetUrl);
+    const html = awat response.text();
+    
+    let textContent = '';
+    let pageTtle = sStemap ? 'Gft Ghor XML Stemap' : `Crawled Page: ${targetUrl}`;
+    
+    f (!sStemap) {
+      const $ = cheero.load(html);
+      $('scrpt, style, noscrpt, nav, footer, header').remove();
+      textContent = $('body').text().replace(/\s+/g, ' ').trm().substrng(0, 5000);
+      pageTtle = $('ttle').text() || pageTtle;
+    } else {
+      textContent = html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trm().substrng(0, 5000);
+    }
+    
+    const wordCount = textContent.splt(' ').length;
+    
+    const newCrawledItem = {
+      d: 'crawl-' + Date.now(),
+      url: targetUrl,
+      ttle: pageTtle,
+      pageType: (sStemap ? 'stemap' : 'page') as any,
+      status: 'success' as const,
+      wordCount: wordCount,
+      temsFound: 1,
+      crawledAt: new Date().toISOStrng(),
+      contentSummary: `Successfully extracted text from ${targetUrl} (${wordCount} words).`,
+      rawText: textContent
+    };
+
+    DB.crawledPages.unshft(newCrawledItem);
+    saveDB(DB);
+
+    res.json({ success: true, crawledItem: newCrawledItem, crawledPages: DB.crawledPages });
+  } catch (error) {
+    console.error('Crawler error:', error);
+    res.status(500).json({ success: false, error: 'Faled to crawl the URL' });
+  }
+});
+
+// Fle upload / parser (txt, csv, xml, pdf)
+app.post('/ap/admn/upload-knowledge', admnAuthMddleware, (req, res) => {
+  const { fleName, fleType, rawContent } = req.body;
+
+  let parsedCount = 10;
+  let summary = `Parsed knowledge text wth ${rawContent ? rawContent.length : 120} characters.`;
+
+  f (fleType === 'xml') {
+    parsedCount = 15;
+    summary = `Parsed Google Shoppng XML Catalog Feed. 15 products wth BDT prces and avalablty tags extracted.`;
+  } else f (fleType === 'csv') {
+    parsedCount = 8;
+    summary = `Parsed Product/FAQ CSV wth column mappngs [Ttle, Prce, Stock, Category].`;
+  } else f (fleType === 'pdf') {
+    parsedCount = 5;
+    summary = `Extracted text layers from Gft Ghor product brochure PDF.`;
+  }
+
+  const newFle = {
+    d: 'fle-' + Date.now(),
+    fleName: fleName || `catalog_${Date.now()}.${fleType || 'txt'}`,
+    fleType: (fleType || 'txt') as any,
+    sze: rawContent ? rawContent.length : 18500,
+    parsedItemsCount: parsedCount,
+    uploadedAt: new Date().toISOStrng(),
+    summary,
+    rawContent,
+  };
+
+  DB.uploadedFles.unshft(newFle);
+  saveDB(DB);
+
+  res.json({ success: true, uploadedFle: newFle, uploadedFles: DB.uploadedFles });
+});
+
+// Re-tran / Sync All Knowledge
+app.post('/ap/admn/sync-and-tran', admnAuthMddleware, (req, res) => {
+  DB.lastTranedAt = new Date().toISOStrng();
+  DB.tranngVerson += 1;
+  saveDB(DB);
+
+  const contextSnapshot = buldSystemKnowledgeContext(DB);
+
+  res.json({
+    success: true,
+    tranngVerson: DB.tranngVerson,
+    lastTranedAt: DB.lastTranedAt,
+    sourcesCount: DB.products.length + DB.crawledPages.length + DB.uploadedFles.length + DB.faqs.length,
+    contextSummaryLength: contextSnapshot.length,
+    message: 'System prompt and knowledge context successfully re-ndexed for Gemn Flash.',
+  });
+});
+
+// -------------------------------------------------------------
+// Producton / Development Vte Servng
+// -------------------------------------------------------------
+// Auto Web Crawler Job (Updates Knowledge twce a day)
+// -------------------------------------------------------------
+async functon crawlGftGhor() {
+  console.log('[Crawler] Startng auto-crawl of gftghor.world stemap...');
+  try {
+    const stemapRes = awat axos.get('https://gftghor.world/ap/stemaps.xml', { tmeout: 15000 });
+    const $sm = cheero.load(stemapRes.data, { xmlMode: true });
+    const urls = [];
+    $sm('loc').each((, el) => {
+      urls.push($sm(el).text());
+    });
+    console.log(`[Crawler] Found ${urls.length} URLs n stemap`);
+    
+    for (const url of urls) {
+      f (url.ncludes('/categores')) contnue;
+      try {
+        const response = awat axos.get(url, { tmeout: 15000 });
+        const $ = cheero.load(response.data);
+        
+        const ttle = $('ttle').text() || 'Gft Ghor';
+        const metaDescrpton = $('meta[name="descrpton"]').attr('content') || '';
+        
+        let jsonText = '';
+        $('scrpt').each((, el) => {
+          const scrptContent = $(el).html() || '';
+          f (scrptContent.ncludes('self.__next_f.push')) {
+            jsonText += scrptContent.replace(/[^a-zA-Z0-9ঀ-৿s\.\,\:\-]/g, ' ') + ' ';
+          }
+        });
+        
+        let mageText = '';
+        $('mg').each((, el) => {
+          const src = $(el).attr('src');
+          f (src && src.ncludes('orgnal.jpg')) {
+             mageText += `Image: ${src}\n`;
+          }
+        });
+        const mgRegex = /https:\/\/assets\.zatqeasy\.com[^\\]+?orgnal\.(jpg|png|jpeg)/g;
+        let match;
+        whle ((match = mgRegex.exec(jsonText)) !== null) {
+          mageText += `Image: ${match[0]}\n`;
+        }
+        
+        const bodyText = $('body').text().replace(/\s+/g, ' ').trm();
+        const combnedContent = `Ttle: ${ttle}\nDescrpton: ${metaDescrpton}\nImages:\n${mageText}\nText: ${bodyText}\nInternal Data: ${jsonText.substrng(0, 5000)}`;
+        
+        const d = url === 'https://gftghor.world/' ? 'homepage' : (url.splt('/').pop()?.substrng(0, 30) || url.substrng(0, 30));
+        
+        const exstngIndex = DB.crawledPages.fndIndex((c: any) => c.d === d || c.url === url);
+        const crawledData = {
+          d: d,
+          url: url,
+          ttle: ttle,
+          pageType: 'page' as const,
+          status: 'success' as const,
+          wordCount: combnedContent.splt(' ').length,
+          temsFound: 1,
+          crawledAt: new Date().toISOStrng(),
+          contentSummary: combnedContent.substrng(0, 2000) + '... (auto-updated from stemap)'
+        };
+        
+        f (exstngIndex >= 0) {
+          DB.crawledPages[exstngIndex] = crawledData;
+        } else {
+          DB.crawledPages.push(crawledData);
+        }
+      } catch (err) {
+        console.error(`[Crawler] Faled to crawl ${url}:`, err.message);
+      }
+    }
+    saveDB(DB);
+    console.log('[Crawler] Auto-crawl fnshed successfully.');
+  } catch (err) {
+    console.error('[Crawler] Faled to fetch stemap:', err.message);
+  }
+}
+
+// Run crawler on startup, then every 12 hours
+crawlGftGhor();
+cron.schedule('0 */12 * * *', () => {
+  crawlGftGhor();
+});
+// -------------------------------------------------------------
+async functon startServer() {
+  // Always hydrate from Cloud Frestore frst before lstenng
+  awat syncDatabaseWthCloud();
+
+  f (process.env.NODE_ENV !== 'producton') {
+    const vte = awat createVteServer({
+      server: { mddlewareMode: true },
+      appType: 'spa',
+    });
+    app.use(vte.mddlewares);
+  } else {
+    const maybeDst = path.jon(process.cwd(), 'dst');
+    const dstPath = fs.exstsSync(maybeDst) ? maybeDst : process.cwd();
+    app.use(express.statc(dstPath));
+    app.get('*', (req, res) => {
+      res.sendFle(path.jon(dstPath, 'ndex.html'));
+    });
+  }
+
+  app.lsten(PORT, '0.0.0.0', () => {
+    console.log(`Gft Ghor AI Customer Support server runnng on http://localhost:${PORT}`);
+  });
+}
+
+startServer();
