@@ -873,7 +873,7 @@ function getAllGeminiApiKeys(): string[] {
 async function callGeminiAI(
   contents: any[],
   systemInstruction: string,
-  maxTokens: number = 1000,
+  maxTokens: number = 3000,
   temperature: number = 0.7
 ): Promise<string | null> {
   const apiKeys = getAllGeminiApiKeys();
@@ -909,9 +909,9 @@ async function callGeminiAI(
           },
         });
 
-        // 10s timeout per attempt so response is fully generated without truncation
+        // 25s timeout per attempt so long responses are fully generated without truncation
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error(`Timeout (${modelName})`)), 10000)
+          setTimeout(() => reject(new Error(`Timeout (${modelName})`)), 25000)
         );
 
         const response: any = await Promise.race([apiCall, timeoutPromise]);
@@ -3106,7 +3106,7 @@ app.post('/api/admin/ai-assistant', adminAuthMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'Invalid history payload' });
     }
 
-    let systemInstruction = "You are an expert AI Business Assistant, Digital Marketer, and Strategist for 'Gift Ghor'. You are talking directly to the Owner of the business. Do NOT talk like a customer service bot. Your job is to help the owner with ad copy, business strategy, data analysis, and product ideas. Be professional, creative, and proactive. Provide well-formatted answers with emojis where appropriate. Base your knowledge on the following business context:\n\n" + buildSystemKnowledgeContext(DB);
+    let systemInstruction = "You are an expert AI Business Assistant, Digital Marketer, and Strategist for 'Gift Ghor'. You are talking directly to the Owner of the business. Do NOT talk like a customer service bot. Your job is to help the owner with ad copy, business strategy, data analysis, and product ideas. Be professional, creative, and proactive. Provide well-formatted, complete answers with emojis where appropriate. CRITICAL: Always complete your sentences and paragraphs fully without stopping mid-sentence. Base your knowledge on the following business context:\n\n" + buildSystemKnowledgeContext(DB);
     try {
       const analyticsContext = await fetchAnalyticsData();
       if (analyticsContext) {
@@ -3142,7 +3142,10 @@ app.post('/api/admin/ai-assistant', adminAuthMiddleware, async (req, res) => {
       }
     }
 
-    const botReplyText = await callGeminiAI(normalizedHistory, systemInstruction, 1000, 0.8);
+    // Limit history to last 10 turns to avoid exceeding context window
+    const recentHistory = normalizedHistory.slice(-10);
+
+    const botReplyText = await callGeminiAI(recentHistory, systemInstruction, 4000, 0.8);
 
     if (!botReplyText) {
       return res.status(500).json({ error: 'All API keys or candidate models failed to generate a response.' });

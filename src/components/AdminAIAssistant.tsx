@@ -116,8 +116,9 @@ export const AdminAIAssistant: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // Build history payload for Gemini
-      const history = messages.slice(1).map(m => {
+      // Build history payload for Gemini (limit to last 8 messages to prevent context overflow)
+      const recentMessages = messages.slice(1).slice(-8);
+      const history = recentMessages.map(m => {
         const parts: any[] = [];
         if (m.text) {
           parts.push({ text: m.text });
@@ -197,7 +198,7 @@ export const AdminAIAssistant: React.FC = () => {
               {msg.imageUrl && (
                 <img src={msg.imageUrl} alt="Uploaded" className="max-w-full h-auto rounded-lg mb-2 border border-black/10" />
               )}
-              <div className="prose prose-sm max-w-none prose-p:leading-relaxed">
+              <div className="prose prose-sm max-w-none prose-p:leading-relaxed break-words whitespace-pre-wrap leading-normal text-gray-800">
                 {msg.sender === 'user' ? (
                   <p>{msg.text}</p>
                 ) : (
