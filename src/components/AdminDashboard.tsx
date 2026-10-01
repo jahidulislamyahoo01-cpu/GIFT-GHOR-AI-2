@@ -2941,42 +2941,145 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Store Logo (Upload Image)
-                  </label>
-                  <div className="flex items-center gap-4">
+                <div className="bg-amber-50/40 p-4 rounded-2xl border border-amber-200/60">
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="block text-xs font-bold text-gray-800">
+                      Store Logo (লোগো আপলোড ও লিংক)
+                    </label>
+                    {branding.logoUrl && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          setBranding({ ...branding, logoUrl: '' });
+                          try {
+                            await fetch('/api/admin/branding/logo', {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                                Authorization: `Bearer ${authToken}`,
+                              },
+                              body: JSON.stringify({ logoUrl: '' }),
+                            });
+                            showToast('লোগো মুছে ফেলা হয়েছে (ডিফল্ট আইকন সেট করা হয়েছে)');
+                          } catch (err) {}
+                        }}
+                        className="text-[11px] text-rose-600 hover:text-rose-800 font-semibold"
+                      >
+                        লোগো মুছে ফেলুন
+                      </button>
+                    )}
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                     {branding.logoUrl ? (
-                      <div className="w-12 h-12 rounded-xl border border-[#ECECEC] bg-white overflow-hidden shrink-0 flex items-center justify-center">
+                      <div className="w-16 h-16 rounded-2xl border border-amber-300 bg-white shadow-xs overflow-hidden shrink-0 flex items-center justify-center p-1">
                         <img src={branding.logoUrl} alt="Logo Preview" className="w-full h-full object-contain" />
                       </div>
                     ) : (
-                      <div className="w-12 h-12 rounded-xl border border-[#ECECEC] bg-gray-50 shrink-0 flex items-center justify-center text-gray-400">
-                        <span className="text-[10px]">No logo</span>
+                      <div className="w-16 h-16 rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50 shrink-0 flex flex-col items-center justify-center text-gray-400">
+                        <span className="text-xl">🎁</span>
+                        <span className="text-[9px] font-semibold">No logo</span>
                       </div>
                     )}
-                    <div className="flex-1">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            if (file.size > 2 * 1024 * 1024) {
-                              alert("File is too large. Please upload an image under 2MB.");
-                              return;
+                    
+                    <div className="flex-1 w-full space-y-2">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = (event) => {
+                                const img = new Image();
+                                img.onload = async () => {
+                                  // Client-side canvas compression to 300x300 (fast, clean, lightweight)
+                                  const canvas = document.createElement('canvas');
+                                  const maxDim = 300;
+                                  let width = img.width;
+                                  let height = img.height;
+                                  if (width > height) {
+                                    if (width > maxDim) {
+                                      height = Math.round((height * maxDim) / width);
+                                      width = maxDim;
+                                    }
+                                  } else {
+                                    if (height > maxDim) {
+                                      width = Math.round((width * maxDim) / height);
+                                      height = maxDim;
+                                    }
+                                  }
+                                  canvas.width = width;
+                                  canvas.height = height;
+                                  const ctx = canvas.getContext('2d');
+                                  if (ctx) {
+                                    ctx.drawImage(img, 0, 0, width, height);
+                                    const compressedDataUrl = canvas.toDataURL('image/png', 0.9);
+                                    setBranding((prev: any) => ({ ...prev, logoUrl: compressedDataUrl }));
+                                    
+                                    try {
+                                      const res = await fetch('/api/admin/branding/logo', {
+                                        method: 'POST',
+                                        headers: {
+                                          'Content-Type': 'application/json',
+                                          Authorization: `Bearer ${authToken}`,
+                                        },
+                                        body: JSON.stringify({ logoUrl: compressedDataUrl }),
+                                      });
+                                      if (res.ok) {
+                                        showToast('✅ লোগো সফলভাবে আপলোড ও সেভ হয়েছে!');
+                                      }
+                                    } catch (err) {
+                                      showToast('লোগো লোকাল প্রিভিউতে সেট হয়েছে');
+                                    }
+                                  }
+                                };
+                                img.src = event.target?.result as string;
+                              };
+                              reader.readAsDataURL(file);
                             }
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                              setBranding({ ...branding, logoUrl: reader.result as string });
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
-                        className="w-full text-xs bg-gray-50 border border-[#ECECEC] rounded-xl px-3 py-2 text-[#262626] file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-semibold file:bg-[#FDF7EE] file:text-[#ECA548] hover:file:bg-[#faeedd] cursor-pointer"
-                      />
-                      <p className="text-[10px] text-gray-400 mt-1">
-                        Upload a PNG or JPG. Leave blank for default icon. Max 2MB.
+                          }}
+                          className="w-full text-xs bg-white border border-[#ECECEC] rounded-xl px-3 py-2 text-[#262626] file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-[11px] file:font-semibold file:bg-[#FDF7EE] file:text-[#ECA548] hover:file:bg-[#faeedd] cursor-pointer shadow-xs"
+                        />
+                      </div>
+                      
+                      {/* Direct Logo Image URL Input */}
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="url"
+                          placeholder="অথবা সরাসরি লোগো ইমেজ লিঙ্ক (https://...)"
+                          value={branding.logoUrl?.startsWith('data:') ? '' : (branding.logoUrl || '')}
+                          onChange={(e) => setBranding({ ...branding, logoUrl: e.target.value })}
+                          className="flex-1 text-xs bg-white border border-[#ECECEC] rounded-xl px-3 py-1.5 text-[#262626]"
+                        />
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            if (!branding.logoUrl) return;
+                            try {
+                              const res = await fetch('/api/admin/branding/logo', {
+                                method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                  Authorization: `Bearer ${authToken}`,
+                                },
+                                body: JSON.stringify({ logoUrl: branding.logoUrl }),
+                              });
+                              if (res.ok) {
+                                showToast('✅ লোগো লিংক সেভ হয়েছে!');
+                              }
+                            } catch (err) {
+                              showToast('লোগো লিংক সেট হয়েছে');
+                            }
+                          }}
+                          className="px-3 py-1.5 bg-[#ECA548] hover:bg-[#d9943b] text-white font-bold text-xs rounded-xl transition shrink-0 shadow-xs"
+                        >
+                          সেভ করুন
+                        </button>
+                      </div>
+                      <p className="text-[10px] text-gray-500">
+                        যেকোনো PNG, JPG বা WebP ছবি সিলেক্ট করার সাথে সাথেই স্বয়ংক্রিয়ভাবে কম্প্রেস ও সেভ হয়ে যাবে।
                       </p>
                     </div>
                   </div>

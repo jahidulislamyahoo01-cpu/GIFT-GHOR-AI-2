@@ -469,8 +469,12 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                 }}
               >
                 <div className="flex items-start gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-[#FDF7EE] text-[#ECA548] flex items-center justify-center shrink-0 font-bold text-sm">
-                    🎁
+                  <div className="w-8 h-8 rounded-full bg-[#FDF7EE] text-[#ECA548] flex items-center justify-center shrink-0 font-bold text-sm overflow-hidden border border-[#ECA548]/20">
+                    {branding.logoUrl ? (
+                      <img src={branding.logoUrl} alt="Logo" className="w-full h-full object-contain p-0.5" />
+                    ) : (
+                      <span>🎁</span>
+                    )}
                   </div>
                   <div>
                     <div className="flex items-center justify-between">
@@ -556,13 +560,21 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
             <div className="bg-white px-5 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
               {/* Brand Logo & Title */}
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-[#FDF7EE] flex items-center justify-center text-[#ECA548] font-black text-sm shrink-0 border border-[#ECA548]/30">
-                  <Gift className="w-4 h-4 text-[#ECA548]" />
+                <div className="w-8 h-8 rounded-full bg-[#FDF7EE] flex items-center justify-center text-[#ECA548] font-black text-sm shrink-0 border border-[#ECA548]/30 overflow-hidden">
+                  {branding.logoUrl ? (
+                    <img
+                      src={branding.logoUrl}
+                      alt={branding.storeName || "Logo"}
+                      className="w-full h-full object-contain p-0.5"
+                    />
+                  ) : (
+                    <Gift className="w-4 h-4 text-[#ECA548]" />
+                  )}
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
                     <span className="font-extrabold text-base tracking-tight text-[#262626]">
-                      Gift Ghor
+                      {branding.storeName || 'Gift Ghor'}
                     </span>
                     <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#ECA548]"></span>
                     <span className="text-[11px] font-semibold text-[#ECA548] uppercase tracking-wider">
@@ -612,8 +624,12 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
               <div className="flex flex-col items-start">
                 <div className="flex items-start gap-2.5 max-w-[88%]">
                   {/* Bot Avatar */}
-                  <div className="w-7 h-7 rounded-full bg-white border border-[#ECA548]/30 shadow-xs flex items-center justify-center shrink-0 mt-0.5 text-[#ECA548]">
-                    <Gift className="w-3.5 h-3.5 text-[#ECA548]" />
+                  <div className="w-7 h-7 rounded-full bg-white border border-[#ECA548]/30 shadow-xs flex items-center justify-center shrink-0 mt-0.5 text-[#ECA548] overflow-hidden">
+                    {branding.logoUrl ? (
+                      <img src={branding.logoUrl} alt="Bot" className="w-full h-full object-contain p-0.5" />
+                    ) : (
+                      <Gift className="w-3.5 h-3.5 text-[#ECA548]" />
+                    )}
                   </div>
 
                   <div className="flex flex-col gap-1">
@@ -709,8 +725,12 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                     <div className="flex items-start gap-2.5 max-w-[88%]">
                       {/* Bot Avatar */}
                       {!isUser && (
-                        <div className="w-7 h-7 rounded-full bg-white border border-[#ECA548]/30 shadow-xs flex items-center justify-center shrink-0 mt-0.5 text-[#ECA548]">
-                          <Gift className="w-3.5 h-3.5 text-[#ECA548]" />
+                        <div className="w-7 h-7 rounded-full bg-white border border-[#ECA548]/30 shadow-xs flex items-center justify-center shrink-0 mt-0.5 text-[#ECA548] overflow-hidden">
+                          {branding.logoUrl ? (
+                            <img src={branding.logoUrl} alt="Bot" className="w-full h-full object-contain p-0.5" />
+                          ) : (
+                            <Gift className="w-3.5 h-3.5 text-[#ECA548]" />
+                          )}
                         </div>
                       )}
 

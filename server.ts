@@ -3532,6 +3532,14 @@ app.post('/api/admin/branding', adminAuthMiddleware, (req, res) => {
   res.json({ success: true, branding: DB.branding });
 });
 
+// Dedicated Logo Update Endpoint
+app.post('/api/admin/branding/logo', adminAuthMiddleware, (req, res) => {
+  const { logoUrl } = req.body;
+  DB.branding.logoUrl = typeof logoUrl === 'string' ? logoUrl.trim() : '';
+  saveDB(DB);
+  res.json({ success: true, logoUrl: DB.branding.logoUrl });
+});
+
 // Update Delivery & Return Rules
 app.post('/api/admin/delivery-policy', adminAuthMiddleware, (req, res) => {
   const policyData = req.body;
