@@ -4,19 +4,11 @@ import {
   X,
   Send,
   Gift,
-  Phone,
-  MapPin,
-  ShoppingBag,
-  Clock,
   ChevronRight,
-  Headset,
   Image as ImageIcon,
   RotateCcw,
   Menu,
   Sparkles,
-  Truck,
-  HelpCircle,
-  PackageCheck,
   ChevronDown,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -46,7 +38,6 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputVal, setInputVal] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [typingElapsed, setTypingElapsed] = useState(0);
   const [showTeaser, setShowTeaser] = useState(false);
   const [showQuickMenu, setShowQuickMenu] = useState(false);
   const [showMoreOptions, setShowMoreOptions] = useState(false);
@@ -62,7 +53,6 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
     adminConnected: false,
     mode: 'ai',
   });
-  const [timerSeconds, setTimerSeconds] = useState<number | null>(null);
 
   // Quick Order Modal State
   const [showOrderModal, setShowOrderModal] = useState(false);
@@ -82,6 +72,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
   const [trackResult, setTrackResult] = useState<any>(null);
   const [isTrackingLoading, setIsTrackingLoading] = useState(false);
 
+  // Original Brand Colors: Warm Amber/Honey #ECA548 & Charcoal #262626
   const [branding, setBranding] = useState<{
     fontFamily: string;
     storeName: string;
@@ -111,7 +102,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
     widgetTitle: 'Gift Ghor Assistant',
     widgetSubtitle: 'Online | Instant replies in বাংলা & English',
     logoUrl: '',
-    primaryColor: '#E02424',
+    primaryColor: '#ECA548',
     welcomeMessage: 'আসসালামু আলাইকুম! আমি গিফট ঘর এর এআই বন্ধু। কীভাবে সাহায্য করতে পারি?',
     quickReplies: [
       '🎁 আমার অফার',
@@ -185,7 +176,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
     }
   }, [showTeaser, isOpen, isIframeEmbed]);
 
-  // Fetch session messages
+  // Fetch session messages without wiping or hiding cards
   useEffect(() => {
     if (!sessionId) return;
 
@@ -200,18 +191,8 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
             mode: data.mode || 'ai',
           });
         }
-        if (data.messages && data.messages.length > 0) {
+        if (data && Array.isArray(data.messages) && data.messages.length > 0) {
           setMessages(data.messages);
-        } else {
-          // Initialize clean welcome message
-          const initialMsg: ChatMessage = {
-            id: 'welcome-msg',
-            sessionId,
-            sender: 'bot',
-            text: `হ্যালো! 👋\n\nআমি গিফট ঘর এর এআই বন্ধু! আপনার কেনাকাটার পার্সোনাল অ্যাসিস্ট্যান্ট!\n\nকীভাবে সাহায্য করতে পারি?\n\nআমার উত্তর AI দ্বারা প্রস্তুত হয়, তাই সরাসরি দেখতে বা অর্ডার করতে নিচের যেকোনো অপশনে ট্যাপ করতে পারেন:`,
-            timestamp: new Date().toISOString(),
-          };
-          setMessages([initialMsg]);
         }
       })
       .catch((err) => console.log('Session fetch err', err));
@@ -224,7 +205,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
     }
   }, [messages, isTyping, isOpen]);
 
-  // Periodic poll for admin replies if active
+  // Periodic poll for live admin replies
   useEffect(() => {
     if (!isOpen || !sessionId) return;
     const interval = setInterval(() => {
@@ -239,7 +220,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
               mode: data.mode || 'ai',
             });
           }
-          if (data.messages && Array.isArray(data.messages)) {
+          if (data && Array.isArray(data.messages) && data.messages.length > 0) {
             const lastIncoming = data.messages[data.messages.length - 1]?.id;
             const lastCurrent = messages[messages.length - 1]?.id;
             if (data.messages.length !== messages.length || (lastIncoming && lastIncoming !== lastCurrent)) {
@@ -251,20 +232,6 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
     }, 2500);
     return () => clearInterval(interval);
   }, [isOpen, sessionId, messages]);
-
-  // Dynamic typing timer
-  useEffect(() => {
-    let timer: any;
-    if (isTyping) {
-      setTypingElapsed(0);
-      timer = setInterval(() => {
-        setTypingElapsed((prev) => prev + 1);
-      }, 1000);
-    } else {
-      setTypingElapsed(0);
-    }
-    return () => clearInterval(timer);
-  }, [isTyping]);
 
   const handleSendMessage = async (textToSend?: string) => {
     const messageText = (textToSend || inputVal).trim();
@@ -327,7 +294,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
         id: 'err-' + Date.now(),
         sessionId,
         sender: 'bot',
-        text: 'সংযোগ জনিত সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন বা সরাসরি আমাদের নম্বরে কল করুন।',
+        text: 'সংযোগ জনিত সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন বা সরাসরি আমাদের পেজে মেসেজ দিন।',
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, errorMsg]);
@@ -341,15 +308,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
     const newSessionId = 'ghor-' + Math.random().toString(36).substring(2, 9) + '-' + Date.now().toString(36);
     localStorage.setItem('giftghor_chat_session_id', newSessionId);
     setSessionId(newSessionId);
-    setMessages([
-      {
-        id: 'welcome-' + Date.now(),
-        sessionId: newSessionId,
-        sender: 'bot',
-        text: `হ্যালো! 👋\n\nআমি গিফট ঘর এর এআই বন্ধু! আপনার কেনাকাটার পার্সোনাল অ্যাসিস্ট্যান্ট!\n\nকীভাবে সাহায্য করতে পারি?\n\nযেকোনো প্রশ্ন সরাসরি লিখুন অথবা নিচের অপশনগুলোতে ট্যাপ করুন:`,
-        timestamp: new Date().toISOString(),
-      },
-    ]);
+    setMessages([]);
     setShowQuickMenu(false);
   };
 
@@ -492,8 +451,8 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
   ];
 
   return (
-    <div id="giftghor-support-root" className="relative z-50 font-sans text-gray-800">
-      {/* Floating launcher trigger button */}
+    <div id="giftghor-support-root" className="relative z-50 font-sans text-[#262626]">
+      {/* Floating launcher trigger button (Gift Ghor Amber Brand Color #ECA548) */}
       {!standalone && (
         <div className={`fixed flex flex-col items-end gap-3 z-50 ${isIframeEmbed ? 'bottom-0 right-0' : 'bottom-6 right-6'}`}>
           {/* Teaser notification bubble */}
@@ -503,19 +462,19 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                 initial={{ opacity: 0, y: 15, scale: 0.92 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="bg-white rounded-2xl p-3.5 shadow-xl border border-gray-100 max-w-[280px] relative cursor-pointer group hover:border-red-400 transition-all"
+                className="bg-white rounded-2xl p-3.5 shadow-xl border border-gray-100 max-w-[280px] relative cursor-pointer group hover:border-[#ECA548] transition-all"
                 onClick={() => {
                   setIsOpen(true);
                   setShowTeaser(false);
                 }}
               >
                 <div className="flex items-start gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-red-50 text-red-600 flex items-center justify-center shrink-0 font-bold text-sm">
+                  <div className="w-8 h-8 rounded-full bg-[#FDF7EE] text-[#ECA548] flex items-center justify-center shrink-0 font-bold text-sm">
                     🎁
                   </div>
                   <div>
                     <div className="flex items-center justify-between">
-                      <p className="text-xs font-bold text-gray-900">Gift Ghor AI</p>
+                      <p className="text-xs font-bold text-[#262626]">Gift Ghor AI</p>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -536,7 +495,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
             )}
           </AnimatePresence>
 
-          {/* Main Launcher Button */}
+          {/* Main Launcher Button (Original Brand Color #ECA548) */}
           <motion.button
             id="giftghor-chat-launcher-btn"
             whileHover={{ scale: 1.05 }}
@@ -546,7 +505,8 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
               setShowTeaser(false);
             }}
             aria-label="Open Gift Ghor Chat"
-            className="w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-white bg-gradient-to-tr from-red-600 to-rose-500 hover:shadow-red-500/25 transition-shadow"
+            style={{ backgroundColor: branding.primaryColor || '#ECA548' }}
+            className="w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-white transition-shadow hover:shadow-[#ECA548]/40"
           >
             <AnimatePresence mode="wait">
               {isOpen ? (
@@ -596,16 +556,16 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
             <div className="bg-white px-5 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
               {/* Brand Logo & Title */}
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-600 font-black text-sm shrink-0">
-                  <Gift className="w-4 h-4 text-red-600" />
+                <div className="w-8 h-8 rounded-full bg-[#FDF7EE] flex items-center justify-center text-[#ECA548] font-black text-sm shrink-0 border border-[#ECA548]/30">
+                  <Gift className="w-4 h-4 text-[#ECA548]" />
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-extrabold text-base tracking-tight text-red-600">
-                      giftghor
+                    <span className="font-extrabold text-base tracking-tight text-[#262626]">
+                      Gift Ghor
                     </span>
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-600"></span>
-                    <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wider">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#ECA548]"></span>
+                    <span className="text-[11px] font-semibold text-[#ECA548] uppercase tracking-wider">
                       AI
                     </span>
                   </div>
@@ -648,20 +608,109 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
 
             {/* 2. Chat Feed Area */}
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 bg-[#F8F9FA]">
-              {messages.map((msg, index) => {
+              {/* Permanent Welcome Greeting & Quick Action Cards: ALWAYS PRESENT, NEVER VANISHES */}
+              <div className="flex flex-col items-start">
+                <div className="flex items-start gap-2.5 max-w-[88%]">
+                  {/* Bot Avatar */}
+                  <div className="w-7 h-7 rounded-full bg-white border border-[#ECA548]/30 shadow-xs flex items-center justify-center shrink-0 mt-0.5 text-[#ECA548]">
+                    <Gift className="w-3.5 h-3.5 text-[#ECA548]" />
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    {/* Welcome Message Bubble (Clean off-white) */}
+                    <div className="bg-white text-[#262626] border border-gray-150 rounded-2xl rounded-tl-xs px-4 py-3 text-[13.5px] leading-relaxed shadow-xs">
+                      <div className="font-semibold text-[#262626] mb-1">হ্যালো! 👋</div>
+                      <div className="text-gray-700 leading-relaxed mb-2">
+                        আমি গিফট ঘর এর এআই বন্ধু! আপনার কেনাকাটার পার্সোনাল অ্যাসিস্ট্যান্ট!
+                      </div>
+                      <div className="text-gray-600 text-xs leading-relaxed">
+                        কীভাবে সাহায্য করতে পারি? সরাসরি দেখতে বা অর্ডার করতে নিচের অপশনগুলোতে ট্যাপ করুন:
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Permanent Structured Option Cards Container (Inspired by reference UI) */}
+                <div className="w-full mt-3 pl-9 pr-1 space-y-2">
+                  <div className="bg-white/90 border border-gray-200/70 rounded-2xl p-2 space-y-1.5 shadow-xs">
+                    {mainActionOptions.map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={opt.action}
+                        className="w-full bg-white hover:bg-[#FDF7EE]/50 active:scale-[0.99] border border-gray-100 rounded-xl px-3.5 py-2.5 flex items-center justify-between shadow-2xs transition-all text-left group"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="text-base">{opt.emoji}</span>
+                          <span className="text-xs font-semibold text-[#262626] group-hover:text-[#ECA548] transition-colors">
+                            {opt.title}
+                          </span>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-[#ECA548] group-hover:translate-x-0.5 transition-transform shrink-0" />
+                      </button>
+                    ))}
+
+                    {/* Expandable More Options */}
+                    <AnimatePresence>
+                      {showMoreOptions && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="space-y-1.5 overflow-hidden pt-1"
+                        >
+                          {extendedActionOptions.map((opt) => (
+                            <button
+                              key={opt.id}
+                              onClick={opt.action}
+                              className="w-full bg-white hover:bg-[#FDF7EE]/50 active:scale-[0.99] border border-gray-100 rounded-xl px-3.5 py-2.5 flex items-center justify-between shadow-2xs transition-all text-left group"
+                            >
+                              <div className="flex items-center gap-2.5">
+                                <span className="text-base">{opt.emoji}</span>
+                                <span className="text-xs font-semibold text-[#262626] group-hover:text-[#ECA548] transition-colors">
+                                  {opt.title}
+                                </span>
+                              </div>
+                              <ChevronRight className="w-4 h-4 text-[#ECA548] group-hover:translate-x-0.5 transition-transform shrink-0" />
+                            </button>
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Toggle "+ আরো অপশন" Button */}
+                    <button
+                      type="button"
+                      onClick={() => setShowMoreOptions(!showMoreOptions)}
+                      className="w-full bg-gray-50 hover:bg-[#FDF7EE]/70 border border-dashed border-gray-200 rounded-xl px-3.5 py-2 flex items-center justify-between transition-colors text-left group"
+                    >
+                      <div className="flex items-center gap-2 text-xs font-bold text-gray-700 group-hover:text-[#ECA548]">
+                        <span>{showMoreOptions ? '−' : '+'}</span>
+                        <span>{showMoreOptions ? 'কম দেখান' : 'আরো দেখুন'}</span>
+                      </div>
+                      <ChevronDown
+                        className={`w-3.5 h-3.5 text-gray-400 transition-transform ${
+                          showMoreOptions ? 'rotate-180 text-[#ECA548]' : ''
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dynamic Conversation Messages */}
+              {messages.map((msg) => {
                 const isUser = msg.sender === 'user';
-                const isFirstBotMessage = !isUser && index === 0;
 
                 return (
                   <div
                     key={msg.id}
                     className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}
                   >
-                    <div className={`flex items-start gap-2.5 max-w-[88%]`}>
+                    <div className="flex items-start gap-2.5 max-w-[88%]">
                       {/* Bot Avatar */}
                       {!isUser && (
-                        <div className="w-7 h-7 rounded-full bg-white border border-gray-200/80 shadow-xs flex items-center justify-center shrink-0 mt-0.5 text-red-600">
-                          <Gift className="w-3.5 h-3.5" />
+                        <div className="w-7 h-7 rounded-full bg-white border border-[#ECA548]/30 shadow-xs flex items-center justify-center shrink-0 mt-0.5 text-[#ECA548]">
+                          <Gift className="w-3.5 h-3.5 text-[#ECA548]" />
                         </div>
                       )}
 
@@ -670,8 +719,8 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                         <div
                           className={`rounded-2xl px-4 py-3 text-[13.5px] leading-relaxed ${
                             isUser
-                              ? 'bg-red-600 text-white rounded-br-xs font-medium shadow-xs'
-                              : 'bg-white text-gray-800 border border-gray-150 rounded-tl-xs shadow-xs'
+                              ? 'bg-[#ECA548] text-white rounded-br-xs font-medium shadow-xs'
+                              : 'bg-white text-[#262626] border border-gray-150 rounded-tl-xs shadow-xs'
                           }`}
                         >
                           {msg.image && (
@@ -694,74 +743,6 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                         </span>
                       </div>
                     </div>
-
-                    {/* 3. Structured Option Cards (Reference style directly beneath first bot welcome message) */}
-                    {isFirstBotMessage && (
-                      <div className="w-full mt-3 pl-9 pr-1 space-y-2">
-                        <div className="bg-white/90 border border-gray-200/70 rounded-2xl p-2 space-y-1.5 shadow-xs">
-                          {mainActionOptions.map((opt) => (
-                            <button
-                              key={opt.id}
-                              onClick={opt.action}
-                              className="w-full bg-white hover:bg-gray-50 active:scale-[0.99] border border-gray-100/90 rounded-xl px-3.5 py-2.5 flex items-center justify-between shadow-2xs transition-all text-left group"
-                            >
-                              <div className="flex items-center gap-2.5">
-                                <span className="text-base">{opt.emoji}</span>
-                                <span className="text-xs font-semibold text-gray-800 group-hover:text-red-600 transition-colors">
-                                  {opt.title}
-                                </span>
-                              </div>
-                              <ChevronRight className="w-4 h-4 text-red-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
-                            </button>
-                          ))}
-
-                          {/* Expandable More Options */}
-                          <AnimatePresence>
-                            {showMoreOptions && (
-                              <motion.div
-                                initial={{ opacity: 0, height: 0 }}
-                                animate={{ opacity: 1, height: 'auto' }}
-                                exit={{ opacity: 0, height: 0 }}
-                                className="space-y-1.5 overflow-hidden pt-1"
-                              >
-                                {extendedActionOptions.map((opt) => (
-                                  <button
-                                    key={opt.id}
-                                    onClick={opt.action}
-                                    className="w-full bg-white hover:bg-gray-50 active:scale-[0.99] border border-gray-100/90 rounded-xl px-3.5 py-2.5 flex items-center justify-between shadow-2xs transition-all text-left group"
-                                  >
-                                    <div className="flex items-center gap-2.5">
-                                      <span className="text-base">{opt.emoji}</span>
-                                      <span className="text-xs font-semibold text-gray-800 group-hover:text-red-600 transition-colors">
-                                        {opt.title}
-                                      </span>
-                                    </div>
-                                    <ChevronRight className="w-4 h-4 text-red-500 group-hover:translate-x-0.5 transition-transform shrink-0" />
-                                  </button>
-                                ))}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-
-                          {/* Toggle "+ আরো অপশন" Button */}
-                          <button
-                            type="button"
-                            onClick={() => setShowMoreOptions(!showMoreOptions)}
-                            className="w-full bg-gray-50/80 hover:bg-gray-100 border border-dashed border-gray-200 rounded-xl px-3.5 py-2 flex items-center justify-between transition-colors text-left group"
-                          >
-                            <div className="flex items-center gap-2 text-xs font-bold text-gray-700 group-hover:text-red-600">
-                              <span>{showMoreOptions ? '−' : '+'}</span>
-                              <span>{showMoreOptions ? 'কম দেখান' : 'আরো দেখুন'}</span>
-                            </div>
-                            <ChevronDown
-                              className={`w-3.5 h-3.5 text-gray-400 transition-transform ${
-                                showMoreOptions ? 'rotate-180 text-red-500' : ''
-                              }`}
-                            />
-                          </button>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 );
               })}
@@ -775,12 +756,12 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                     exit={{ opacity: 0, y: 4 }}
                     className="flex items-center gap-2 pl-9"
                   >
-                    <div className="bg-white border border-gray-200/80 px-3.5 py-2 rounded-2xl rounded-tl-xs shadow-xs flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-red-500 animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <span className="w-2 h-2 rounded-full bg-red-500 animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <span className="w-2 h-2 rounded-full bg-red-500 animate-bounce" style={{ animationDelay: '300ms' }} />
-                      <span className="text-[11px] font-medium text-gray-500 ml-1">
-                        লিখছে...
+                    <div className="bg-white border border-[#ECA548]/20 px-3.5 py-2 rounded-2xl rounded-tl-xs shadow-xs flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-[#ECA548] animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <span className="w-2 h-2 rounded-full bg-[#ECA548] animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <span className="w-2 h-2 rounded-full bg-[#ECA548] animate-bounce" style={{ animationDelay: '300ms' }} />
+                      <span className="text-[11px] font-medium text-[#ECA548] ml-1">
+                        উত্তর প্রস্তুত হচ্ছে...
                       </span>
                     </div>
                   </motion.div>
@@ -800,8 +781,8 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                   className="bg-white border-t border-gray-200 px-4 py-3 shadow-lg z-20 space-y-1.5"
                 >
                   <div className="flex items-center justify-between pb-1.5 border-b border-gray-100">
-                    <span className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-red-500" />
+                    <span className="text-xs font-bold text-[#262626] flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[#ECA548]" />
                       দ্রুত সেবা ও অপশনসমূহ
                     </span>
                     <button
@@ -816,7 +797,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                       <button
                         key={opt.id}
                         onClick={opt.action}
-                        className="bg-gray-50 hover:bg-red-50 hover:border-red-200 border border-gray-150 rounded-xl px-2.5 py-2 text-left flex items-center gap-2 transition-colors text-xs font-medium text-gray-700 hover:text-red-700"
+                        className="bg-gray-50 hover:bg-[#FDF7EE] hover:border-[#ECA548]/40 border border-gray-150 rounded-xl px-2.5 py-2 text-left flex items-center gap-2 transition-colors text-xs font-medium text-gray-700 hover:text-[#ECA548]"
                       >
                         <span>{opt.emoji}</span>
                         <span className="truncate">{opt.title}</span>
@@ -829,22 +810,22 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
 
             {/* Image Preview Banner */}
             {selectedImage && (
-              <div className="px-4 py-2 bg-red-50 border-t border-red-100 flex items-center justify-between shrink-0">
+              <div className="px-4 py-2 bg-[#FDF7EE] border-t border-[#ECA548]/30 flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-2">
-                  <img src={selectedImage} alt="Selected" className="w-8 h-8 object-cover rounded-lg border border-red-200" />
-                  <span className="text-xs font-medium text-red-900">ছবি যুক্ত হয়েছে</span>
+                  <img src={selectedImage} alt="Selected" className="w-8 h-8 object-cover rounded-lg border border-[#ECA548]/50" />
+                  <span className="text-xs font-medium text-[#ECA548]">ছবি যুক্ত হয়েছে</span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setSelectedImage(null)}
-                  className="p-1 rounded-full text-red-600 hover:bg-red-100 transition"
+                  className="p-1 rounded-full text-[#ECA548] hover:bg-[#ECA548]/10 transition"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
             )}
 
-            {/* 4. Bottom Input Bar (Clean, rounded, matching reference) */}
+            {/* 4. Bottom Input Bar (Clean, original brand styling) */}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -860,18 +841,18 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                 className="hidden"
               />
 
-              {/* Action Menu (☰ Hamburger Icon in bold red/accent) */}
+              {/* Action Menu (☰ Hamburger Icon in Gift Ghor Amber) */}
               <button
                 type="button"
                 onClick={() => setShowQuickMenu(!showQuickMenu)}
                 title="দ্রুত অপশন মেনু"
-                className="w-9 h-9 rounded-xl flex items-center justify-center text-red-600 hover:bg-red-50 active:scale-95 transition-all shrink-0"
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-[#ECA548] hover:bg-[#FDF7EE] active:scale-95 transition-all shrink-0"
               >
                 <Menu className="w-5 h-5 stroke-[2.5]" />
               </button>
 
               {/* Pill-shaped Input Container */}
-              <div className="flex-1 bg-white border border-gray-200 focus-within:border-gray-400 rounded-2xl px-3.5 py-2 flex items-center gap-2 transition-all shadow-2xs">
+              <div className="flex-1 bg-white border border-gray-200 focus-within:border-[#ECA548] focus-within:ring-1 focus-within:ring-[#ECA548]/20 rounded-2xl px-3.5 py-2 flex items-center gap-2 transition-all shadow-2xs">
                 <input
                   ref={inputRef}
                   type="text"
@@ -880,7 +861,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                   onChange={(e) => setInputVal(e.target.value)}
                   placeholder="Write a reply..."
                   disabled={isTyping}
-                  className="flex-1 text-xs sm:text-sm bg-transparent focus:outline-none text-gray-800 placeholder-gray-400"
+                  className="flex-1 text-xs sm:text-sm bg-transparent focus:outline-none text-[#262626] placeholder-gray-400"
                 />
 
                 {/* Camera / Image Attachment */}
@@ -888,20 +869,20 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   title="ছবি পাঠান"
-                  className="text-gray-400 hover:text-red-500 transition-colors p-0.5 shrink-0"
+                  className="text-gray-400 hover:text-[#ECA548] transition-colors p-0.5 shrink-0"
                 >
                   <ImageIcon className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Send Button: Sleek paper plane */}
+              {/* Send Button: Sleek paper plane with brand color */}
               <button
                 type="submit"
                 id="giftghor-chat-send-btn"
                 disabled={(!inputVal.trim() && !selectedImage) || isTyping}
                 className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all shrink-0 ${
                   inputVal.trim() || selectedImage
-                    ? 'text-red-600 bg-red-50 hover:bg-red-100 active:scale-95'
+                    ? 'text-[#ECA548] bg-[#FDF7EE] hover:bg-[#ECA548] hover:text-white active:scale-95'
                     : 'text-gray-300 cursor-not-allowed'
                 }`}
               >
@@ -916,7 +897,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                   <div className="bg-white border-b border-gray-100 p-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">🛍️</span>
-                      <span className="font-bold text-sm text-gray-900">১-ক্লিক ইনস্ট্যান্ট অর্ডার</span>
+                      <span className="font-bold text-sm text-[#262626]">১-ক্লিক ইনস্ট্যান্ট অর্ডার</span>
                     </div>
                     <button
                       onClick={() => setShowOrderModal(false)}
@@ -927,11 +908,11 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                   </div>
 
                   <form onSubmit={handleSubmitQuickOrder} className="p-4 space-y-3 overflow-y-auto">
-                    <div className="bg-red-50/70 p-3 rounded-2xl border border-red-100 text-xs">
-                      <span className="font-bold text-gray-900 block truncate">{orderProduct.title}</span>
+                    <div className="bg-[#FDF7EE] p-3 rounded-2xl border border-[#ECA548]/30 text-xs">
+                      <span className="font-bold text-[#262626] block truncate">{orderProduct.title}</span>
                       <div className="flex items-center justify-between mt-1 text-gray-600">
                         <span>মূল্য:</span>
-                        <span className="font-extrabold text-red-600 text-sm">৳{orderProduct.price} BDT</span>
+                        <span className="font-extrabold text-[#ECA548] text-sm">৳{orderProduct.price} BDT</span>
                       </div>
                     </div>
 
@@ -944,13 +925,13 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                         value={custName}
                         onChange={(e) => setCustName(e.target.value)}
                         placeholder="e.g. সাদিয়া ইসলাম"
-                        className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-gray-800 focus:outline-none focus:border-red-500 focus:bg-white transition"
+                        className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white transition"
                       />
                     </div>
 
                     <div>
                       <label className="block text-[11px] font-semibold text-gray-600 mb-1">
-                        সচল মোবাইল নম্বর <span className="text-red-500">*</span>
+                        সচল মোবাইল নম্বর <span className="text-rose-500">*</span>
                       </label>
                       <input
                         type="tel"
@@ -958,7 +939,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                         value={custPhone}
                         onChange={(e) => setCustPhone(e.target.value)}
                         placeholder="017xxxxxxxx"
-                        className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-gray-800 focus:outline-none focus:border-red-500 focus:bg-white transition font-mono"
+                        className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white transition font-mono"
                       />
                     </div>
 
@@ -972,7 +953,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                           onClick={() => setCustLocation('inside_dhaka')}
                           className={`text-xs py-2 px-2.5 rounded-xl border font-medium text-center transition ${
                             custLocation === 'inside_dhaka'
-                              ? 'border-red-500 bg-red-50 text-red-700 font-bold'
+                              ? 'border-[#ECA548] bg-[#FDF7EE] text-[#ECA548] font-bold'
                               : 'border-gray-200 bg-gray-50 text-gray-600'
                           }`}
                         >
@@ -983,7 +964,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                           onClick={() => setCustLocation('outside_dhaka')}
                           className={`text-xs py-2 px-2.5 rounded-xl border font-medium text-center transition ${
                             custLocation === 'outside_dhaka'
-                              ? 'border-red-500 bg-red-50 text-red-700 font-bold'
+                              ? 'border-[#ECA548] bg-[#FDF7EE] text-[#ECA548] font-bold'
                               : 'border-gray-200 bg-gray-50 text-gray-600'
                           }`}
                         >
@@ -994,7 +975,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
 
                     <div>
                       <label className="block text-[11px] font-semibold text-gray-600 mb-1">
-                        সম্পূর্ণ ডেলিভারি ঠিকানা (জেলা ও থানা সহ) <span className="text-red-500">*</span>
+                        সম্পূর্ণ ডেলিভারি ঠিকানা (জেলা ও থানা সহ) <span className="text-rose-500">*</span>
                       </label>
                       <textarea
                         required
@@ -1002,7 +983,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                         value={custAddress}
                         onChange={(e) => setCustAddress(e.target.value)}
                         placeholder="বাড়ি নং, রোড নং, এলাকা, থানা ও জেলা..."
-                        className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-gray-800 focus:outline-none focus:border-red-500 focus:bg-white transition"
+                        className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white transition"
                       />
                     </div>
 
@@ -1015,9 +996,9 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                         <span>ডেলিভারি চার্জ:</span>
                         <span>৳{custLocation === 'inside_dhaka' ? 70 : 130}</span>
                       </div>
-                      <div className="flex justify-between font-bold text-gray-900 border-t border-gray-200 pt-1 text-sm">
+                      <div className="flex justify-between font-bold text-[#262626] border-t border-gray-200 pt-1 text-sm">
                         <span>সর্বমোট (ক্যাশ অন ডেলিভারি):</span>
-                        <span className="text-red-600">
+                        <span className="text-[#ECA548]">
                           ৳{orderProduct.price + (custLocation === 'inside_dhaka' ? 70 : 130)} BDT
                         </span>
                       </div>
@@ -1026,7 +1007,8 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                     <button
                       type="submit"
                       disabled={isSubmittingOrder}
-                      className="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-red-600 hover:bg-red-700 active:scale-[0.98] transition shadow-xs flex items-center justify-center gap-1.5 disabled:opacity-50"
+                      style={{ backgroundColor: '#ECA548' }}
+                      className="w-full py-2.5 rounded-xl text-xs font-bold text-white hover:opacity-90 active:scale-[0.98] transition shadow-xs flex items-center justify-center gap-1.5 disabled:opacity-50"
                     >
                       {isSubmittingOrder ? (
                         <span>কনফার্ম হচ্ছে...</span>
@@ -1046,7 +1028,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                   <div className="bg-white border-b border-gray-100 p-4 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">📦</span>
-                      <span className="font-bold text-sm text-gray-900">অর্ডার লাইভ ট্র্যাকিং</span>
+                      <span className="font-bold text-sm text-[#262626]">অর্ডার লাইভ ট্র্যাকিং</span>
                     </div>
                     <button
                       onClick={() => setShowTrackingModal(false)}
@@ -1067,13 +1049,14 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                         value={trackQuery}
                         onChange={(e) => setTrackQuery(e.target.value)}
                         placeholder="e.g. 017xxxxxxxx বা GG-1001"
-                        className="flex-1 text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-gray-800 focus:outline-none focus:border-red-500 focus:bg-white transition"
+                        className="flex-1 text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white transition"
                       />
                       <button
                         type="button"
                         onClick={() => handleExecuteTracking()}
                         disabled={isTrackingLoading || !trackQuery.trim()}
-                        className="px-4 py-2 bg-red-600 text-white rounded-xl text-xs font-bold hover:bg-red-700 transition disabled:opacity-50"
+                        style={{ backgroundColor: '#ECA548' }}
+                        className="px-4 py-2 text-white rounded-xl text-xs font-bold hover:opacity-90 transition disabled:opacity-50"
                       >
                         {isTrackingLoading ? 'খোঁজা হচ্ছে...' : 'ট্র্যাক'}
                       </button>
@@ -1084,7 +1067,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                         {trackResult.success ? (
                           <>
                             <div className="flex items-center justify-between border-b border-gray-200 pb-1.5">
-                              <span className="font-bold text-gray-900">অর্ডার #{trackResult.order?.orderNumber}</span>
+                              <span className="font-bold text-[#262626]">অর্ডার #{trackResult.order?.orderNumber}</span>
                               <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
                                 {trackResult.order?.status || 'Active'}
                               </span>
