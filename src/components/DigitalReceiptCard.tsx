@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import {
-  FileText,
   Printer,
   Copy,
   Check,
   Truck,
-  MapPin,
-  Phone,
-  Package,
-  ExternalLink,
-  ShieldCheck,
-  CheckCircle2,
+  FileText,
 } from 'lucide-react';
-import { InvoiceOrderData } from './BrandedInvoiceModal';
+import { InvoiceOrderData, ReceiptQRCode } from './BrandedInvoiceModal';
 
 interface DigitalReceiptCardProps {
   order: InvoiceOrderData;
@@ -27,19 +21,42 @@ export const DigitalReceiptCard: React.FC<DigitalReceiptCardProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
-  const isInsideDhaka = order.deliveryLocation === 'inside_dhaka';
-  const subtotal = (order.productPrice || 0) * (order.quantity || 1);
-  const deliveryCharge = order.deliveryCharge || (isInsideDhaka ? 70 : 130);
-  const totalAmount = order.totalAmount || (subtotal + deliveryCharge);
+  // Format date DD-MM-YYYY
+  const orderDate = order.createdAt ? new Date(order.createdAt) : new Date();
+  const day = String(orderDate.getDate()).padStart(2, '0');
+  const month = String(orderDate.getMonth() + 1).padStart(2, '0');
+  const year = orderDate.getFullYear();
+  const formattedDate = `${day}-${month}-${year}`;
+
+  // Numbers
+  const unitPrice = Number(order.productPrice || 0);
+  const qty = Number(order.quantity || 1);
+  const subtotal = unitPrice * qty;
+  const isInside = order.deliveryLocation === 'inside_dhaka';
+  const deliveryCharge = order.deliveryCharge !== undefined ? Number(order.deliveryCharge) : (isInside ? 70 : 130);
+  const grandTotal = order.totalAmount || (subtotal + deliveryCharge);
+  const advancedPay = Number(order.advancedPay || 0);
+  const duePay = Math.max(0, grandTotal - advancedPay);
+
+  // Extract clean numerical invoice number
+  const numericInvoice = order.orderNumber
+    ? order.orderNumber.replace(/\D/g, '') || '3178967'
+    : '3178967';
+
+  // Barcode / Tracking code
+  const trackingNumber = '30' + (numericInvoice.padStart(7, '0'));
 
   const handleCopy = () => {
-    const text = `🧾 Gift Ghor ডিজিটাল রিসিট (#${order.orderNumber})\n` +
-      `👤 ক্রেতা: ${order.customerName || 'সম্মানিত ক্রেতা'}\n` +
-      `📞 মোবাইল: ${order.customerPhone}\n` +
-      `📍 ঠিকানা: ${order.customerAddress}\n` +
-      `🛍️ প্রোডাক্ট: ${order.productName}${order.variant ? ` (${order.variant})` : ''} x ${order.quantity}টি\n` +
-      `💰 মোট বিল: ৳${totalAmount} BDT (ক্যাশ অন ডেলিভারি)\n` +
-      `🌐 giftghor.world`;
+    const text = `🧾 GIFT GHOR Official Invoice (${formattedDate})\n` +
+      `Invoice Number: ${numericInvoice}\n` +
+      `-----------------------------\n` +
+      `Customer: ${order.customerName || 'Customer'}\n` +
+      `Phone: ${order.customerPhone}\n` +
+      `Address: ${order.customerAddress}\n` +
+      `Product: ${order.productName} x ${qty}\n` +
+      `Grand Total: BDT ${grandTotal.toFixed(2)}\n` +
+      `Due Pay: BDT ${duePay.toFixed(2)}\n` +
+      `Contact: +8801522126525 | support@giftghorbd.com`;
 
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -47,116 +64,185 @@ export const DigitalReceiptCard: React.FC<DigitalReceiptCardProps> = ({
   };
 
   return (
-    <div className="my-2 bg-white rounded-2xl border border-amber-200/90 shadow-sm overflow-hidden text-xs text-[#262626] animate-fadeIn">
-      {/* Receipt Header */}
-      <div className="bg-gradient-to-r from-[#FDF7EE] via-amber-50/50 to-white px-3.5 py-2.5 border-b border-amber-100 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-[#ECA548] text-white flex items-center justify-center font-bold text-xs shadow-2xs">
-            🧾
+    <div className="my-2.5 bg-white rounded-xl border border-gray-300 shadow-sm overflow-hidden text-black font-sans text-xs">
+      {/* Printable / Clean Receipt Card Content Matching IMG_1529 1:1 */}
+      <div className="p-4 sm:p-5 space-y-3.5 bg-white">
+        {/* Header Row */}
+        <div className="flex items-start justify-between gap-2">
+          {/* Logo & Date */}
+          <div className="space-y-1.5">
+            <img
+              src="https://giftghor.world/assets/logo.png"
+              alt="Gift Ghor"
+              className="w-8 h-8 object-contain"
+            />
+            <p className="text-[11px] text-gray-800 font-medium">
+              Date: {formattedDate}
+            </p>
           </div>
+
+          {/* Center Invoice Number */}
+          <div className="text-center pt-0.5">
+            <span className="text-[10px] text-gray-700 block">Invoice Number:</span>
+            <span className="text-base font-bold text-black font-sans tracking-wide block mt-0.5">
+              {numericInvoice}
+            </span>
+          </div>
+
+          {/* Right QR Code Box */}
           <div>
-            <span className="font-extrabold text-[12px] text-[#262626] block leading-tight">
-              ডিজিটাল ক্যাশ মেমো
-            </span>
-            <span className="font-mono text-[10px] text-gray-500 font-bold">
-              #{order.orderNumber}
-            </span>
+            <ReceiptQRCode value={numericInvoice} trackingNum={trackingNumber} size={52} />
           </div>
         </div>
 
-        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
-          <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-          <span>কনফার্মড (COD)</span>
-        </span>
-      </div>
+        <hr className="border-t border-gray-300 my-2" />
 
-      {/* Product Summary Row */}
-      <div className="p-3 space-y-2.5">
-        <div className="flex items-center gap-2.5 bg-gray-50 p-2 rounded-xl border border-gray-150">
-          {order.imageUrl && (
-            <img
-              src={order.imageUrl}
-              alt={order.productName}
-              className="w-10 h-10 rounded-lg object-cover border border-gray-200 shrink-0"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          )}
-          <div className="flex-1 min-w-0">
-            <h5 className="font-bold text-[11.5px] text-[#262626] line-clamp-1">
-              {order.productName}
-            </h5>
-            <div className="flex items-center gap-2 text-[10px] text-gray-500 mt-0.5">
-              {order.variant && (
-                <span className="text-[#ECA548] font-bold">কালার: {order.variant}</span>
-              )}
-              <span>পরিমাণ: {order.quantity}টি</span>
+        {/* From & Bill To Grid */}
+        <div className="grid grid-cols-2 gap-2.5 text-[11px]">
+          {/* From Box */}
+          <div className="border border-gray-700 bg-white">
+            <div className="border-b border-gray-700 px-2 py-1 font-bold text-[11px] text-black">
+              From
+            </div>
+            <div className="p-2 space-y-0.5 text-gray-900 leading-tight">
+              <p className="font-bold uppercase tracking-tight">GIFT GHOR</p>
+              <p>MogBazar,Dhaka</p>
+              <p>+8801522126525</p>
             </div>
           </div>
-          <span className="font-extrabold text-xs text-[#262626] shrink-0">
-            ৳{subtotal}
-          </span>
-        </div>
 
-        {/* Customer & Location */}
-        <div className="space-y-1 text-[11px] text-gray-600 px-0.5">
-          <div className="flex items-center justify-between">
-            <span className="flex items-center gap-1">
-              <Phone className="w-3 h-3 text-[#ECA548]" />
-              <span className="font-mono font-semibold">{order.customerPhone}</span>
-            </span>
-            <span className="text-gray-400">({order.customerName || 'ক্রেতা'})</span>
-          </div>
-
-          <div className="flex items-start gap-1 text-gray-600">
-            <MapPin className="w-3 h-3 text-[#ECA548] shrink-0 mt-0.5" />
-            <span className="line-clamp-2 leading-relaxed">{order.customerAddress}</span>
+          {/* Bill To Box */}
+          <div className="border border-gray-700 bg-white">
+            <div className="border-b border-gray-700 px-2 py-1 font-bold text-[11px] text-black">
+              Bill To
+            </div>
+            <div className="p-2 space-y-0.5 text-gray-900 leading-tight">
+              <p className="font-semibold text-black">{order.customerName || 'Customer'}</p>
+              <p className="font-mono text-gray-800">{order.customerPhone || 'N/A'}</p>
+              <p className="text-gray-800 break-words line-clamp-2 leading-tight">{order.customerAddress || 'Dhaka'}</p>
+            </div>
           </div>
         </div>
 
-        {/* Price Breakdown */}
-        <div className="pt-2 border-t border-gray-150 space-y-1 text-[11px]">
-          <div className="flex justify-between text-gray-500">
-            <span>ডেলিভারি চার্জ:</span>
-            <span>৳{deliveryCharge} ({isInsideDhaka ? 'ঢাকার ভিতরে' : 'ঢাকার বাইরে'})</span>
-          </div>
-          <div className="flex justify-between font-extrabold text-xs text-[#262626] pt-1 border-t border-dashed border-gray-200">
-            <span>সর্বমোট প্রদেয় বিল (COD):</span>
-            <span className="text-[#ECA548]">৳{totalAmount} BDT</span>
+        {/* Product Table */}
+        <div className="pt-1">
+          <table className="w-full border border-gray-800 border-collapse text-[11px]">
+            <thead>
+              <tr className="border-b border-gray-800 text-black bg-gray-50">
+                <th className="border-r border-gray-800 px-1.5 py-1.5 text-center font-bold w-7">
+                  No.
+                </th>
+                <th className="border-r border-gray-800 px-2 py-1.5 text-left font-bold">
+                  Product Description
+                </th>
+                <th className="border-r border-gray-800 px-1.5 py-1.5 text-center font-bold w-10">
+                  QTY
+                </th>
+                <th className="border-r border-gray-800 px-2 py-1.5 text-right font-bold">
+                  Unit Price
+                </th>
+                <th className="px-2 py-1.5 text-right font-bold">
+                  Amount
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="text-black align-top">
+                <td className="border-r border-gray-800 px-1.5 py-2 text-center font-medium">
+                  1
+                </td>
+                <td className="border-r border-gray-800 px-2 py-2 space-y-0.5">
+                  <p className="font-medium text-black leading-tight">{order.productName}</p>
+                  {order.variant && (
+                    <p className="text-[9.5px] text-gray-600 font-normal">
+                      {order.productName.split(' ')[0]} Wallet: {order.variant}
+                    </p>
+                  )}
+                </td>
+                <td className="border-r border-gray-800 px-1.5 py-2 text-center font-medium">
+                  {qty}
+                </td>
+                <td className="border-r border-gray-800 px-2 py-2 text-right font-mono text-[10.5px]">
+                  <span>BDT {unitPrice.toFixed(2)}</span>
+                </td>
+                <td className="px-2 py-2 text-right font-mono font-semibold text-[10.5px]">
+                  <span>BDT {subtotal.toFixed(2)}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Totals Section */}
+        <div className="flex justify-end pt-0.5">
+          <div className="w-48 space-y-1 text-[11px]">
+            <div className="flex justify-between items-center text-gray-800">
+              <span>Sub Total</span>
+              <span className="font-mono">BDT {subtotal.toFixed(2)}</span>
+            </div>
+
+            {deliveryCharge > 0 && (
+              <div className="flex justify-between items-center text-gray-800">
+                <span>Delivery Charge</span>
+                <span className="font-mono">BDT {deliveryCharge.toFixed(2)}</span>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center text-black font-bold pt-0.5">
+              <span>Grand Total</span>
+              <span className="font-mono">BDT {grandTotal.toFixed(2)}</span>
+            </div>
+
+            <div className="flex justify-between items-center text-gray-800">
+              <span>Advanced Pay</span>
+              <span className="font-mono">BDT {advancedPay.toFixed(2)}</span>
+            </div>
+
+            <div className="flex justify-between items-center text-black font-bold pt-0.5 border-t border-gray-300">
+              <span>Due Pay</span>
+              <span className="font-mono">BDT {duePay.toFixed(2)}</span>
+            </div>
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="pt-2 flex items-center gap-2">
+        <hr className="border-t border-gray-300 my-2" />
+
+        {/* Footer */}
+        <div className="text-center text-[11px] text-gray-900 space-y-0.5">
+          <p className="font-medium">Thank you!</p>
+          <p className="font-mono text-[10px] text-gray-700">
+            +8801522126525 | support@giftghorbd.com
+          </p>
+        </div>
+
+        {/* In-Chat Interactive Action Row */}
+        <div className="pt-2 flex items-center gap-2 no-print border-t border-dashed border-gray-200">
           <button
             type="button"
             onClick={() => onOpenInvoiceModal(order)}
-            className="flex-1 py-1.5 px-2.5 rounded-xl text-[11px] font-bold bg-[#ECA548] hover:bg-[#d6913a] text-white transition flex items-center justify-center gap-1.5 shadow-2xs active:scale-95"
+            className="flex-1 py-1.5 px-2.5 rounded-lg text-xs font-bold bg-black hover:bg-gray-800 text-white transition flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
           >
             <Printer className="w-3.5 h-3.5" />
-            <span>ইনভয়েস দেখুন / প্রিন্ট</span>
+            <span>প্রিন্ট / ফুল ইনভয়েস</span>
           </button>
 
           <button
             type="button"
             onClick={handleCopy}
-            className="py-1.5 px-2.5 rounded-xl text-[11px] font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 transition flex items-center gap-1 active:scale-95"
-            title="মেমো কপি করুন"
+            className="py-1.5 px-2.5 rounded-lg text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-800 transition flex items-center gap-1 cursor-pointer"
           >
-            {copied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
-            <span>{copied ? 'কপি' : 'কপি'}</span>
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+            <span>{copied ? 'Copied' : 'Copy'}</span>
           </button>
 
           {onTrackOrder && (
             <button
               type="button"
               onClick={() => onTrackOrder(order.orderNumber)}
-              className="py-1.5 px-2.5 rounded-xl text-[11px] font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 transition flex items-center gap-1 active:scale-95"
-              title="ট্র্যাকিং দেখুন"
+              className="py-1.5 px-2.5 rounded-lg text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-800 transition flex items-center gap-1 cursor-pointer"
             >
-              <Truck className="w-3 h-3 text-gray-500" />
-              <span>ট্র্যাক</span>
+              <Truck className="w-3.5 h-3.5 text-gray-600" />
+              <span>Track</span>
             </button>
           )}
         </div>
