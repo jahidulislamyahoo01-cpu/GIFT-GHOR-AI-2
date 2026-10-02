@@ -142,20 +142,25 @@ export const AdminAIAssistant: React.FC = () => {
       history.push({ role: 'user', parts: currentParts });
 
       const res = await axios.post('/api/admin/ai-assistant', { history }, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        timeout: 45000,
       });
 
+      const replyText = res.data?.reply || 'উত্তরে কোনো তথ্য পাওয়া যায়নি। অনুগ্রহ করে আবার প্রশ্নটি করুন।';
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         sender: 'model',
-        text: res.data.reply
+        text: replyText
       }]);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
+      const isTimeout = err.code === 'ECONNABORTED' || err.message?.includes('timeout');
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         sender: 'model',
-        text: 'Sorry, I encountered an error. Please check the console or API keys.'
+        text: isTimeout
+          ? '⚠️ এআই রেসপন্স তৈরিতে অতিরিক্ত সময় লেগেছে। অনুগ্রহ করে প্রশ্নটি আরেকবার পাঠান, দ্রুত উত্তর চলে আসবে।'
+          : '⚠️ এআই অ্যাসিস্ট্যান্টে সাময়িক সমস্যা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।'
       }]);
     } finally {
       setIsLoading(false);
@@ -212,7 +217,7 @@ export const AdminAIAssistant: React.FC = () => {
           <div className="flex justify-start">
             <div className="bg-white border border-gray-100 rounded-2xl p-4 rounded-bl-none shadow-sm flex items-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
-              <span className="text-sm text-gray-500">Thinking...</span>
+              <span className="text-sm text-gray-500 font-medium">তথ্য বিশ্লেষণ ও উত্তর প্রস্তুত হচ্ছে...</span>
             </div>
           </div>
         )}

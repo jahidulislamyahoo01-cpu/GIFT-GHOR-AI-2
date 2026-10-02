@@ -1,9 +1,7 @@
-import { DB } from '../server.js';
-
 let cachedFbData: string = '';
 let lastFetchTime: number = 0;
 
-export async function fetchFacebookInsights(): Promise<string> {
+export async function fetchFacebookInsights(adminSettings?: any): Promise<string> {
   // Cache for 1 hour
   if (cachedFbData && Date.now() - lastFetchTime < 3600000) {
     return cachedFbData;
@@ -11,8 +9,8 @@ export async function fetchFacebookInsights(): Promise<string> {
 
   try {
     // Check ENV variables or Admin DB settings
-    const pageId = process.env.FACEBOOK_PAGE_ID || DB.adminSettings?.facebookPageId;
-    const accessToken = process.env.FACEBOOK_ACCESS_TOKEN || DB.adminSettings?.facebookAccessToken;
+    const pageId = process.env.FACEBOOK_PAGE_ID || adminSettings?.facebookPageId;
+    const accessToken = process.env.FACEBOOK_ACCESS_TOKEN || adminSettings?.facebookAccessToken;
 
     if (!pageId || !accessToken) {
       console.warn('[Facebook] Credentials missing. Skipping Facebook Insights.');

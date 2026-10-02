@@ -1038,15 +1038,10 @@ async function callGeminiAI(
   }
 
   const candidateModels = [
-    'gemini-2.5-flash',
-    'gemini-2.5-pro',
-    'gemini-2.0-flash',
-    'gemini-1.5-flash',
-    'gemini-3.6-flash',
-    'gemini-3.8-flash',
-    'gemini-3.5-flash',
     'gemini-3.1-flash-lite',
     'gemini-flash-latest',
+    'gemini-3.8-flash',
+    'gemini-3.1-pro-preview',
   ];
 
   const keyCount = apiKeys.length;
@@ -1067,9 +1062,9 @@ async function callGeminiAI(
           },
         });
 
-        // 25s timeout per attempt so long responses are fully generated without truncation
+        // 12s timeout per attempt for fast failover
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error(`Timeout (${modelName})`)), 25000)
+          setTimeout(() => reject(new Error(`Timeout (${modelName})`)), 12000)
         );
 
         const response: any = await Promise.race([apiCall, timeoutPromise]);
@@ -1080,7 +1075,12 @@ async function callGeminiAI(
           return response.text;
         }
       } catch (err: any) {
-        console.warn(`[Gemini AI] Key #${selectedKeyIndex + 1}/${keyCount} (${modelName}) notice: ${err?.message || err}`);
+        const errMsg = String(err?.message || err);
+        console.warn(`[Gemini AI] Key #${selectedKeyIndex + 1}/${keyCount} (${modelName}) notice: ${errMsg}`);
+        // If model does not exist (404/NOT_FOUND), do not retry other keys for this model
+        if (errMsg.includes('404') || errMsg.includes('NOT_FOUND') || errMsg.includes('not found') || errMsg.includes('no longer available')) {
+          break;
+        }
       }
     }
   }
@@ -3780,31 +3780,29 @@ app.post('/api/admin/ai-assistant', adminAuthMiddleware, async (req, res) => {
     }
 
     let systemInstruction = "You are an expert AI Business Assistant, Digital Marketer, and Strategist for 'Gift Ghor'. You are talking directly to the Owner of the business. Do NOT talk like a customer service bot. Your job is to help the owner with ad copy, business strategy, data analysis, and product ideas. Be professional, creative, and proactive. Provide well-formatted, complete answers with emojis where appropriate. CRITICAL: Always complete your sentences and paragraphs fully without stopping mid-sentence. Base your knowledge on the following business context:\n\n" + buildSystemKnowledgeContext(DB);
+
+    // Fetch external analytics in parallel with strict 2s timeout so it never blocks or delays the assistant
+    const timeoutQuick = (ms: number) => new Promise<null>((resolve) => setTimeout(() => resolve(null), ms));
     try {
-      const analyticsContext = await fetchAnalyticsData();
-      if (analyticsContext) {
-        systemInstruction += `\n\nREAL-TIME WEBSITE ANALYTICS DATA:\n${analyticsContext}\nUse this data to answer questions about which pages or products are most viewed or popular.`;
+      const [analyticsRes, searchRes, fbRes] = await Promise.allSettled([
+        Promise.race([fetchAnalyticsData(), timeoutQuick(2000)]),
+        Promise.race([fetchSearchConsoleData(), timeoutQuick(2000)]),
+        Promise.race([fetchFacebookInsights(DB.adminSettings), timeoutQuick(2000)]),
+      ]);
+
+      if (analyticsRes.status === 'fulfilled' && typeof analyticsRes.value === 'string' && !analyticsRes.value.includes('unavailable')) {
+        systemInstruction += `\n\nREAL-TIME WEBSITE ANALYTICS DATA:\n${analyticsRes.value}\nUse this data to answer questions about which pages or products are most viewed or popular.`;
+      }
+      if (searchRes.status === 'fulfilled' && typeof searchRes.value === 'string' && !searchRes.value.includes('unavailable')) {
+        systemInstruction += `\n\nGOOGLE SEARCH CONSOLE DATA:\n${searchRes.value}\nUse this data to answer questions about Google search keywords, clicks, impressions, CTR, SEO ranking positions, and organic search optimization recommendations.`;
+      }
+      if (fbRes.status === 'fulfilled' && typeof fbRes.value === 'string' && !fbRes.value.includes('unavailable')) {
+        systemInstruction += `\n\nFACEBOOK PAGE INSIGHTS:\n${fbRes.value}\nUse this data to answer questions about social media performance, Facebook page reach, engagement, and impressions.`;
       }
     } catch (e) {
-      console.warn('Could not fetch analytics data', e);
+      console.warn('External insights quick fetch notice:', e);
     }
 
-    try {
-      const searchConsoleContext = await fetchSearchConsoleData();
-      if (searchConsoleContext) {
-        systemInstruction += `\n\nGOOGLE SEARCH CONSOLE (SEO & ORGANIC SEARCH) DATA:\n${searchConsoleContext}\nUse this data to answer questions about Google search keywords, clicks, impressions, CTR, SEO ranking positions, and organic search optimization recommendations.`;
-      }
-    } catch (e) {
-      console.warn('Could not fetch search console data', e);
-    }
-    try {
-      const fbContext = await fetchFacebookInsights();
-      if (fbContext && !fbContext.includes('currently unavailable')) {
-        systemInstruction += `\n\nFACEBOOK PAGE INSIGHTS:\n${fbContext}\nUse this data to answer questions about social media performance, Facebook page reach, engagement, and impressions.`;
-      }
-    } catch (e) {
-      console.warn('Could not fetch facebook insights', e);
-    }
     // Normalize history to group consecutive roles
     const normalizedHistory = [];
     for (const m of history) {
@@ -3818,7 +3816,7 @@ app.post('/api/admin/ai-assistant', adminAuthMiddleware, async (req, res) => {
     // Limit history to last 10 turns to avoid exceeding context window
     const recentHistory = normalizedHistory.slice(-10);
 
-    const botReplyText = await callGeminiAI(recentHistory, systemInstruction, 4000, 0.8);
+    const botReplyText = await callGeminiAI(recentHistory, systemInstruction, 2500, 0.7);
 
     if (!botReplyText) {
       const orderCount = Object.keys(DB.orders || {}).length;
