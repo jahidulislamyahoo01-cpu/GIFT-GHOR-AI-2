@@ -196,6 +196,7 @@ interface SystemDB {
         image?: string;
         timestamp: string;
         orderData?: any;
+        receiptOrder?: any;
       }>;
       orderExtracted?: {
         customerName?: string;
@@ -1875,6 +1876,7 @@ app.post('/api/chat/message', async (req, res) => {
   const userTimestamp = new Date().toISOString();
 
   // Trying extracting customer order lead
+  let capturedOrderForReceipt: any = null;
   const updatedOrder = tryExtractOrder(text, session.orderExtracted);
   if (updatedOrder) {
     session.orderExtracted = updatedOrder;
@@ -1890,7 +1892,15 @@ app.post('/api/chat/message', async (req, res) => {
       const orderId = existingOrder ? existingOrder.id : ('ord-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6));
       const orderNumber = existingOrder ? existingOrder.orderNumber : `GG-${1001 + Object.keys(DB.orders).length}`;
 
-      const deliveryLocation = (updatedOrder.customerAddress && /dhaka|ঢাকা/.test(updatedOrder.customerAddress)) ? 'inside_dhaka' : 'outside_dhaka';
+      let isInsideDhaka = false;
+      if (updatedOrder.customerAddress) {
+        const addrLower = updatedOrder.customerAddress.toLowerCase();
+        const hasOutsideDist = /chittagong|chattogram|চট্টগ্রাম|চট্রগ্রাম|sylhet|সিলেট|rajshahi|রাজশাহী|khulna|খুলনা|barisal|barishal|বরিশাল|rangpur|রংপুর|mymensingh|ময়মনসিংহ|comilla|cumilla|কুমিল্লা|gazipur|গাজীপুর|narayanganj|নারায়ণগঞ্জ|bogra|বগুড়া|noakhali|নোয়াখালী|feni|ফেনী|cox|কক্সবাজার|tangail|টাঙ্গাইল|jessore|যশোর|kushtia|কুষ্টিয়া|পাবনা|দিনাজপুর|মানিকগঞ্জ|ফরিদপুর|ব্রাহ্মণবাড়িয়া|চাঁদপুর/i.test(addrLower);
+        if (!hasOutsideDist && /dhaka|ঢাকা|mirpur|মিরপুর|dhanmondi|ধানমন্ডি|uttara|উত্তরা|gulshan|গুলশান|banani|বনানী|mohammadpur|মোহাম্মদপুর|motijheel|মতিঝিল|badda|বাড্ডা|malibagh|মালিবাগ|jatrabari|যাত্রাবাড়ী|bashundhara|বসুন্ধরা|paltan|পল্টন|rampura|রামপুরা|khilgaon|খিলগাঁও|savar|সাভার|কেরানীগঞ্জ|keraniganj|shyamoli|শ্যামলী|মোহাম্মাদপুর|মহাখালী|mohakhali/i.test(addrLower)) {
+          isInsideDhaka = true;
+        }
+      }
+      const deliveryLocation = isInsideDhaka ? 'inside_dhaka' : 'outside_dhaka';
       const deliveryCharge = deliveryLocation === 'inside_dhaka' ? (DB.deliveryPolicy.insideDhakaCost || 70) : (DB.deliveryPolicy.outsideDhakaCost || 130);
       const prodPrice = updatedOrder.productPrice || 790;
       const totalAmount = prodPrice + deliveryCharge;
@@ -1916,6 +1926,7 @@ app.post('/api/chat/message', async (req, res) => {
       };
 
       DB.orders[orderId] = orderRecord;
+      capturedOrderForReceipt = orderRecord;
       saveOrderToFirestore(orderRecord).catch((e) => console.warn('[Firestore] Order cloud sync failed:', e));
 
       // Auto-deduct stock for chatbot captured order
@@ -2131,6 +2142,14 @@ app.post('/api/chat/message', async (req, res) => {
     const botMsgId = 'msg-' + (Date.now() + 1) + '-' + Math.random().toString(36).substring(2, 7);
     const botTimestamp = new Date().toISOString();
 
+    const isOrderConfirmedInChat = capturedOrderForReceipt && (
+      session.orderExtracted?.orderStatus === 'confirmed' ||
+      botReplyText.includes('কনফার্ম') ||
+      botReplyText.includes('অর্ডার') ||
+      botReplyText.includes('order') ||
+      capturedOrderForReceipt.customerAddress
+    );
+
     session.messages.push({
       id: botMsgId,
       sessionId,
@@ -2138,6 +2157,7 @@ app.post('/api/chat/message', async (req, res) => {
       text: botReplyText,
       timestamp: botTimestamp,
       orderData: session.orderExtracted,
+      receiptOrder: isOrderConfirmedInChat ? capturedOrderForReceipt : undefined,
     });
 
     if (needsAttention) {
@@ -3480,10 +3500,17 @@ app.post('/api/orders/quick-create', async (req, res) => {
     const chosenVariant = variant || variantName || '';
     const finalProductName = chosenVariant ? `${productName} (${chosenVariant})` : productName;
 
-    const isInsideDhaka = deliveryLocation === 'inside_dhaka' || deliveryLocation === 'dhaka';
+    let isInsideDhaka = deliveryLocation === 'inside_dhaka' || deliveryLocation === 'dhaka';
+    if (!deliveryLocation && customerAddress) {
+      const addrLower = customerAddress.toLowerCase();
+      const hasOutsideDist = /chittagong|chattogram|চট্টগ্রাম|চট্রগ্রাম|sylhet|সিলেট|rajshahi|রাজশাহী|khulna|খুলনা|barisal|barishal|বরিশাল|rangpur|রংপুর|mymensingh|ময়মনসিংহ|comilla|cumilla|কুমিল্লা|gazipur|গাজীপুর|narayanganj|নারায়ণগঞ্জ|bogra|বগুড়া|noakhali|নোয়াখালী|feni|ফেনী|cox|কক্সবাজার|tangail|টাঙ্গাইল|jessore|যশোর|kushtia|কুষ্টিয়া|পাবনা|দিনাজপুর|মানিকগঞ্জ|ফরিদপুর|ব্রাহ্মণবাড়িয়া|চাঁদপুর/i.test(addrLower);
+      if (!hasOutsideDist && /dhaka|ঢাকা|mirpur|মিরপুর|dhanmondi|ধানমন্ডি|uttara|উত্তরা|gulshan|গুলশান|banani|বনানী|mohammadpur|মোহাম্মদপুর|motijheel|মতিঝিল|badda|বাড্ডা|malibagh|মালিবাগ|jatrabari|যাত্রাবাড়ী|bashundhara|বসুন্ধরা|paltan|পল্টন|rampura|রামপুরা|khilgaon|খিলগাঁও|savar|সাভার|কেরানীগঞ্জ|keraniganj|shyamoli|শ্যামলী|মোহাম্মাদপুর|মহাখালী|mohakhali/i.test(addrLower)) {
+        isInsideDhaka = true;
+      }
+    }
     const deliveryCharge = isInsideDhaka
-      ? (DB.deliveryPolicy?.insideDhakaCost || 60)
-      : (DB.deliveryPolicy?.outsideDhakaCost || 120);
+      ? (DB.deliveryPolicy?.insideDhakaCost || 70)
+      : (DB.deliveryPolicy?.outsideDhakaCost || 130);
 
     const priceNum = Number(productPrice) || 0;
     const qtyNum = Number(quantity) || 1;

@@ -89,6 +89,7 @@ export interface ChatMessage {
   image?: string;
   timestamp: string;
   orderData?: OrderDetails;
+  receiptOrder?: any;
 }
 
 export interface ChatSession {

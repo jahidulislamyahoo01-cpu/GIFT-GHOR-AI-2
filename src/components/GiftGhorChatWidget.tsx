@@ -19,6 +19,9 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { ChatMessage } from '../types';
 import { products as defaultCatalog } from '../db/scraped_products';
+import { detectDeliveryLocation } from '../utils/addressDetector';
+import { BrandedInvoiceModal, InvoiceOrderData } from './BrandedInvoiceModal';
+import { DigitalReceiptCard } from './DigitalReceiptCard';
 
 interface WidgetProps {
   initialOpen?: boolean;
@@ -94,6 +97,29 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
   const [custAddress, setCustAddress] = useState('');
   const [custLocation, setCustLocation] = useState<'inside_dhaka' | 'outside_dhaka'>('inside_dhaka');
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
+  const [autoDetectedReason, setAutoDetectedReason] = useState<string>('');
+  const [invoiceModalOrder, setInvoiceModalOrder] = useState<InvoiceOrderData | null>(null);
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+
+  // Smart auto-detect delivery location based on address
+  const handleAddressChange = (val: string) => {
+    setCustAddress(val);
+    if (val.trim()) {
+      const detected = detectDeliveryLocation(
+        val,
+        branding.deliveryRates?.insideDhakaCost || 70,
+        branding.deliveryRates?.outsideDhakaCost || 130
+      );
+      if (detected.confidence !== 'none') {
+        setCustLocation(detected.location);
+        setAutoDetectedReason(detected.reason);
+      } else {
+        setAutoDetectedReason('');
+      }
+    } else {
+      setAutoDetectedReason('');
+    }
+  };
 
   // Sync real product catalog from server
   useEffect(() => {
@@ -429,6 +455,28 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
         setIsSelectingProduct(false);
         const orderNum = data.orderNumber;
 
+        const currentOrderData: InvoiceOrderData = {
+          orderNumber: orderNum,
+          customerName: custName.trim() || 'সম্মানিত ক্রেতা',
+          customerPhone: custPhone.trim(),
+          customerAddress: custAddress.trim(),
+          productName: orderProduct.title,
+          productPrice: orderProduct.price,
+          quantity: qty,
+          variant: chosenVariantLabel,
+          imageUrl: selectedVariant?.imageUrl || orderProduct.imageUrl,
+          deliveryLocation: custLocation,
+          deliveryCharge,
+          totalAmount,
+          createdAt: new Date().toISOString(),
+          status: 'confirmed',
+          source: 'chat_instant',
+        };
+
+        // Immediately open branded invoice modal for the customer
+        setInvoiceModalOrder(currentOrderData);
+        setShowInvoiceModal(true);
+
         const confirmText = `✅ **অর্ডার সফলভাবে কনফার্ম হয়েছে!**\n\n` +
           `🆔 **অর্ডার আইডি:** #${orderNum}\n` +
           `🛍️ **প্রোডাক্ট:** ${orderProduct.title}\n` +
@@ -446,12 +494,14 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
           sender: 'bot',
           text: confirmText,
           timestamp: new Date().toISOString(),
+          receiptOrder: currentOrderData,
         };
 
         setMessages((prev) => [...prev, newMsg]);
         setCustName('');
         setCustPhone('');
         setCustAddress('');
+        setAutoDetectedReason('');
         setOrderQuantity(1);
       } else {
         alert(data.error || 'অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
@@ -867,6 +917,43 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                             })()}
                           </div>
                         </div>
+
+                        {/* Digital Receipt Card for Confirmed Orders */}
+                        {(() => {
+                          const orderDataToRender: InvoiceOrderData | null = msg.receiptOrder || (
+                            msg.orderData && msg.orderData.customerPhone && msg.orderData.customerAddress && (msg.orderData.orderStatus === 'confirmed' || msg.text?.includes('অর্ডার') || msg.text?.includes('কনফার্ম'))
+                              ? {
+                                  orderNumber: (msg.text.match(/#?(GG-\d+)/i)?.[1]) || 'GG-' + Math.floor(10000 + Math.random() * 90000),
+                                  customerName: msg.orderData.customerName || 'সম্মানিত ক্রেতা',
+                                  customerPhone: msg.orderData.customerPhone,
+                                  customerAddress: msg.orderData.customerAddress,
+                                  productName: msg.orderData.productDetails || 'Gift Ghor Item',
+                                  productPrice: 790,
+                                  quantity: 1,
+                                  deliveryLocation: /dhaka|ঢাকা/i.test(msg.orderData.customerAddress) ? 'inside_dhaka' : 'outside_dhaka',
+                                  deliveryCharge: /dhaka|ঢাকা/i.test(msg.orderData.customerAddress) ? 70 : 130,
+                                  totalAmount: 790 + (/dhaka|ঢাকা/i.test(msg.orderData.customerAddress) ? 70 : 130),
+                                  createdAt: msg.timestamp,
+                                  status: 'confirmed',
+                                  imageUrl: defaultCatalog[0]?.imageUrl,
+                                }
+                              : null
+                          );
+
+                          if (orderDataToRender) {
+                            return (
+                              <DigitalReceiptCard
+                                order={orderDataToRender}
+                                onOpenInvoiceModal={(ord) => {
+                                  setInvoiceModalOrder(ord);
+                                  setShowInvoiceModal(true);
+                                }}
+                                onTrackOrder={(q) => handleExecuteTracking(q)}
+                              />
+                            );
+                          }
+                          return null;
+                        })()}
 
                         {/* Timestamp */}
                         <span className={`text-[10px] text-gray-400 px-1 ${isUser ? 'text-right' : 'text-left'}`}>
@@ -1342,46 +1429,66 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
 
                       <div>
                         <label className="block text-[11px] font-semibold text-gray-600 mb-1">
-                          ডেলিভারি এলাকা
-                        </label>
-                        <div className="grid grid-cols-2 gap-2">
-                          <button
-                            type="button"
-                            onClick={() => setCustLocation('inside_dhaka')}
-                            className={`text-xs py-2 px-2.5 rounded-xl border font-medium text-center transition ${
-                              custLocation === 'inside_dhaka'
-                                ? 'border-[#ECA548] bg-[#FDF7EE] text-[#ECA548] font-bold'
-                                : 'border-gray-200 bg-gray-50 text-gray-600'
-                            }`}
-                          >
-                            ঢাকার ভিতরে (৳৭০)
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setCustLocation('outside_dhaka')}
-                            className={`text-xs py-2 px-2.5 rounded-xl border font-medium text-center transition ${
-                              custLocation === 'outside_dhaka'
-                                ? 'border-[#ECA548] bg-[#FDF7EE] text-[#ECA548] font-bold'
-                                : 'border-gray-200 bg-gray-50 text-gray-600'
-                            }`}
-                          >
-                            ঢাকার বাইরে (৳১৩০)
-                          </button>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-[11px] font-semibold text-gray-600 mb-1">
                           সম্পূর্ণ ডেলিভারি ঠিকানা (জেলা ও থানা সহ) <span className="text-rose-500">*</span>
                         </label>
                         <textarea
                           required
                           rows={2}
                           value={custAddress}
-                          onChange={(e) => setCustAddress(e.target.value)}
-                          placeholder="বাড়ি নং, রোড নং, এলাকা, থানা ও জেলা..."
+                          onChange={(e) => handleAddressChange(e.target.value)}
+                          placeholder="বাড়ি নং, রোড নং, এলাকা, থানা ও জেলা লিখুন..."
                           className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white transition"
                         />
+                      </div>
+
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <label className="text-[11px] font-semibold text-gray-600">
+                            ডেলিভারি এলাকা
+                          </label>
+                          {autoDetectedReason ? (
+                            <span className="text-[10px] font-bold text-amber-900 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-full flex items-center gap-1 animate-pulse">
+                              <Sparkles className="w-3 h-3 text-[#ECA548]" />
+                              <span>{autoDetectedReason}</span>
+                            </span>
+                          ) : (
+                            <span className="text-[10px] text-gray-400">
+                              (ঠিকানা লিখলে অটো-ডিটেক্ট হবে)
+                            </span>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCustLocation('inside_dhaka');
+                              setAutoDetectedReason('ম্যানুয়ালি নির্বাচিত: ঢাকার ভিতরে');
+                            }}
+                            className={`text-xs py-2 px-2.5 rounded-xl border font-medium text-center transition flex items-center justify-center gap-1.5 ${
+                              custLocation === 'inside_dhaka'
+                                ? 'border-[#ECA548] bg-[#FDF7EE] text-[#ECA548] font-bold ring-2 ring-[#ECA548]/30 shadow-2xs'
+                                : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
+                            }`}
+                          >
+                            <span>ঢাকার ভিতরে (৳৭০)</span>
+                            {custLocation === 'inside_dhaka' && <Check className="w-3 h-3" />}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCustLocation('outside_dhaka');
+                              setAutoDetectedReason('ম্যানুয়ালি নির্বাচিত: ঢাকার বাইরে');
+                            }}
+                            className={`text-xs py-2 px-2.5 rounded-xl border font-medium text-center transition flex items-center justify-center gap-1.5 ${
+                              custLocation === 'outside_dhaka'
+                                ? 'border-[#ECA548] bg-[#FDF7EE] text-[#ECA548] font-bold ring-2 ring-[#ECA548]/30 shadow-2xs'
+                                : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'
+                            }`}
+                          >
+                            <span>ঢাকার বাইরে (৳১৩০)</span>
+                            {custLocation === 'outside_dhaka' && <Check className="w-3 h-3" />}
+                          </button>
+                        </div>
                       </div>
 
                       {/* Bill Calculation Box */}
@@ -1550,6 +1657,17 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Branded Official Invoice & Cash Memo Modal */}
+      {invoiceModalOrder && (
+        <BrandedInvoiceModal
+          order={invoiceModalOrder}
+          isOpen={showInvoiceModal}
+          onClose={() => setShowInvoiceModal(false)}
+          brandName={branding.storeName || 'Gift Ghor'}
+          brandLogo={branding.logoUrl || 'https://giftghor.world/assets/logo.png'}
+        />
+      )}
     </div>
   );
 };
