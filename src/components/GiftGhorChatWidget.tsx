@@ -11,9 +11,14 @@ import {
   Sparkles,
   ChevronDown,
   ExternalLink,
+  Search,
+  ShoppingBag,
+  ArrowLeft,
+  Check,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChatMessage } from '../types';
+import { products as defaultCatalog } from '../db/scraped_products';
 
 interface WidgetProps {
   initialOpen?: boolean;
@@ -55,17 +60,35 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
     mode: 'ai',
   });
 
-  // Quick Order Modal State
+  // Catalog Products & Quick Order Modal State
+  const [catalogProducts, setCatalogProducts] = useState<any[]>(defaultCatalog || []);
   const [showOrderModal, setShowOrderModal] = useState(false);
-  const [orderProduct, setOrderProduct] = useState<{ title: string; price: number; imageUrl?: string }>({
-    title: 'Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet',
-    price: 350,
+  const [isSelectingProduct, setIsSelectingProduct] = useState(false);
+  const [productSearch, setProductSearch] = useState('');
+  const [orderQuantity, setOrderQuantity] = useState(1);
+  const [orderProduct, setOrderProduct] = useState<{ id?: string; title: string; price: number; imageUrl?: string }>({
+    id: defaultCatalog[0]?.id || '1333107',
+    title: defaultCatalog[0]?.title || 'Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet',
+    price: defaultCatalog[0]?.price || 350,
+    imageUrl: defaultCatalog[0]?.imageUrl || 'https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg',
   });
   const [custName, setCustName] = useState('');
   const [custPhone, setCustPhone] = useState('');
   const [custAddress, setCustAddress] = useState('');
   const [custLocation, setCustLocation] = useState<'inside_dhaka' | 'outside_dhaka'>('inside_dhaka');
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
+
+  // Sync real product catalog from server
+  useEffect(() => {
+    fetch('/api/products')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.products) && data.products.length > 0) {
+          setCatalogProducts(data.products);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Order Tracking Modal State
   const [showTrackingModal, setShowTrackingModal] = useState(false);
@@ -313,10 +336,31 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
     setShowQuickMenu(false);
   };
 
-  const handleOpenOrderModal = (productTitle = '', price = 0) => {
-    const title = productTitle || branding.products?.[0]?.title || 'Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet';
-    const p = price || branding.products?.[0]?.price || 350;
-    setOrderProduct({ title, price: p });
+  const handleOpenOrderModal = (productTitle = '', price = 0, imageUrl = '') => {
+    let chosen = catalogProducts.find(
+      (p) =>
+        (productTitle && p.title.toLowerCase().includes(productTitle.toLowerCase())) ||
+        (productTitle && productTitle.toLowerCase().includes(p.title.toLowerCase()))
+    );
+    if (!chosen && catalogProducts.length > 0) {
+      chosen = catalogProducts[0];
+    }
+    if (chosen) {
+      setOrderProduct({
+        id: chosen.id,
+        title: chosen.title,
+        price: price || chosen.price,
+        imageUrl: imageUrl || chosen.imageUrl,
+      });
+    } else {
+      setOrderProduct({
+        title: productTitle || defaultCatalog[0]?.title || 'Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet',
+        price: price || defaultCatalog[0]?.price || 350,
+        imageUrl: imageUrl || defaultCatalog[0]?.imageUrl,
+      });
+    }
+    setOrderQuantity(1);
+    setIsSelectingProduct(false);
     setShowOrderModal(true);
     setShowQuickMenu(false);
   };
@@ -326,18 +370,22 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
     if (!custPhone.trim() || !custAddress.trim() || isSubmittingOrder) return;
     setIsSubmittingOrder(true);
 
+    const qty = Math.max(1, Number(orderQuantity) || 1);
+    const deliveryCharge = custLocation === 'inside_dhaka' ? 70 : 130;
+    const totalAmount = (orderProduct.price * qty) + deliveryCharge;
+
     try {
       const res = await fetch('/api/orders/quick-create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          customerName: custName.trim() || 'Valued Customer',
+          customerName: custName.trim() || 'সম্মানিত ক্রেতা',
           customerPhone: custPhone.trim(),
           customerAddress: custAddress.trim(),
           productName: orderProduct.title,
           productPrice: orderProduct.price,
           deliveryLocation: custLocation,
-          quantity: 1,
+          quantity: qty,
           sessionId,
         }),
       });
@@ -345,15 +393,16 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
       const data = await res.json();
       if (res.ok && data.success) {
         setShowOrderModal(false);
+        setIsSelectingProduct(false);
         const orderNum = data.orderNumber;
 
         const confirmText = `✅ **অর্ডার সফলভাবে কনফার্ম হয়েছে!**\n\n` +
           `🆔 **অর্ডার আইডি:** #${orderNum}\n` +
-          `🛍️ **প্রোডাক্ট:** ${orderProduct.title}\n` +
-          `👤 **নাম:** ${custName || 'কাস্টমার'}\n` +
+          `🛍️ **প্রোডাক্ট:** ${orderProduct.title} (পরিমাণ: ${qty}টি)\n` +
+          `👤 **নাম:** ${custName || 'সম্মানিত ক্রেতা'}\n` +
           `📞 **মোবাইল:** ${custPhone}\n` +
           `📍 **ঠিকানা:** ${custAddress}\n` +
-          `💰 **মোট বিল:** ৳${data.order?.totalAmount || orderProduct.price + (custLocation === 'inside_dhaka' ? 70 : 130)} (ক্যাশ অন ডেলিভারি)\n\n` +
+          `💰 **সর্বমোট বিল:** ৳${totalAmount} BDT (ক্যাশ অন ডেলিভারি)\n\n` +
           `আমরা দ্রুত পার্সেলটি প্যাক করে আপনার দেওয়া ঠিকানায় পাঠিয়ে দিচ্ছি। ধন্যবাদ! ❤️`;
 
         const newMsg: ChatMessage = {
@@ -368,6 +417,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
         setCustName('');
         setCustPhone('');
         setCustAddress('');
+        setOrderQuantity(1);
       } else {
         alert(data.error || 'অর্ডার করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
       }
@@ -941,131 +991,297 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
 
             {/* 1-Click Order Modal Overlay */}
             {showOrderModal && (
-              <div className="absolute inset-0 bg-black/40 backdrop-blur-2xs z-50 flex items-center justify-center p-4 animate-fadeIn">
-                <div className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[90%]">
-                  <div className="bg-white border-b border-gray-100 p-4 flex items-center justify-between">
+              <div className="absolute inset-0 bg-black/45 backdrop-blur-2xs z-50 flex items-center justify-center p-3 animate-fadeIn">
+                <div className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col max-h-[92%]">
+                  {/* Modal Header */}
+                  <div className="bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between shrink-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-lg">🛍️</span>
-                      <span className="font-bold text-sm text-[#262626]">১-ক্লিক ইনস্ট্যান্ট অর্ডার</span>
+                      {isSelectingProduct ? (
+                        <button
+                          type="button"
+                          onClick={() => setIsSelectingProduct(false)}
+                          className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition active:scale-95"
+                          title="ফিরে যান"
+                        >
+                          <ArrowLeft className="w-4 h-4" />
+                        </button>
+                      ) : (
+                        <span className="text-lg">🛍️</span>
+                      )}
+                      <div>
+                        <span className="font-bold text-sm text-[#262626] block leading-tight">
+                          {isSelectingProduct ? 'প্রোডাক্ট বেছে নিন' : '১-ক্লিক ইনস্ট্যান্ট অর্ডার'}
+                        </span>
+                        <span className="text-[10px] text-gray-400 block">
+                          {isSelectingProduct
+                            ? `${catalogProducts.filter((p) => !productSearch.trim() || p.title.toLowerCase().includes(productSearch.toLowerCase())).length}টি কালেকশন উপলব্ধ`
+                            : 'ক্যাশ অন ডেলিভারি (কোনো অগ্রিম ছাড়া)'}
+                        </span>
+                      </div>
                     </div>
                     <button
-                      onClick={() => setShowOrderModal(false)}
+                      type="button"
+                      onClick={() => {
+                        setShowOrderModal(false);
+                        setIsSelectingProduct(false);
+                      }}
                       className="w-7 h-7 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center transition"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <form onSubmit={handleSubmitQuickOrder} className="p-4 space-y-3 overflow-y-auto">
-                    <div className="bg-[#FDF7EE] p-3 rounded-2xl border border-[#ECA548]/30 text-xs">
-                      <span className="font-bold text-[#262626] block truncate">{orderProduct.title}</span>
-                      <div className="flex items-center justify-between mt-1 text-gray-600">
-                        <span>মূল্য:</span>
-                        <span className="font-extrabold text-[#ECA548] text-sm">৳{orderProduct.price} BDT</span>
+                  {isSelectingProduct ? (
+                    /* PRODUCT SELECTION VIEW */
+                    <div className="flex flex-col flex-1 overflow-hidden">
+                      {/* Search box */}
+                      <div className="p-3 border-b border-gray-100 bg-gray-50/70 shrink-0">
+                        <div className="relative">
+                          <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                          <input
+                            type="text"
+                            value={productSearch}
+                            onChange={(e) => setProductSearch(e.target.value)}
+                            placeholder="ব্যাগ, ওয়ালেট বা প্রোডাক্টের নাম লিখে খুঁজুন..."
+                            className="w-full pl-8 pr-3 py-2 text-xs bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#ECA548] text-[#262626]"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Products Scrollable List */}
+                      <div className="p-3 space-y-2 overflow-y-auto flex-1 max-h-[380px]">
+                        {catalogProducts
+                          .filter((p) => !productSearch.trim() || p.title.toLowerCase().includes(productSearch.toLowerCase()))
+                          .map((prod) => {
+                            const isSelected = orderProduct.title === prod.title || orderProduct.id === prod.id;
+                            return (
+                              <div
+                                key={prod.id || prod.title}
+                                onClick={() => {
+                                  setOrderProduct({
+                                    id: prod.id,
+                                    title: prod.title,
+                                    price: prod.price,
+                                    imageUrl: prod.imageUrl,
+                                  });
+                                  setIsSelectingProduct(false);
+                                }}
+                                className={`p-2.5 rounded-2xl border transition-all cursor-pointer flex items-center gap-3 active:scale-[0.98] ${
+                                  isSelected
+                                    ? 'bg-[#FDF7EE] border-[#ECA548] ring-1 ring-[#ECA548]/30 shadow-xs'
+                                    : 'bg-white hover:bg-gray-50 border-gray-150'
+                                }`}
+                              >
+                                <div className="relative w-14 h-14 rounded-xl overflow-hidden bg-gray-100 shrink-0 border border-gray-150">
+                                  <img
+                                    src={prod.imageUrl}
+                                    alt={prod.title}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      (e.currentTarget as HTMLImageElement).src = 'https://giftghor.world/assets/logo.png';
+                                    }}
+                                  />
+                                  {isSelected && (
+                                    <div className="absolute inset-0 bg-[#ECA548]/25 flex items-center justify-center">
+                                      <div className="w-5 h-5 rounded-full bg-[#ECA548] text-white flex items-center justify-center shadow-xs">
+                                        <Check className="w-3 h-3 stroke-[3]" />
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+
+                                <div className="flex-1 min-w-0">
+                                  <h4 className="font-semibold text-xs text-[#262626] line-clamp-2 leading-tight">
+                                    {prod.title}
+                                  </h4>
+                                  <div className="flex items-center justify-between mt-1.5">
+                                    <span className="font-extrabold text-xs text-[#ECA548]">
+                                      ৳{prod.price} BDT
+                                    </span>
+                                    <span
+                                      className={`text-[10px] font-bold px-2 py-0.5 rounded-md transition ${
+                                        isSelected
+                                          ? 'bg-[#ECA548] text-white'
+                                          : 'bg-gray-100 text-gray-600 hover:bg-[#FDF7EE] hover:text-[#ECA548]'
+                                      }`}
+                                    >
+                                      {isSelected ? 'সিলেক্টেড ✓' : 'বেছে নিন'}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
                       </div>
                     </div>
+                  ) : (
+                    /* ORDER FORM WITH VISUAL PRODUCT PREVIEW */
+                    <form onSubmit={handleSubmitQuickOrder} className="p-4 space-y-3 overflow-y-auto">
+                      {/* Selected Product Card with Image */}
+                      <div className="bg-[#FDF7EE] p-3 rounded-2xl border border-[#ECA548]/40 shadow-2xs">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-[11px] font-bold text-gray-600 flex items-center gap-1">
+                            <ShoppingBag className="w-3 h-3 text-[#ECA548]" />
+                            নির্বাচিত প্রোডাক্ট:
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setIsSelectingProduct(true)}
+                            className="text-[11px] font-bold text-[#ECA548] hover:text-[#c47f26] bg-white border border-[#ECA548]/40 px-2.5 py-1 rounded-lg transition-all active:scale-95 flex items-center gap-1 shadow-2xs"
+                          >
+                            <span>প্রোডাক্ট পরিবর্তন করুন</span>
+                            <ChevronRight className="w-3 h-3" />
+                          </button>
+                        </div>
 
-                    <div>
-                      <label className="block text-[11px] font-semibold text-gray-600 mb-1">
-                        আপনার পূর্ণ নাম (ঐচ্ছিক)
-                      </label>
-                      <input
-                        type="text"
-                        value={custName}
-                        onChange={(e) => setCustName(e.target.value)}
-                        placeholder="e.g. সাদিয়া ইসলাম"
-                        className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white transition"
-                      />
-                    </div>
+                        <div className="flex gap-3 items-center">
+                          <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-amber-200/80 bg-white shrink-0 shadow-2xs">
+                            <img
+                              src={orderProduct.imageUrl || defaultCatalog[0]?.imageUrl}
+                              alt={orderProduct.title}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLImageElement).src = defaultCatalog[0]?.imageUrl || 'https://giftghor.world/assets/logo.png';
+                              }}
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-bold text-xs text-[#262626] line-clamp-2 leading-tight">
+                              {orderProduct.title}
+                            </h4>
+                            <div className="flex items-center justify-between mt-1.5">
+                              <span className="font-extrabold text-sm text-[#ECA548]">
+                                ৳{orderProduct.price} BDT
+                              </span>
 
-                    <div>
-                      <label className="block text-[11px] font-semibold text-gray-600 mb-1">
-                        সচল মোবাইল নম্বর <span className="text-rose-500">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        value={custPhone}
-                        onChange={(e) => setCustPhone(e.target.value)}
-                        placeholder="017xxxxxxxx"
-                        className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white transition font-mono"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-[11px] font-semibold text-gray-600 mb-1">
-                        ডেলিভারি লোকেশন
-                      </label>
-                      <div className="grid grid-cols-2 gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setCustLocation('inside_dhaka')}
-                          className={`text-xs py-2 px-2.5 rounded-xl border font-medium text-center transition ${
-                            custLocation === 'inside_dhaka'
-                              ? 'border-[#ECA548] bg-[#FDF7EE] text-[#ECA548] font-bold'
-                              : 'border-gray-200 bg-gray-50 text-gray-600'
-                          }`}
-                        >
-                          ঢাকার ভিতরে (৳৭০)
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setCustLocation('outside_dhaka')}
-                          className={`text-xs py-2 px-2.5 rounded-xl border font-medium text-center transition ${
-                            custLocation === 'outside_dhaka'
-                              ? 'border-[#ECA548] bg-[#FDF7EE] text-[#ECA548] font-bold'
-                              : 'border-gray-200 bg-gray-50 text-gray-600'
-                          }`}
-                        >
-                          ঢাকার বাইরে (৳১৩০)
-                        </button>
+                              {/* Quantity Selector */}
+                              <div className="flex items-center border border-gray-200 bg-white rounded-lg overflow-hidden shadow-2xs">
+                                <button
+                                  type="button"
+                                  onClick={() => setOrderQuantity(Math.max(1, orderQuantity - 1))}
+                                  className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition text-xs font-bold"
+                                >
+                                  −
+                                </button>
+                                <span className="px-2 text-xs font-bold text-[#262626]">
+                                  {orderQuantity}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => setOrderQuantity(orderQuantity + 1)}
+                                  className="w-6 h-6 flex items-center justify-center text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition text-xs font-bold"
+                                >
+                                  +
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
 
-                    <div>
-                      <label className="block text-[11px] font-semibold text-gray-600 mb-1">
-                        সম্পূর্ণ ডেলিভারি ঠিকানা (জেলা ও থানা সহ) <span className="text-rose-500">*</span>
-                      </label>
-                      <textarea
-                        required
-                        rows={2}
-                        value={custAddress}
-                        onChange={(e) => setCustAddress(e.target.value)}
-                        placeholder="বাড়ি নং, রোড নং, এলাকা, থানা ও জেলা..."
-                        className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white transition"
-                      />
-                    </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                          আপনার নাম (ঐচ্ছিক)
+                        </label>
+                        <input
+                          type="text"
+                          value={custName}
+                          onChange={(e) => setCustName(e.target.value)}
+                          placeholder="e.g. সাদিয়া ইসলাম"
+                          className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white transition"
+                        />
+                      </div>
 
-                    <div className="bg-gray-50 p-2.5 rounded-xl text-xs space-y-1 text-gray-600">
-                      <div className="flex justify-between">
-                        <span>প্রোডাক্ট মূল্য:</span>
-                        <span>৳{orderProduct.price}</span>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                          সচল মোবাইল নম্বর <span className="text-rose-500">*</span>
+                        </label>
+                        <input
+                          type="tel"
+                          required
+                          value={custPhone}
+                          onChange={(e) => setCustPhone(e.target.value)}
+                          placeholder="017xxxxxxxx"
+                          className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white transition font-mono"
+                        />
                       </div>
-                      <div className="flex justify-between">
-                        <span>ডেলিভারি চার্জ:</span>
-                        <span>৳{custLocation === 'inside_dhaka' ? 70 : 130}</span>
-                      </div>
-                      <div className="flex justify-between font-bold text-[#262626] border-t border-gray-200 pt-1 text-sm">
-                        <span>সর্বমোট (ক্যাশ অন ডেলিভারি):</span>
-                        <span className="text-[#ECA548]">
-                          ৳{orderProduct.price + (custLocation === 'inside_dhaka' ? 70 : 130)} BDT
-                        </span>
-                      </div>
-                    </div>
 
-                    <button
-                      type="submit"
-                      disabled={isSubmittingOrder}
-                      style={{ backgroundColor: '#ECA548' }}
-                      className="w-full py-2.5 rounded-xl text-xs font-bold text-white hover:opacity-90 active:scale-[0.98] transition shadow-xs flex items-center justify-center gap-1.5 disabled:opacity-50"
-                    >
-                      {isSubmittingOrder ? (
-                        <span>কনফার্ম হচ্ছে...</span>
-                      ) : (
-                        <span>অর্ডার কনফার্ম করুন (ক্যাশ অন ডেলিভারি)</span>
-                      )}
-                    </button>
-                  </form>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                          ডেলিভারি এলাকা
+                        </label>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setCustLocation('inside_dhaka')}
+                            className={`text-xs py-2 px-2.5 rounded-xl border font-medium text-center transition ${
+                              custLocation === 'inside_dhaka'
+                                ? 'border-[#ECA548] bg-[#FDF7EE] text-[#ECA548] font-bold'
+                                : 'border-gray-200 bg-gray-50 text-gray-600'
+                            }`}
+                          >
+                            ঢাকার ভিতরে (৳৭০)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setCustLocation('outside_dhaka')}
+                            className={`text-xs py-2 px-2.5 rounded-xl border font-medium text-center transition ${
+                              custLocation === 'outside_dhaka'
+                                ? 'border-[#ECA548] bg-[#FDF7EE] text-[#ECA548] font-bold'
+                                : 'border-gray-200 bg-gray-50 text-gray-600'
+                            }`}
+                          >
+                            ঢাকার বাইরে (৳১৩০)
+                          </button>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-semibold text-gray-600 mb-1">
+                          সম্পূর্ণ ডেলিভারি ঠিকানা (জেলা ও থানা সহ) <span className="text-rose-500">*</span>
+                        </label>
+                        <textarea
+                          required
+                          rows={2}
+                          value={custAddress}
+                          onChange={(e) => setCustAddress(e.target.value)}
+                          placeholder="বাড়ি নং, রোড নং, এলাকা, থানা ও জেলা..."
+                          className="w-full text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white transition"
+                        />
+                      </div>
+
+                      {/* Bill Calculation Box */}
+                      <div className="bg-gray-50 p-2.5 rounded-xl text-xs space-y-1 text-gray-600">
+                        <div className="flex justify-between">
+                          <span>প্রোডাক্ট মূল্য ({orderQuantity}টি):</span>
+                          <span>৳{orderProduct.price * orderQuantity}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>ডেলিভারি চার্জ:</span>
+                          <span>৳{custLocation === 'inside_dhaka' ? 70 : 130}</span>
+                        </div>
+                        <div className="flex justify-between font-bold text-[#262626] border-t border-gray-200 pt-1 text-sm">
+                          <span>সর্বমোট ক্যাশ অন ডেলিভারি (COD):</span>
+                          <span className="text-[#ECA548]">
+                            ৳{(orderProduct.price * orderQuantity) + (custLocation === 'inside_dhaka' ? 70 : 130)} BDT
+                          </span>
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={isSubmittingOrder}
+                        style={{ backgroundColor: '#ECA548' }}
+                        className="w-full py-2.5 rounded-xl text-xs font-bold text-white hover:opacity-90 active:scale-[0.98] transition shadow-xs flex items-center justify-center gap-1.5 disabled:opacity-50"
+                      >
+                        {isSubmittingOrder ? (
+                          <span>কনফার্ম হচ্ছে...</span>
+                        ) : (
+                          <span>অর্ডার কনফার্ম করুন - ৳{(orderProduct.price * orderQuantity) + (custLocation === 'inside_dhaka' ? 70 : 130)}</span>
+                        )}
+                      </button>
+                    </form>
+                  )}
                 </div>
               </div>
             )}

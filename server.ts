@@ -3245,6 +3245,14 @@ app.post('/api/orders/track', async (req, res) => {
   });
 });
 
+// Public Product Catalog Endpoint (Provides real image URLs, prices, titles)
+app.get('/api/products', (req, res) => {
+  return res.json({
+    success: true,
+    products: DB.products || [],
+  });
+});
+
 // Public Quick Order Creation from In-Chat Product Cards / Modal
 app.post('/api/orders/quick-create', async (req, res) => {
   try {
