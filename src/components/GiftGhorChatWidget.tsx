@@ -1161,45 +1161,13 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                               </span>
                             </div>
 
-                            {/* Customer & Courier Details */}
-                            <div className="bg-white p-2.5 rounded-xl border border-gray-150 space-y-1.5 text-gray-600 text-[11.5px]">
-                              {trackResult.order?.productName && (
-                                <div className="flex justify-between">
-                                  <span className="text-gray-500">প্রোডাক্ট:</span>
-                                  <span className="font-semibold text-gray-800 text-right max-w-[200px] truncate">{trackResult.order.productName}</span>
-                                </div>
-                              )}
-                              {trackResult.order?.customerName && (
-                                <div className="flex justify-between">
-                                  <span className="text-gray-500">গ্রাহক:</span>
-                                  <span className="font-semibold text-gray-800">{trackResult.order.customerName}</span>
-                                </div>
-                              )}
-                              {trackResult.order?.customerPhone && (
-                                <div className="flex justify-between">
-                                  <span className="text-gray-500">মোবাইল:</span>
-                                  <span className="font-mono text-gray-800">{trackResult.order.customerPhone}</span>
-                                </div>
-                              )}
-                              {trackResult.order?.customerAddress && (
-                                <div className="flex justify-between">
-                                  <span className="text-gray-500">ঠিকানা:</span>
-                                  <span className="text-right text-gray-800 max-w-[200px] truncate">{trackResult.order.customerAddress}</span>
-                                </div>
-                              )}
-                              {trackResult.order?.steadfastConsignmentId && (
-                                <div className="flex justify-between pt-1 border-t border-gray-100">
-                                  <span className="text-gray-500">Consignment ID:</span>
-                                  <span className="font-mono font-bold text-sky-700">{trackResult.order.steadfastConsignmentId}</span>
-                                </div>
-                              )}
-                              {trackResult.order?.steadfastTrackingCode && (
-                                <div className="flex justify-between">
-                                  <span className="text-gray-500">Tracking Code:</span>
-                                  <span className="font-mono font-bold text-purple-700 text-[10.5px]">{trackResult.order.steadfastTrackingCode}</span>
-                                </div>
-                              )}
-                            </div>
+                            {/* Consignment ID Row (if available) */}
+                            {trackResult.order?.steadfastConsignmentId && (
+                              <div className="bg-white p-2.5 rounded-xl border border-gray-150 flex justify-between items-center text-[11.5px]">
+                                <span className="text-gray-500 font-medium">Steadfast CID:</span>
+                                <span className="font-mono font-bold text-sky-700">{trackResult.order.steadfastConsignmentId}</span>
+                              </div>
+                            )}
 
                             {/* Direct Valid Steadfast Tracking Link Button */}
                             {(trackResult.trackingUrl || trackResult.order?.trackingUrl) && (
