@@ -104,7 +104,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
     widgetSubtitle: 'Online | Instant replies in বাংলা & English',
     logoUrl: '',
     primaryColor: '#ECA548',
-    welcomeMessage: 'আসসালামু আলাইকুম! আমি গিফট ঘর এর এআই বন্ধু। কীভাবে সাহায্য করতে পারি?',
+    welcomeMessage: 'আসসালামু আলাইকুম! আমি গিফট ঘর এর এআই অ্যাসিস্ট্যান্ট। কীভাবে সাহায্য করতে পারি?',
     quickReplies: [
       '🎁 আমার অফার',
       '🛍️ প্রোডাক্ট ক্যাটালগ',
@@ -638,7 +638,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                     <div className="bg-white text-[#262626] border border-gray-150 rounded-2xl rounded-tl-xs px-4 py-3 text-[13.5px] leading-relaxed shadow-xs">
                       <div className="font-semibold text-[#262626] mb-1">হ্যালো! 👋</div>
                       <div className="text-gray-700 leading-relaxed mb-2">
-                        আমি গিফট ঘর এর এআই বন্ধু! আপনার কেনাকাটার পার্সোনাল অ্যাসিস্ট্যান্ট!
+                        আমি গিফট ঘর এর এআই অ্যাসিস্ট্যান্ট!
                       </div>
                       <div className="text-gray-600 text-xs leading-relaxed">
                         কীভাবে সাহায্য করতে পারি? সরাসরি দেখতে বা অর্ডার করতে নিচের অপশনগুলোতে ট্যাপ করুন:
