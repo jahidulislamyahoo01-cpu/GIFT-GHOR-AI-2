@@ -390,6 +390,58 @@ export async function crawlSitemapToCloudSql(sitemapUrl = 'https://giftghor.worl
   }
 }
 
+export async function upsertChatSessionInCloudSql(sess: any): Promise<void> {
+  if (!sess || !sess.id) return;
+  try {
+    await db
+      .insert(chatSessionsTable)
+      .values({
+        id: sess.id,
+        customerName: sess.customerName || null,
+        customerPhone: sess.customerPhone || null,
+        status: sess.status || 'active',
+        messages: sess.messages || [],
+        orderExtracted: sess.orderExtracted || null,
+        updatedAt: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: chatSessionsTable.id,
+        set: {
+          customerName: sess.customerName || null,
+          customerPhone: sess.customerPhone || null,
+          status: sess.status || 'active',
+          messages: sess.messages || [],
+          orderExtracted: sess.orderExtracted || null,
+          updatedAt: new Date(),
+        },
+      });
+  } catch (error) {
+    console.error('[CloudSQL] Error upserting chat session:', error);
+  }
+}
+
+export async function getChatSessionsFromCloudSql(): Promise<Record<string, any>> {
+  try {
+    const rows = await db.select().from(chatSessionsTable);
+    const sessionsMap: Record<string, any> = {};
+    for (const r of rows) {
+      sessionsMap[r.id] = {
+        id: r.id,
+        customerName: r.customerName,
+        customerPhone: r.customerPhone,
+        status: r.status || 'active',
+        messages: r.messages || [],
+        orderExtracted: r.orderExtracted,
+        lastActivity: r.updatedAt ? new Date(r.updatedAt).toISOString() : new Date().toISOString(),
+      };
+    }
+    return sessionsMap;
+  } catch (error) {
+    console.error('[CloudSQL] Error fetching chat sessions:', error);
+    return {};
+  }
+}
+
 // ----------------- FULL BIDIRECTIONAL SYNC & LOAD -----------------
 
 export async function syncDbToCloudSql(dbData: any): Promise<void> {
@@ -440,6 +492,14 @@ export async function syncDbToCloudSql(dbData: any): Promise<void> {
         });
       }
     }
+    // 3. Sync chat sessions
+    if (dbData.sessions && typeof dbData.sessions === 'object') {
+      const sessionsList = Object.values(dbData.sessions);
+      for (const sess of sessionsList as any[]) {
+        if (!sess.id) continue;
+        await upsertChatSessionInCloudSql(sess);
+      }
+    }
   } catch (err) {
     console.error('[CloudSQL] syncDbToCloudSql error:', err);
   }
@@ -448,14 +508,16 @@ export async function syncDbToCloudSql(dbData: any): Promise<void> {
 export async function loadDataFromCloudSql(): Promise<{
   products: SqlProduct[];
   orders: SqlOrder[];
+  sessions: Record<string, any>;
 }> {
   try {
     const products = await getProductsFromCloudSql();
     const orders = await getOrdersFromCloudSql();
-    return { products, orders };
+    const sessions = await getChatSessionsFromCloudSql();
+    return { products, orders, sessions };
   } catch (err) {
     console.error('[CloudSQL] loadDataFromCloudSql error:', err);
-    return { products: [], orders: [] };
+    return { products: [], orders: [], sessions: {} };
   }
 }
 

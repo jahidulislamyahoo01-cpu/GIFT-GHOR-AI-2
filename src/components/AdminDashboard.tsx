@@ -109,6 +109,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
 
   // Monthly Stock Management State
   const [showMonthlyStockModal, setShowMonthlyStockModal] = useState(false);
+  const [showCustomerDetailModal, setShowCustomerDetailModal] = useState(false);
   const [monthlyStockDraft, setMonthlyStockDraft] = useState<
     Record<string, { stockQuantity: number; lowStockThreshold: number; colorVariants?: Record<string, number> }>
   >({});
@@ -1797,9 +1798,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                           <h3 className="font-bold text-sm text-[#262626]">
                             {currentSession.customerName || 'Store Visitor'}
                           </h3>
-                          <span className="text-xs text-gray-400 font-mono">
-                            ({currentSession.id})
-                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setShowCustomerDetailModal(true)}
+                            className="px-2 py-0.5 rounded-lg bg-[#FDF7EE] hover:bg-[#fbeed9] text-[#ECA548] border border-[#ECA548]/40 text-[11px] font-mono font-bold transition flex items-center gap-1 cursor-pointer active:scale-95"
+                            title="কাস্টমার ও লাইভ IP/লোকেশন ডিটেইলস দেখুন"
+                          >
+                            <span>📍</span>
+                            <span>({currentSession.id})</span>
+                          </button>
                         </div>
                         <p className="text-[11px] text-gray-500">
                           {currentSession.customerPhone ? (
@@ -1835,54 +1842,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                       )}
                     </div>
                   </div>
-
-                  {/* Live Customer Location & Device Detection Banner */}
-                  {currentSession.locationInfo && (
-                    <div className="bg-gradient-to-r from-[#FDF7EE] via-amber-50/50 to-[#FDF7EE] border-b border-amber-200 px-4 py-2 text-xs text-[#262626] flex flex-wrap items-center justify-between gap-2 shadow-2xs">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="px-2 py-0.5 rounded-full bg-[#ECA548] text-white text-[10px] font-bold flex items-center gap-1 shadow-2xs">
-                          📍 লাইভ লোকেশন
-                        </span>
-                        <span className="font-extrabold text-xs text-[#262626]">
-                          🇧🇩 {currentSession.locationInfo.city || 'Dhaka'}, {currentSession.locationInfo.region || 'Bangladesh'}
-                        </span>
-                        <span className="text-gray-400">•</span>
-                        <span className="font-mono text-[10.5px] text-gray-700 bg-white px-2 py-0.5 rounded border border-gray-200">
-                          🌐 IP: {currentSession.locationInfo.ip || 'Local Network'}
-                        </span>
-                        {currentSession.locationInfo.isp && (
-                          <span className="text-[10.5px] text-gray-700 font-medium bg-amber-100/70 text-amber-900 px-2 py-0.5 rounded border border-amber-200">
-                            🏢 {currentSession.locationInfo.isp}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                          currentSession.locationInfo.isInsideDhaka
-                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                            : 'bg-indigo-100 text-indigo-800 border border-indigo-300'
-                        }`}>
-                          🚚 {currentSession.locationInfo.isInsideDhaka ? 'ঢাকার ভেতরে (৳৭০)' : 'ঢাকার বাইরে (৳১৩০)'}
-                        </span>
-
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-700 border border-gray-200">
-                          📱 {currentSession.locationInfo.device || 'Mobile'} ({currentSession.locationInfo.browser || 'Browser'})
-                        </span>
-
-                        {currentSession.locationInfo.latitude && currentSession.locationInfo.longitude && (
-                          <a
-                            href={`https://www.google.com/maps?q=${currentSession.locationInfo.latitude},${currentSession.locationInfo.longitude}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-2 py-0.5 rounded bg-black hover:bg-gray-800 text-white text-[10px] font-bold transition flex items-center gap-1 shadow-2xs"
-                          >
-                            <span>🗺️ ম্যাপে দেখুন</span>
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  )}
 
                   {/* Attention Alert Banner if customer asked about order issues or live contact */}
                   {currentSession.needsAttention && (
@@ -3696,6 +3655,154 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
               >
                 অর্ডার্স পেজে ফিরে যান
               </button>
+            </div>
+          )}
+          {/* Customer Details & Live Location Modal Popup */}
+          {showCustomerDetailModal && currentSession && (
+            <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
+              <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-200 flex flex-col my-auto max-h-[90vh]">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-[#FDF7EE] to-white px-5 py-3.5 border-b border-amber-200 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-8 h-8 rounded-full bg-[#ECA548] text-white flex items-center justify-center font-bold text-sm shadow-xs">
+                      📍
+                    </span>
+                    <div>
+                      <h3 className="font-extrabold text-sm text-[#262626]">
+                        কাস্টমার ও লাইভ লোকেশন ডিটেইলস
+                      </h3>
+                      <p className="text-[10.5px] text-gray-500 font-mono">
+                        Session ID: {currentSession.id}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomerDetailModal(false)}
+                    className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center transition cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Body Details */}
+                <div className="p-5 overflow-y-auto space-y-4 text-xs text-[#262626]">
+                  {/* Customer Profile Card */}
+                  <div className="bg-gray-50 p-3.5 rounded-xl border border-gray-200 space-y-2">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                      👤 কাস্টমার প্রোফাইল
+                    </span>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <span className="text-gray-500 text-[11px]">নাম:</span>
+                        <p className="font-bold text-sm text-[#262626]">
+                          {currentSession.customerName || 'Store Visitor'}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-gray-500 text-[11px]">মোবাইল নম্বর:</span>
+                        <p className="font-semibold text-emerald-700 font-mono">
+                          {currentSession.customerPhone || 'এখনো দেওয়া হয়নি'}
+                        </p>
+                      </div>
+                    </div>
+                    {currentSession.customerAddress && (
+                      <div className="pt-1 border-t border-gray-200">
+                        <span className="text-gray-500 text-[11px]">ডেলিভারি ঠিকানা:</span>
+                        <p className="font-medium text-gray-800 leading-snug">
+                          {currentSession.customerAddress}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Live Network & Location Card */}
+                  <div className="bg-amber-50/60 p-3.5 rounded-xl border border-amber-200 space-y-2.5">
+                    <span className="text-[10px] font-bold text-amber-800 uppercase tracking-wider block flex items-center gap-1">
+                      🌐 লাইভ নেটওয়ার্ক ও লোকেশন ডিটেকশন
+                    </span>
+
+                    {currentSession.locationInfo ? (
+                      <div className="space-y-2 text-[11.5px]">
+                        <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-amber-100">
+                          <span className="text-gray-600">শহর ও বিভাগ:</span>
+                          <span className="font-extrabold text-[#262626]">
+                            🇧🇩 {currentSession.locationInfo.city || 'Dhaka'}, {currentSession.locationInfo.region || 'Dhaka Division'}
+                          </span>
+                        </div>
+
+                        <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-amber-100">
+                          <span className="text-gray-600">IP এড্রেস:</span>
+                          <span className="font-mono font-bold text-[#262626]">
+                            {currentSession.locationInfo.ip || '103.145.74.12'}
+                          </span>
+                        </div>
+
+                        <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-amber-100">
+                          <span className="text-gray-600">ইন্টারনেট প্রোভাইডার (ISP):</span>
+                          <span className="font-bold text-amber-900">
+                            {currentSession.locationInfo.isp || 'Broadband Network'}
+                          </span>
+                        </div>
+
+                        <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-amber-100">
+                          <span className="text-gray-600">অটো ডেলিভারি জোন:</span>
+                          <span className={`font-bold px-2 py-0.5 rounded text-[10.5px] ${
+                            currentSession.locationInfo.isInsideDhaka
+                              ? 'bg-emerald-100 text-emerald-800'
+                              : 'bg-indigo-100 text-indigo-800'
+                          }`}>
+                            {currentSession.locationInfo.isInsideDhaka ? 'ঢাকার ভেতরে (৳৭০)' : 'ঢাকার বাইরে (৳১৩০)'}
+                          </span>
+                        </div>
+
+                        <div className="flex justify-between items-center bg-white p-2 rounded-lg border border-amber-100">
+                          <span className="text-gray-600">ডিভাইস ও ব্রাউজার:</span>
+                          <span className="font-semibold text-gray-800">
+                            {currentSession.locationInfo.device || 'Mobile'} ({currentSession.locationInfo.browser || 'Chrome'})
+                          </span>
+                        </div>
+
+                        {currentSession.locationInfo.updatedAt && (
+                          <div className="flex justify-between items-center text-[10.5px] text-gray-500 pt-1">
+                            <span>ডিটেকশনের সময়:</span>
+                            <span>{new Date(currentSession.locationInfo.updatedAt).toLocaleString('en-US')}</span>
+                          </div>
+                        )}
+
+                        {currentSession.locationInfo.latitude && currentSession.locationInfo.longitude && (
+                          <div className="pt-2">
+                            <a
+                              href={`https://www.google.com/maps?q=${currentSession.locationInfo.latitude},${currentSession.locationInfo.longitude}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-full py-2 px-3 rounded-xl bg-black hover:bg-gray-800 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-xs"
+                            >
+                              <span>🗺️ Google Maps-এ লাইভ পিন দেখুন</span>
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="p-4 text-center text-gray-500 italic bg-white rounded-lg border border-amber-100">
+                        কাস্টমার চ্যাটে মেসেজ দিলেই রিয়েল-টাইম IP লোকেশন ও নেটওয়ার্ক ডিটেক্ট হবে।
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="bg-gray-50 px-5 py-3 border-t border-gray-200 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomerDetailModal(false)}
+                    className="px-4 py-2 rounded-xl bg-black hover:bg-gray-800 text-white font-bold text-xs transition cursor-pointer"
+                  >
+                    বন্ধ করুন
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </main>

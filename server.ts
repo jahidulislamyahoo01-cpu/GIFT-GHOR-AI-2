@@ -64,6 +64,7 @@ import {
   crawlSitemapToCloudSql,
   upsertOrderInCloudSql,
   upsertProductInCloudSql,
+  upsertChatSessionInCloudSql,
 } from './server/cloudSqlService.ts';
 
 import { products as defaultCatalog } from './src/db/scraped_products.ts';
@@ -90,6 +91,12 @@ app.use((req, res, next) => {
 
 app.use(express.json({ limit: '15mb' }));
 app.use(express.urlencoded({ extended: true, limit: '15mb' }));
+
+function syncSession(session: any) {
+  if (!session || !session.id) return;
+  saveSessionToFirestore(session).catch((e) => console.warn('[Firestore] Sync failed:', e));
+  upsertChatSessionInCloudSql(session).catch((e) => console.warn('[CloudSQL] Session sync failed:', e));
+}
 
 // -------------------------------------------------------------
 // Persistent Storage Engine
@@ -1985,7 +1992,7 @@ app.post('/api/chat/message', async (req, res) => {
   session.unreadCount += 1;
   session.lastActivity = userTimestamp;
   saveDB(DB);
-  saveSessionToFirestore(session).catch((e) => console.warn('[Firestore] Session cloud sync failed:', e));
+  syncSession(session);
 
   // Check for live agent / human transfer request
   // Check for live agent / human transfer request (targeted to actual transfer intents)
