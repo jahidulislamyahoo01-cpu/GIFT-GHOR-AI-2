@@ -261,11 +261,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
       
       const userIsSuper = data.currentUser?.role === 'superadmin';
 
-      // Do not overwrite user input fields during background polling
+      // Update live product stock and catalog always so admin dashboard stays live
+      if (data.products) setProducts(data.products);
+
+      // Do not overwrite form draft input fields during background polling
       if (!isPolling) {
         setBranding(data.branding);
         setDeliveryPolicy(data.deliveryPolicy);
-        setProducts(data.products || []);
         setCrawledPages(data.crawledPages || []);
         setUploadedFiles(data.uploadedFiles || []);
         setFaqs(data.faqs || []);
@@ -671,11 +673,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
   const handleOpenMonthlyStockModal = () => {
     const draft: Record<string, { stockQuantity: number; lowStockThreshold: number; colorVariants?: Record<string, number> }> = {};
     for (const p of products) {
-      const vars = p.colorVariants
-        ? { ...p.colorVariants }
-        : { 'Black': 10, 'Pink': 8, 'Brown': 7 };
+      const vars = p.colorVariants ? { ...p.colorVariants } : undefined;
+      const actualQty = typeof p.stockQuantity === 'number' ? p.stockQuantity : (typeof p.stock === 'number' ? p.stock : 0);
       draft[p.id] = {
-        stockQuantity: typeof p.stockQuantity === 'number' ? p.stockQuantity : 25,
+        stockQuantity: actualQty,
         lowStockThreshold: typeof p.lowStockThreshold === 'number' ? p.lowStockThreshold : 3,
         colorVariants: vars,
       };
@@ -2545,7 +2546,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                 <div className="bg-emerald-50 p-3.5 rounded-xl border border-emerald-200 shadow-xs">
                   <span className="text-[11px] font-semibold text-emerald-800">পর্যাপ্ত স্টক</span>
                   <p className="text-lg font-extrabold text-emerald-700 mt-0.5">
-                    {products.filter((p) => (p.stockQuantity ?? 25) > (p.lowStockThreshold ?? 3)).length}টি
+                    {products.filter((p) => (p.stockQuantity ?? p.stock ?? 0) > (p.lowStockThreshold ?? 3)).length}টি
                   </p>
                 </div>
                 <div className="bg-amber-50 p-3.5 rounded-xl border border-amber-200 shadow-xs">
@@ -2554,13 +2555,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                     স্টক শেষের পথে
                   </span>
                   <p className="text-lg font-extrabold text-amber-700 mt-0.5">
-                    {products.filter((p) => (p.stockQuantity ?? 25) > 0 && (p.stockQuantity ?? 25) <= (p.lowStockThreshold ?? 3)).length}টি
+                    {products.filter((p) => (p.stockQuantity ?? p.stock ?? 0) > 0 && (p.stockQuantity ?? p.stock ?? 0) <= (p.lowStockThreshold ?? 3)).length}টি
                   </p>
                 </div>
                 <div className="bg-rose-50 p-3.5 rounded-xl border border-rose-200 shadow-xs">
                   <span className="text-[11px] font-semibold text-rose-800">স্টক আউট (০ পিস)</span>
                   <p className="text-lg font-extrabold text-rose-700 mt-0.5">
-                    {products.filter((p) => (p.stockQuantity ?? 25) === 0).length}টি
+                    {products.filter((p) => (p.stockQuantity ?? p.stock ?? 0) === 0).length}টি
                   </p>
                 </div>
               </div>
@@ -2568,7 +2569,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
               {/* Product Cards Grid with Live Stock Badges and Inline Stock Editor */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {products.map((p) => {
-                  const currentStock = typeof p.stockQuantity === 'number' ? p.stockQuantity : 25;
+                  const currentStock = typeof p.stockQuantity === 'number' ? p.stockQuantity : (typeof p.stock === 'number' ? p.stock : 0);
                   const threshold = typeof p.lowStockThreshold === 'number' ? p.lowStockThreshold : 3;
                   const isOut = currentStock === 0;
                   const isLow = currentStock > 0 && currentStock <= threshold;
