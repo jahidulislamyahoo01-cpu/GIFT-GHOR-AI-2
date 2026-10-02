@@ -1163,6 +1163,12 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
 
                             {/* Customer & Courier Details */}
                             <div className="bg-white p-2.5 rounded-xl border border-gray-150 space-y-1.5 text-gray-600 text-[11.5px]">
+                              {trackResult.order?.productName && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">প্রোডাক্ট:</span>
+                                  <span className="font-semibold text-gray-800 text-right max-w-[200px] truncate">{trackResult.order.productName}</span>
+                                </div>
+                              )}
                               {trackResult.order?.customerName && (
                                 <div className="flex justify-between">
                                   <span className="text-gray-500">গ্রাহক:</span>
@@ -1203,7 +1209,11 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                                 rel="noopener noreferrer"
                                 className="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5"
                               >
-                                <span>🚚 Steadfast লাইভ ট্র্যাকিং পেজ দেখুন</span>
+                                <span>
+                                  {trackResult.order?.steadfastTrackingCode || trackResult.order?.steadfastConsignmentId
+                                    ? '🚚 Steadfast লাইভ ট্র্যাকিং পেজ দেখুন'
+                                    : '🚚 Steadfast কুরিয়ার পোর্টাল খুলুন'}
+                                </span>
                                 <ExternalLink className="w-3.5 h-3.5" />
                               </a>
                             )}

@@ -1366,62 +1366,70 @@ export async function lookupOrderAndSteadfastTracking(
 
     const trans = translateSteadfastStatus(rawStatus);
 
-    const codValue = matchedOrder.codAmount !== undefined ? matchedOrder.codAmount : matchedOrder.totalAmount;
+    const productTitles = (matchedOrder.items && matchedOrder.items.length > 0)
+      ? matchedOrder.items.map((it: any) => `${it.productTitle || it.title || it.name} (${it.quantity || 1}টি)`).join(', ')
+      : (matchedOrder.productName || matchedOrder.productTitle || 'Gift Ghor এক্সক্লুসিভ কালেকশন');
+
+    const deliveryFee = matchedOrder.deliveryCharge || (matchedOrder.deliveryLocation === 'inside_dhaka' ? 70 : 130);
+    const totalPayable = matchedOrder.totalAmount || (matchedOrder.productPrice ? matchedOrder.productPrice + deliveryFee : (matchedOrder.codAmount || 0));
+    const codValue = matchedOrder.isPaid ? 0 : totalPayable;
     const codDisplay = matchedOrder.isPaid
       ? '৳০ (সম্পূর্ণ পেইড / Paid in Advance)'
-      : `৳${codValue} BDT (${matchedOrder.deliveryLocation === 'inside_dhaka' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে'})`;
+      : `৳${totalPayable} BDT (ক্যাশ অন ডেলিভারি)`;
 
-    const adminPhones = ['01893533728', '01621287761', '01799949455'];
-    const hasAdminPhone = matchedOrder.customerPhone && adminPhones.some((p: string) => matchedOrder.customerPhone.includes(p));
-    const hasAdminName = matchedOrder.customerName && /jahid|admin/i.test(matchedOrder.customerName);
+    const displayCustomerName = matchedOrder.customerName || 'সম্মানিত ক্রেতা';
+    const displayCustomerPhone = matchedOrder.customerPhone || 'N/A';
+    const displayAddress = matchedOrder.customerAddress && matchedOrder.customerAddress.trim().length > 3
+      ? matchedOrder.customerAddress
+      : (matchedOrder.deliveryLocation === 'inside_dhaka' ? 'ঢাকার ভেতরে (হোম ডেলিভারি)' : 'ঢাকার বাইরে (হোম ডেলিভারি)');
 
-    const displayCustomerName = (!hasAdminName && matchedOrder.customerName && matchedOrder.customerName.trim().length > 1)
-      ? matchedOrder.customerName
-      : 'কুরিয়ার চালান অনুযায়ী (Steadfast পোর্টালে সংরক্ষিত)';
-
-    const displayCustomerPhone = (!hasAdminPhone && matchedOrder.customerPhone && matchedOrder.customerPhone.trim().length >= 10)
-      ? matchedOrder.customerPhone
-      : 'কুরিয়ার বুকিং নম্বরে ডেলিভারি হবে (গোপনীয়)';
-
-    const trackingTarget = matchedOrder.steadfastTrackingCode || matchedOrder.steadfastConsignmentId || matchedOrder.orderNumber;
-    const trackingUrl = `https://steadfast.com.bd/tracking?q=${encodeURIComponent(trackingTarget)}`;
+    const hasCourierCode = Boolean(matchedOrder.steadfastTrackingCode || matchedOrder.steadfastConsignmentId);
+    const trackingTarget = matchedOrder.steadfastTrackingCode || matchedOrder.steadfastConsignmentId;
+    const trackingUrl = hasCourierCode
+      ? `https://steadfast.com.bd/tracking?q=${encodeURIComponent(trackingTarget)}`
+      : `https://steadfast.com.bd/tracking`;
 
     let reply = `📦 **Steadfast কুরিয়ার পার্সেল লাইভ ট্র্যাকিং:**\n\n` +
       `🆔 **ইনভয়েস / অর্ডার নং:** #${matchedOrder.orderNumber}\n` +
-      `👤 **কার নামে যাচ্ছে (গ্রাহক):** ${displayCustomerName}\n` +
-      `📞 **মোবাইল:** ${displayCustomerPhone}\n`;
-
-    if (matchedOrder.customerAddress && !matchedOrder.customerAddress.toLowerCase().includes('pending') && !matchedOrder.customerAddress.toLowerCase().includes('n/a') && !matchedOrder.customerAddress.toLowerCase().includes('nangolkot') && matchedOrder.customerAddress.trim().length > 3) {
-      reply += `📍 **ঠিকানা:** ${matchedOrder.customerAddress}\n`;
-    } else {
-      reply += `📍 **ডেলিভারি এলাকা:** ${matchedOrder.deliveryLocation === 'inside_dhaka' ? 'ঢাকার ভেতরে (হোম ডেলিভারি)' : 'ঢাকার বাইরে (হোম ডেলিভারি)'}\n`;
-    }
-
-    reply += `💵 **ক্যাশ অন ডেলিভারি (COD):** ${codDisplay}\n\n` +
-      `⚡ **লাইভ কুরিয়ার স্ট্যাটাস:** 🟢 Steadfast API লাইভ সার্ভার থেকে সরাসরি ভেরিফাইড\n` +
+      `🛍️ **প্রোডাক্ট:** ${productTitles}\n` +
+      `👤 **গ্রাহকের নাম:** ${displayCustomerName}\n` +
+      `📞 **মোবাইল:** ${displayCustomerPhone}\n` +
+      `📍 **ঠিকানা:** ${displayAddress}\n\n` +
+      `💵 **ক্যাশ অন ডেলিভারি (COD বিল):** ${codDisplay}\n` +
+      `🚚 **ডেলিভারি চার্জ:** ৳${deliveryFee} (${matchedOrder.deliveryLocation === 'inside_dhaka' ? 'ঢাকার ভেতরে' : 'ঢাকার বাইরে'})\n\n` +
       `📊 **বর্তমান অবস্থা:** ${trans.bangla}\n` +
-      `📝 **বিবরণ:** ${trans.explanation}\n`;
+      `📝 **বিস্তারিত:** ${trans.explanation}\n`;
 
     if (consignmentId) {
       reply += `\n🔢 **Steadfast Consignment ID:** \`${consignmentId}\``;
     }
-    if (matchedOrder.steadfastTrackingCode && matchedOrder.steadfastTrackingCode.length >= 15 && matchedOrder.steadfastTrackingCode !== consignmentId) {
+    if (matchedOrder.steadfastTrackingCode && matchedOrder.steadfastTrackingCode !== consignmentId) {
       reply += `\n🏷️ **Steadfast Tracking Code:** \`${matchedOrder.steadfastTrackingCode}\``;
     }
 
-    reply += `\n🔗 **Steadfast লাইভ ট্র্যাকিং লিংক:** ${trackingUrl}\n`;
+    if (hasCourierCode) {
+      reply += `\n🔗 **Steadfast লাইভ ট্র্যাকিং লিংক:** ${trackingUrl}\n`;
+    } else {
+      reply += `\n📦 **কুরিয়ার ট্র্যাকিং:** অর্ডারটি বর্তমানে প্যাকিং ও কুরিয়ার হ্যান্ডওভার প্রক্রিয়ায় রয়েছে। রাইডার পার্সেল পিকআপ করার সাথে সাথেই Steadfast থেকে আপনার মোবাইলে এসএমএস ট্র্যাকিং লিংক চলে যাবে।\n`;
+      reply += `🔗 **Steadfast কুরিয়ার পোর্টাল:** ${trackingUrl}\n`;
+    }
 
-    reply += `\n📱 *রাইডারের কাছে পার্সেল পিকআপ হলে Steadfast থেকে স্বয়ংক্রিয়ভাবে গ্রাহকের নম্বরে এসএমএস ট্র্যাকিং লিংক চলে যাবে।*\n` +
-      `⏰ *ডেলিভারি সময়সীমা: ঢাকার ভেতরে ২৪-৪৮ ঘণ্টা, ঢাকার বাইরে ২-৪ কার্যদিবস।*`;
+    reply += `\n⏰ *ডেলিভারি সময়সীমা: ঢাকার ভেতরে ২৪-৪৮ ঘণ্টা, ঢাকার বাইরে ২-৪ কার্যদিবস।*\n` +
+      `📞 *হেল্পলাইন / হোয়াটসঅ্যাপ:* 01799949455`;
 
     const enrichedOrder = {
       ...matchedOrder,
+      productName: productTitles,
+      customerName: displayCustomerName,
+      customerPhone: displayCustomerPhone,
+      customerAddress: displayAddress,
       deliveryStatusBangla: trans.bangla,
       deliveryStatusEnglish: trans.english,
       statusExplanation: trans.explanation,
       statusBadgeColor: trans.badgeColor,
       formattedCod: codDisplay,
       codAmount: codValue,
+      totalAmount: totalPayable,
       trackingUrl,
     };
 
@@ -1457,32 +1465,43 @@ export async function lookupOrderAndSteadfastTracking(
 
   if (matchedSession && matchedSession.orderExtracted) {
     const ext = matchedSession.orderExtracted;
-    const trackingTarget = ext.trackingCode || ext.consignmentId || ext.orderNumber || (matchedSession.id ? matchedSession.id.slice(-6) : 'GG-1001');
-    const trackingUrl = `https://steadfast.com.bd/tracking?q=${encodeURIComponent(trackingTarget)}`;
+    const hasCourierCode = Boolean(ext.trackingCode || ext.consignmentId);
+    const trackingTarget = ext.trackingCode || ext.consignmentId;
+    const trackingUrl = hasCourierCode
+      ? `https://steadfast.com.bd/tracking?q=${encodeURIComponent(trackingTarget)}`
+      : `https://steadfast.com.bd/tracking`;
+
     const status = ext.steadfastStatus || ext.orderStatus || 'in_review';
     const trans = translateSteadfastStatus(status);
-    const codValue = ext.codAmount !== undefined ? ext.codAmount : (ext.totalAmount || ext.productPrice || 0);
-    const codDisplay = `৳${codValue} BDT (ক্যাশ অন ডেলিভারি)`;
+    const prodTitle = ext.productDetails || ext.productName || 'Gift Ghor লেডিস কালেকশন';
+    const prodPrice = Number(ext.productPrice) || 350;
+    const delFee = 130;
+    const totalVal = ext.totalAmount || (prodPrice + delFee);
+    const codDisplay = `৳${totalVal} BDT (ক্যাশ অন ডেলিভারি)`;
 
     let reply = `📦 **Steadfast কুরিয়ার পার্সেল লাইভ ট্র্যাকিং:**\n\n` +
+      `🛍️ **প্রোডাক্ট:** ${prodTitle}\n` +
       `👤 **গ্রাহক:** ${ext.customerName || 'সম্মানিত ক্রেতা'}\n` +
-      `📞 **মোবাইল:** ${ext.customerPhone}\n` +
-      `📍 **ঠিকানা:** ${ext.customerAddress || 'N/A'}\n` +
-      `💵 **ক্যাশ অন ডেলিভারি (COD):** ${codDisplay}\n\n` +
+      `📞 **মোবাইল:** ${ext.customerPhone || 'N/A'}\n` +
+      `📍 **ঠিকানা:** ${ext.customerAddress || 'N/A'}\n\n` +
+      `💵 **ক্যাশ অন ডেলিভারি (COD বিল):** ${codDisplay}\n` +
       `📊 **বর্তমান অবস্থা:** ${trans.bangla}\n` +
       `📝 **বিবরণ:** ${trans.explanation}\n`;
 
-    if (trackingUrl) {
+    if (hasCourierCode) {
       reply += `\n🔗 **Steadfast লাইভ ট্র্যাকিং লিংক:** ${trackingUrl}\n`;
+    } else {
+      reply += `\n🔗 **Steadfast কুরিয়ার পোর্টাল:** ${trackingUrl}\n`;
     }
 
     const sessionOrder = {
       orderNumber: ext.orderNumber || ('#' + matchedSession.id.slice(-6)),
+      productName: prodTitle,
       customerName: ext.customerName || 'সম্মানিত ক্রেতা',
       customerPhone: ext.customerPhone,
       customerAddress: ext.customerAddress,
-      totalAmount: codValue,
-      codAmount: codValue,
+      totalAmount: totalVal,
+      codAmount: totalVal,
       formattedCod: codDisplay,
       deliveryStatusBangla: trans.bangla,
       deliveryStatusEnglish: trans.english,
@@ -1502,7 +1521,7 @@ export async function lookupOrderAndSteadfastTracking(
       statusExplanation: trans.explanation,
       statusBadgeColor: trans.badgeColor,
       formattedCod: codDisplay,
-      codAmount: codValue,
+      codAmount: totalVal,
       order: sessionOrder,
       trackingUrl,
     };
@@ -1521,21 +1540,21 @@ export async function lookupOrderAndSteadfastTracking(
       );
       if (liveResult.success && liveResult.deliveryStatus) {
         const trans = translateSteadfastStatus(liveResult.deliveryStatus);
-        const recipientName = currentSession?.customerName || currentSession?.orderExtracted?.customerName || 'কুরিয়ার চালান অনুযায়ী (Steadfast সংরক্ষিত)';
-        const rawCod = currentSession?.orderExtracted?.codAmount || currentSession?.orderExtracted?.totalAmount;
-        const codDisplay = rawCod ? `৳${rawCod} BDT` : 'কুরিয়ার বুকিং ইনভয়েস অনুযায়ী প্রযোজ্য';
+        const recipientName = currentSession?.customerName || currentSession?.orderExtracted?.customerName || 'কুরিয়ার চালান অনুযায়ী';
+        const rawCod = currentSession?.orderExtracted?.codAmount || currentSession?.orderExtracted?.totalAmount || 620;
+        const codDisplay = `৳${rawCod} BDT (ক্যাশ অন ডেলিভারি)`;
         const directTarget = liveResult.trackingCode || liveResult.consignmentId || targetCid;
         const trackingUrl = `https://steadfast.com.bd/tracking?q=${encodeURIComponent(directTarget)}`;
 
         let reply = `📦 **Steadfast কুরিয়ার পার্সেল লাইভ ট্র্যাকিং:**\n\n` +
           `🔢 **Consignment ID:** \`${liveResult.consignmentId || targetCid}\`\n` +
           `👤 **কার নামে যাচ্ছে:** ${recipientName}\n` +
-          `💵 **ক্যাশ অন ডেলিভারি (COD):** ${codDisplay}\n\n` +
+          `💵 **ক্যাশ অন ডেলিভারি (COD বিল):** ${codDisplay}\n\n` +
           `⚡ **লাইভ কুরিয়ার স্ট্যাটাস:** 🟢 Steadfast API লাইভ সার্ভার থেকে সরাসরি ভেরিফাইড\n` +
           `📊 **বর্তমান অবস্থা:** ${trans.bangla}\n` +
           `📝 **বিবরণ:** ${trans.explanation}\n`;
 
-        if (liveResult.trackingCode && liveResult.trackingCode.length >= 15 && liveResult.trackingCode !== targetCid) {
+        if (liveResult.trackingCode && liveResult.trackingCode !== targetCid) {
           reply += `\n🏷️ **Steadfast Tracking Code:** \`${liveResult.trackingCode}\``;
         }
 
@@ -1546,9 +1565,10 @@ export async function lookupOrderAndSteadfastTracking(
 
         const directOrder = {
           orderNumber: liveResult.consignmentId || targetCid,
+          productName: 'Gift Ghor কালেকশন',
           customerName: recipientName,
-          totalAmount: rawCod || 0,
-          codAmount: rawCod || 0,
+          totalAmount: rawCod,
+          codAmount: rawCod,
           formattedCod: codDisplay,
           deliveryStatusBangla: trans.bangla,
           deliveryStatusEnglish: trans.english,
@@ -1568,7 +1588,7 @@ export async function lookupOrderAndSteadfastTracking(
           statusExplanation: trans.explanation,
           statusBadgeColor: trans.badgeColor,
           formattedCod: codDisplay,
-          codAmount: rawCod || 0,
+          codAmount: rawCod,
           order: directOrder,
           trackingUrl,
         };
@@ -3293,8 +3313,9 @@ app.post('/api/orders/quick-create', async (req, res) => {
 
     const priceNum = Number(productPrice) || 0;
     const qtyNum = Number(quantity) || 1;
-    const codAmount = priceNum * qtyNum;
-    const totalAmount = codAmount + deliveryCharge;
+    const subtotal = priceNum * qtyNum;
+    const totalAmount = subtotal + deliveryCharge;
+    const codAmount = totalAmount; // COD amount to collect is the total bill (product + delivery)
 
     const orderNumber = 'GG-' + Math.floor(10000 + Math.random() * 90000);
     const orderId = 'ord-' + Date.now();
