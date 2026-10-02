@@ -37,6 +37,7 @@ import {
   Sliders, Settings, CreditCard,
   Check,
   Download,
+  X,
 } from 'lucide-react';
 import {
   AdminOverviewStats,
