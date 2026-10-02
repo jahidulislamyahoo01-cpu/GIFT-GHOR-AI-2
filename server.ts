@@ -909,17 +909,14 @@ When a customer wants to order:
 3. Location detection: If address is within Dhaka city, delivery charge is ৳${db.deliveryPolicy.insideDhakaCost}. Outside Dhaka city, delivery charge is ৳${db.deliveryPolicy.outsideDhakaCost}. Calculate total bill clearly.
 4. Mention Cash on Delivery (COD) is available.
 
-STEADFAST LIVE ORDER TRACKING RULES:
-- If a customer asks about order status, delivery update, or provides their Mobile Number (e.g. 017xxxxxxxx), Invoice / Order Number (#1001), or Steadfast Consignment / Tracking ID:
-- Product name is NOT required for order tracking. Just the phone number or invoice/tracking number is sufficient.
-- The system automatically looks up the live status:
-  * ⏳ Pending (পেন্ডিং / পিকআপের অপেক্ষায়) — Order received, packing for courier handover.
-  * 📋 In Review (ইন রিভিউ / পর্যালোচনায় রয়েছে) — Order details & packaging verification.
-  * 🚚 In Transit (ট্রানজিটে রয়েছে / ডেলিভারির পথে) — Booked with Steadfast Courier and on the way.
-  * ✅ Delivered (ডেলিভারি সম্পন্ন) — Delivered to the customer.
-  * ❌ Cancelled (অর্ডার বাতিল) — Order was cancelled.
-  * ⏸️ On Hold (হোল্ডে রয়েছে) — Held for customer verification.
-- Always provide their Steadfast live tracking link (https://steadfast.com.bd/t/<CODE>) if available.
+STEADFAST LIVE ORDER TRACKING PROTOCOL:
+- When a customer asks about order status, delivery update, asks "আমার অর্ডার কোথায়", or provides their Mobile Number (e.g. 017xxxxxxxx), Invoice / Order Number (#1001), or Steadfast Consignment ID:
+- Always clearly state:
+  1. 🆔 Invoice / Order Number (#1001)
+  2. 📊 Current Delivery Status in clear polite Bengali (e.g. 🚚 ট্রানজিটে রয়েছে / ডেলিভারির পথে, 📋 পার্সেল প্রস্তুত ও প্যাকিং চলছে, ⏳ পিকআপের অপেক্ষায়, ✅ ডেলিভারি সম্পন্ন)
+  3. 💵 Exact Cash on Delivery (COD) amount that the customer needs to pay to the rider (e.g. ৳৬২০ BDT)
+  4. 🔗 Official Steadfast live tracking URL: https://steadfast.com.bd/tracking?q=<TRACKING_OR_CONSIGNMENT_OR_ORDER_NO>
+- Delivery timeline: Inside Dhaka 24-48 hours, Outside Dhaka 2-4 business days. Delivery Helpline/WhatsApp: ${db.adminSettings?.whatsappNumber || '01799949455'}.
 `;
 }
 
@@ -1243,12 +1240,26 @@ function tryExtractOrder(text: string, existing?: any) {
   return existing;
 }
 
+export interface OrderTrackingLookupResult {
+  found: boolean;
+  reply: string;
+  statusType: string;
+  order?: any;
+  trackingUrl?: string;
+  statusTextBangla?: string;
+  statusTextEnglish?: string;
+  statusExplanation?: string;
+  statusBadgeColor?: string;
+  formattedCod?: string;
+  codAmount?: number;
+}
+
 // Real-Time Steadfast & Internal Order Lookup Engine
 export async function lookupOrderAndSteadfastTracking(
   query: string,
   db: SystemDB,
   currentSession?: any
-): Promise<{ found: boolean; reply: string; statusType: string; order?: any; trackingUrl?: string } | null> {
+): Promise<OrderTrackingLookupResult | null> {
   if (!query || query.trim().length < 2) return null;
   const rawText = convertBengaliDigits(query.trim());
   const lower = rawText.toLowerCase();
@@ -1372,6 +1383,9 @@ export async function lookupOrderAndSteadfastTracking(
       ? matchedOrder.customerPhone
       : 'কুরিয়ার বুকিং নম্বরে ডেলিভারি হবে (গোপনীয়)';
 
+    const trackingTarget = matchedOrder.steadfastTrackingCode || matchedOrder.steadfastConsignmentId || matchedOrder.orderNumber;
+    const trackingUrl = `https://steadfast.com.bd/tracking?q=${encodeURIComponent(trackingTarget)}`;
+
     let reply = `📦 **Steadfast কুরিয়ার পার্সেল লাইভ ট্র্যাকিং:**\n\n` +
       `🆔 **ইনভয়েস / অর্ডার নং:** #${matchedOrder.orderNumber}\n` +
       `👤 **কার নামে যাচ্ছে (গ্রাহক):** ${displayCustomerName}\n` +
@@ -1391,19 +1405,38 @@ export async function lookupOrderAndSteadfastTracking(
     if (consignmentId) {
       reply += `\n🔢 **Steadfast Consignment ID:** \`${consignmentId}\``;
     }
-    if (matchedOrder.steadfastTrackingCode && matchedOrder.steadfastTrackingCode.length >= 20 && matchedOrder.steadfastTrackingCode !== consignmentId) {
+    if (matchedOrder.steadfastTrackingCode && matchedOrder.steadfastTrackingCode.length >= 15 && matchedOrder.steadfastTrackingCode !== consignmentId) {
       reply += `\n🏷️ **Steadfast Tracking Code:** \`${matchedOrder.steadfastTrackingCode}\``;
     }
 
-    reply += `\n\n📱 *রাইডারের কাছে পার্সেল পিকআপ হলে Steadfast থেকে স্বয়ংক্রিয়ভাবে গ্রাহকের নম্বরে এসএমএস ট্র্যাকিং লিংক চলে যাবে।*\n` +
+    reply += `\n🔗 **Steadfast লাইভ ট্র্যাকিং লিংক:** ${trackingUrl}\n`;
+
+    reply += `\n📱 *রাইডারের কাছে পার্সেল পিকআপ হলে Steadfast থেকে স্বয়ংক্রিয়ভাবে গ্রাহকের নম্বরে এসএমএস ট্র্যাকিং লিংক চলে যাবে।*\n` +
       `⏰ *ডেলিভারি সময়সীমা: ঢাকার ভেতরে ২৪-৪৮ ঘণ্টা, ঢাকার বাইরে ২-৪ কার্যদিবস।*`;
+
+    const enrichedOrder = {
+      ...matchedOrder,
+      deliveryStatusBangla: trans.bangla,
+      deliveryStatusEnglish: trans.english,
+      statusExplanation: trans.explanation,
+      statusBadgeColor: trans.badgeColor,
+      formattedCod: codDisplay,
+      codAmount: codValue,
+      trackingUrl,
+    };
 
     return {
       found: true,
       reply,
       statusType: rawStatus,
-      order: matchedOrder,
-      trackingUrl: undefined,
+      statusTextBangla: trans.bangla,
+      statusTextEnglish: trans.english,
+      statusExplanation: trans.explanation,
+      statusBadgeColor: trans.badgeColor,
+      formattedCod: codDisplay,
+      codAmount: codValue,
+      order: enrichedOrder,
+      trackingUrl,
     };
   }
 
@@ -1424,28 +1457,54 @@ export async function lookupOrderAndSteadfastTracking(
 
   if (matchedSession && matchedSession.orderExtracted) {
     const ext = matchedSession.orderExtracted;
-    const trackingCode = ext.trackingCode;
-    const trackingUrl = trackingCode ? `https://steadfast.com.bd/t/${trackingCode}` : null;
-    const status = ext.steadfastStatus || ext.orderStatus || 'pending';
+    const trackingTarget = ext.trackingCode || ext.consignmentId || ext.orderNumber || (matchedSession.id ? matchedSession.id.slice(-6) : 'GG-1001');
+    const trackingUrl = `https://steadfast.com.bd/tracking?q=${encodeURIComponent(trackingTarget)}`;
+    const status = ext.steadfastStatus || ext.orderStatus || 'in_review';
     const trans = translateSteadfastStatus(status);
+    const codValue = ext.codAmount !== undefined ? ext.codAmount : (ext.totalAmount || ext.productPrice || 0);
+    const codDisplay = `৳${codValue} BDT (ক্যাশ অন ডেলিভারি)`;
 
-    let reply = `📦 **অর্ডার ট্র্যাকিং তথ্য:**\n\n` +
+    let reply = `📦 **Steadfast কুরিয়ার পার্সেল লাইভ ট্র্যাকিং:**\n\n` +
       `👤 **গ্রাহক:** ${ext.customerName || 'সম্মানিত ক্রেতা'}\n` +
       `📞 **মোবাইল:** ${ext.customerPhone}\n` +
       `📍 **ঠিকানা:** ${ext.customerAddress || 'N/A'}\n` +
-      `💵 **টোটাল বিল:** ৳${ext.totalAmount || ext.productPrice || 'N/A'}\n\n` +
+      `💵 **ক্যাশ অন ডেলিভারি (COD):** ${codDisplay}\n\n` +
       `📊 **বর্তমান অবস্থা:** ${trans.bangla}\n` +
       `📝 **বিবরণ:** ${trans.explanation}\n`;
 
     if (trackingUrl) {
-      reply += `\n🔗 **Steadfast ট্র্যাকিং লিংক:** ${trackingUrl}`;
+      reply += `\n🔗 **Steadfast লাইভ ট্র্যাকিং লিংক:** ${trackingUrl}\n`;
     }
+
+    const sessionOrder = {
+      orderNumber: ext.orderNumber || ('#' + matchedSession.id.slice(-6)),
+      customerName: ext.customerName || 'সম্মানিত ক্রেতা',
+      customerPhone: ext.customerPhone,
+      customerAddress: ext.customerAddress,
+      totalAmount: codValue,
+      codAmount: codValue,
+      formattedCod: codDisplay,
+      deliveryStatusBangla: trans.bangla,
+      deliveryStatusEnglish: trans.english,
+      statusExplanation: trans.explanation,
+      statusBadgeColor: trans.badgeColor,
+      steadfastConsignmentId: ext.consignmentId,
+      steadfastTrackingCode: ext.trackingCode,
+      trackingUrl,
+    };
 
     return {
       found: true,
       reply,
       statusType: status,
-      trackingUrl: trackingUrl || undefined,
+      statusTextBangla: trans.bangla,
+      statusTextEnglish: trans.english,
+      statusExplanation: trans.explanation,
+      statusBadgeColor: trans.badgeColor,
+      formattedCod: codDisplay,
+      codAmount: codValue,
+      order: sessionOrder,
+      trackingUrl,
     };
   }
 
@@ -1465,6 +1524,8 @@ export async function lookupOrderAndSteadfastTracking(
         const recipientName = currentSession?.customerName || currentSession?.orderExtracted?.customerName || 'কুরিয়ার চালান অনুযায়ী (Steadfast সংরক্ষিত)';
         const rawCod = currentSession?.orderExtracted?.codAmount || currentSession?.orderExtracted?.totalAmount;
         const codDisplay = rawCod ? `৳${rawCod} BDT` : 'কুরিয়ার বুকিং ইনভয়েস অনুযায়ী প্রযোজ্য';
+        const directTarget = liveResult.trackingCode || liveResult.consignmentId || targetCid;
+        const trackingUrl = `https://steadfast.com.bd/tracking?q=${encodeURIComponent(directTarget)}`;
 
         let reply = `📦 **Steadfast কুরিয়ার পার্সেল লাইভ ট্র্যাকিং:**\n\n` +
           `🔢 **Consignment ID:** \`${liveResult.consignmentId || targetCid}\`\n` +
@@ -1474,18 +1535,42 @@ export async function lookupOrderAndSteadfastTracking(
           `📊 **বর্তমান অবস্থা:** ${trans.bangla}\n` +
           `📝 **বিবরণ:** ${trans.explanation}\n`;
 
-        if (liveResult.trackingCode && liveResult.trackingCode.length >= 20 && liveResult.trackingCode !== targetCid) {
+        if (liveResult.trackingCode && liveResult.trackingCode.length >= 15 && liveResult.trackingCode !== targetCid) {
           reply += `\n🏷️ **Steadfast Tracking Code:** \`${liveResult.trackingCode}\``;
         }
 
-        reply += `\n\n📱 *রাইডারের কাছে পার্সেল পিকআপ হলে Steadfast থেকে স্বয়ংক্রিয়ভাবে গ্রাহকের মোবাইলে এসএমএস ট্র্যাকিং লিংক পৌঁছে যাবে।*\n` +
+        reply += `\n🔗 **Steadfast লাইভ ট্র্যাকিং লিংক:** ${trackingUrl}\n`;
+
+        reply += `\n📱 *রাইডারের কাছে পার্সেল পিকআপ হলে Steadfast থেকে স্বয়ংক্রিয়ভাবে গ্রাহকের মোবাইলে এসএমএস ট্র্যাকিং লিংক পৌঁছে যাবে।*\n` +
           `⏰ *ডেলিভারি সময়সীমা: ঢাকার ভেতরে ২৪-৪৮ ঘণ্টা, ঢাকার বাইরে ২-৪ কার্যদিবস।*`;
+
+        const directOrder = {
+          orderNumber: liveResult.consignmentId || targetCid,
+          customerName: recipientName,
+          totalAmount: rawCod || 0,
+          codAmount: rawCod || 0,
+          formattedCod: codDisplay,
+          deliveryStatusBangla: trans.bangla,
+          deliveryStatusEnglish: trans.english,
+          statusExplanation: trans.explanation,
+          statusBadgeColor: trans.badgeColor,
+          steadfastConsignmentId: liveResult.consignmentId || targetCid,
+          steadfastTrackingCode: liveResult.trackingCode,
+          trackingUrl,
+        };
 
         return {
           found: true,
           reply,
           statusType: liveResult.deliveryStatus,
-          trackingUrl: undefined,
+          statusTextBangla: trans.bangla,
+          statusTextEnglish: trans.english,
+          statusExplanation: trans.explanation,
+          statusBadgeColor: trans.badgeColor,
+          formattedCod: codDisplay,
+          codAmount: rawCod || 0,
+          order: directOrder,
+          trackingUrl,
         };
       }
     } catch {
@@ -3166,7 +3251,13 @@ app.post('/api/orders/track', async (req, res) => {
       order: result.order,
       reply: result.reply,
       statusType: result.statusType,
-      trackingUrl: result.trackingUrl,
+      statusTextBangla: (result as any).statusTextBangla || result.order?.deliveryStatusBangla,
+      statusTextEnglish: (result as any).statusTextEnglish || result.order?.deliveryStatusEnglish,
+      statusExplanation: (result as any).statusExplanation || result.order?.statusExplanation,
+      statusBadgeColor: (result as any).statusBadgeColor || result.order?.statusBadgeColor,
+      formattedCod: (result as any).formattedCod || result.order?.formattedCod,
+      codAmount: (result as any).codAmount || result.order?.codAmount,
+      trackingUrl: result.trackingUrl || result.order?.trackingUrl,
     });
   }
 

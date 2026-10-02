@@ -183,6 +183,7 @@ export function translateSteadfastStatus(status: string): { bangla: string; engl
         explanation: 'পার্সেলটি Steadfast কুরিয়ার হাবে রয়েছে এবং ডেলিভারির জন্য আপনার ঠিকানায় পাঠানো হচ্ছে।',
       };
     case 'pending':
+    case 'pending_pickup':
       return {
         bangla: '⏳ পিকআপের অপেক্ষায় (Pending Pickup)',
         english: 'Pending Pickup',
@@ -190,11 +191,15 @@ export function translateSteadfastStatus(status: string): { bangla: string; engl
         explanation: 'অর্ডারটি কুরিয়ারে বুকিং সম্পন্ন হয়েছে এবং কুরিয়ার রাইডার কর্তৃক পিকআপের অপেক্ষায় রয়েছে।',
       };
     case 'in_review':
+    case 'confirmed':
+    case 'processing':
+    case 'active':
+    case 'booked':
       return {
-        bangla: '📋 পর্যালোচনায় রয়েছে (In Review)',
-        english: 'In Review',
+        bangla: '📋 পার্সেল প্রস্তুত ও বুকিং সম্পন্ন (Processing / In Review)',
+        english: 'Processing / In Review',
         badgeColor: 'purple',
-        explanation: 'অর্ডারটি সিস্টেমে রিভিউ ও প্যাকিং প্রক্রিয়ায় রয়েছে।',
+        explanation: 'আপনার অর্ডারটি সিস্টেমে ভেরিফাইড ও পার্সেল প্রস্তুত করে কুরিয়ারে হস্তান্তরের জন্য প্রসেসিং করা হচ্ছে।',
       };
     case 'hold':
       return {

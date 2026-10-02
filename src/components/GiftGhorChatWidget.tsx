@@ -10,6 +10,7 @@ import {
   Menu,
   Sparkles,
   ChevronDown,
+  ExternalLink,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChatMessage } from '../types';
@@ -750,7 +751,35 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                           )}
 
                           <div className="whitespace-pre-line leading-relaxed">
-                            {msg.text}
+                            {(() => {
+                              if (!msg.text) return '';
+                              const urlRegex = /(https?:\/\/[^\s\)\*]+)/g;
+                              const parts = msg.text.split(urlRegex);
+                              return parts.map((part, i) => {
+                                if (part.match(urlRegex)) {
+                                  const isSteadfast = part.includes('steadfast.com.bd');
+                                  return (
+                                    <a
+                                      key={i}
+                                      href={part}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className={`inline-flex items-center gap-1 font-bold underline break-all my-1 px-1.5 py-0.5 rounded transition ${
+                                        isUser
+                                          ? 'text-white underline hover:opacity-80'
+                                          : isSteadfast
+                                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 no-underline'
+                                          : 'text-sky-600 hover:text-sky-800'
+                                      }`}
+                                    >
+                                      <span>{isSteadfast ? '🚚 Steadfast লাইভ ট্র্যাকিং পেজ' : part}</span>
+                                      <ExternalLink className="w-3 h-3 inline-block" />
+                                    </a>
+                                  );
+                                }
+                                return part;
+                              });
+                            })()}
                           </div>
                         </div>
 
@@ -1083,27 +1112,104 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                     </div>
 
                     {trackResult && (
-                      <div className="mt-3 p-3 bg-gray-50 rounded-2xl border border-gray-200 text-xs space-y-2">
+                      <div className="mt-3 p-3.5 bg-gray-50 rounded-2xl border border-gray-200 text-xs space-y-2.5">
                         {trackResult.success ? (
                           <>
-                            <div className="flex items-center justify-between border-b border-gray-200 pb-1.5">
-                              <span className="font-bold text-[#262626]">অর্ডার #{trackResult.order?.orderNumber}</span>
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
-                                {trackResult.order?.status || 'Active'}
+                            {/* Header: Order Number + Bengali Status Badge */}
+                            <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+                              <div>
+                                <span className="text-[10px] text-gray-400 block font-medium">ইনভয়েস নং</span>
+                                <span className="font-extrabold text-sm text-[#262626]">
+                                  #{trackResult.order?.orderNumber}
+                                </span>
+                              </div>
+                              <span
+                                className={`px-2.5 py-1 rounded-full text-[11px] font-bold shadow-2xs ${
+                                  trackResult.statusBadgeColor === 'green' || trackResult.order?.statusBadgeColor === 'green'
+                                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                                    : trackResult.statusBadgeColor === 'blue' || trackResult.order?.statusBadgeColor === 'blue'
+                                    ? 'bg-sky-100 text-sky-800 border border-sky-200'
+                                    : trackResult.statusBadgeColor === 'rose' || trackResult.order?.statusBadgeColor === 'rose'
+                                    ? 'bg-rose-100 text-rose-800 border border-rose-200'
+                                    : 'bg-amber-100 text-amber-800 border border-amber-200'
+                                }`}
+                              >
+                                {trackResult.statusTextBangla || trackResult.order?.deliveryStatusBangla || 'কুরিয়ার বুকিং সম্পন্ন'}
                               </span>
                             </div>
-                            <div className="text-gray-600 space-y-1">
-                              <div>গ্রাহক: {trackResult.order?.customerName}</div>
-                              <div>বিল: ৳{trackResult.order?.totalAmount} (COD)</div>
+
+                            {/* Status Explanation Card */}
+                            <div className="bg-white p-2.5 rounded-xl border border-gray-150 text-gray-700 leading-relaxed text-[11.5px]">
+                              <div className="font-semibold text-gray-900 mb-0.5 flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span>Steadfast কুরিয়ার স্ট্যাটাস:</span>
+                              </div>
+                              <p className="text-gray-600">
+                                {trackResult.statusExplanation ||
+                                  trackResult.order?.statusExplanation ||
+                                  'পার্সেলটি Steadfast কুরিয়ার সিস্টেমে বুকিং রয়েছে এবং ডেলিভারির জন্য প্রসেসিং করা হচ্ছে।'}
+                              </p>
+                            </div>
+
+                            {/* Prominent COD Amount Box */}
+                            <div className="bg-[#FDF7EE] p-2.5 rounded-xl border border-[#ECA548]/40 flex items-center justify-between">
+                              <span className="font-bold text-gray-800 text-[11.5px]">💵 ক্যাশ অন ডেলিভারি (COD):</span>
+                              <span className="font-black text-sm text-[#ECA548]">
+                                {trackResult.formattedCod ||
+                                  trackResult.order?.formattedCod ||
+                                  `৳${trackResult.order?.codAmount || trackResult.order?.totalAmount || 0} BDT`}
+                              </span>
+                            </div>
+
+                            {/* Customer & Courier Details */}
+                            <div className="bg-white p-2.5 rounded-xl border border-gray-150 space-y-1.5 text-gray-600 text-[11.5px]">
+                              {trackResult.order?.customerName && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">গ্রাহক:</span>
+                                  <span className="font-semibold text-gray-800">{trackResult.order.customerName}</span>
+                                </div>
+                              )}
+                              {trackResult.order?.customerPhone && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">মোবাইল:</span>
+                                  <span className="font-mono text-gray-800">{trackResult.order.customerPhone}</span>
+                                </div>
+                              )}
+                              {trackResult.order?.customerAddress && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">ঠিকানা:</span>
+                                  <span className="text-right text-gray-800 max-w-[200px] truncate">{trackResult.order.customerAddress}</span>
+                                </div>
+                              )}
                               {trackResult.order?.steadfastConsignmentId && (
-                                <div className="text-sky-700 font-semibold">
-                                  Steadfast Consignment ID: {trackResult.order.steadfastConsignmentId}
+                                <div className="flex justify-between pt-1 border-t border-gray-100">
+                                  <span className="text-gray-500">Consignment ID:</span>
+                                  <span className="font-mono font-bold text-sky-700">{trackResult.order.steadfastConsignmentId}</span>
+                                </div>
+                              )}
+                              {trackResult.order?.steadfastTrackingCode && (
+                                <div className="flex justify-between">
+                                  <span className="text-gray-500">Tracking Code:</span>
+                                  <span className="font-mono font-bold text-purple-700 text-[10.5px]">{trackResult.order.steadfastTrackingCode}</span>
                                 </div>
                               )}
                             </div>
+
+                            {/* Direct Valid Steadfast Tracking Link Button */}
+                            {(trackResult.trackingUrl || trackResult.order?.trackingUrl) && (
+                              <a
+                                href={trackResult.trackingUrl || trackResult.order?.trackingUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5"
+                              >
+                                <span>🚚 Steadfast লাইভ ট্র্যাকিং পেজ দেখুন</span>
+                                <ExternalLink className="w-3.5 h-3.5" />
+                              </a>
+                            )}
                           </>
                         ) : (
-                          <div className="text-rose-600 font-medium text-center py-2">
+                          <div className="text-rose-600 font-medium text-center py-2 leading-relaxed">
                             {trackResult.message || 'কোনো অর্ডার খুঁজে পাওয়া যায়নি। নম্বরটি যাচাই করুন।'}
                           </div>
                         )}
