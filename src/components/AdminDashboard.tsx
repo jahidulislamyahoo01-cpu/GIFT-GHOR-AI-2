@@ -1,5 +1,6 @@
 import { AdminInsightsView } from "./AdminInsightsView";
 import React, { useState, useEffect } from 'react';
+import { auth, googleProvider, signInWithPopup, signOut } from '../firebase';
 import {
   Shield,
   Lock,
@@ -65,6 +66,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isGoogleSigningIn, setIsGoogleSigningIn] = useState(false);
+  const [showPasswordFallback, setShowPasswordFallback] = useState(false);
 
   // 2-Step OTP Verification State
   const [requiresOtp, setRequiresOtp] = useState(false);
@@ -343,6 +346,52 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
       return () => clearInterval(interval);
     }
   }, [authToken]);
+
+  // Handle Google OAuth Sign-In (Locked to Owner and Authorized Staff)
+  const handleGoogleSignIn = async () => {
+    setLoginError('');
+    setIsGoogleSigningIn(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const email = user.email;
+      const name = user.displayName || user.email?.split('@')[0] || 'Admin';
+      const photoUrl = user.photoURL || '';
+
+      const res = await fetch('/api/admin/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name, photoUrl }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        await signOut(auth);
+        setLoginError(data.error || 'এক্সেস অস্বীকৃত! এই গুগল অ্যাকাউন্টটি অনুমোদিত নয়।');
+        setIsGoogleSigningIn(false);
+        return;
+      }
+
+      localStorage.setItem('giftghor_admin_token', data.token);
+      if (data.user) {
+        localStorage.setItem('giftghor_current_user', JSON.stringify(data.user));
+        setCurrentUser(data.user);
+      }
+      setAuthToken(data.token);
+      showToast(data.message || 'স্বাগতম! Google দিয়ে সফলভাবে প্রবেশ করেছেন।');
+      setIsGoogleSigningIn(false);
+    } catch (err: any) {
+      console.error('Google Sign-In Error:', err);
+      if (err.code === 'auth/popup-closed-by-user') {
+        setLoginError('লগইন উইন্ডো বন্ধ করা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
+      } else if (err.code === 'auth/popup-blocked') {
+        setLoginError('ব্রাউজার গুগল পপআপ ব্লক করেছে! ব্রাউজার সেটিংসে পপআপ Allow করুন।');
+      } else {
+        setLoginError(err.message || 'গুগল দিয়ে লগইন করতে সমস্যা হয়েছে।');
+      }
+      setIsGoogleSigningIn(false);
+    }
+  };
 
   // Handle Login
   const handleLogin = async (e: React.FormEvent) => {
@@ -694,7 +743,10 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch {}
     setAuthToken(null);
     setCurrentUser(null);
     localStorage.removeItem('giftghor_admin_token');
@@ -1196,58 +1248,101 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
               </form>
             </div>
           ) : (
-            /* Standard Secure Login View (No default credentials hint shown) */
+            /* Google OAuth Locked Admin Login View */
             <>
               {loginError && (
-                <div className="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>{loginError}</span>
+                <div className="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5 leading-relaxed shadow-xs">
+                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
+                  <span className="font-semibold">{loginError}</span>
                 </div>
               )}
 
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-[#262626] mb-1">
-                    Username or Gmail
-                  </label>
-                  <input
-                    type="text"
-                    value={loginUsername}
-                    onChange={(e) => setLoginUsername(e.target.value)}
-                    required
-                    className="w-full text-sm bg-gray-50 border border-[#ECECEC] rounded-xl px-4 py-3 focus:outline-none focus:border-[#ECA548] focus:bg-white text-[#262626]"
-                    placeholder="admin or your team member Gmail"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[#262626] mb-1">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                    required
-                    className="w-full text-sm bg-gray-50 border border-[#ECECEC] rounded-xl px-4 py-3 focus:outline-none focus:border-[#ECA548] focus:bg-white text-[#262626]"
-                    placeholder="Enter your password"
-                  />
-                </div>
-
+              <div className="space-y-4">
+                {/* Primary Google Sign-In Action */}
                 <button
-                  type="submit"
-                  disabled={isLoggingIn}
-                  className="w-full py-3.5 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2 disabled:opacity-60"
-                  style={{ backgroundColor: '#ECA548' }}
+                  type="button"
+                  onClick={handleGoogleSignIn}
+                  disabled={isGoogleSigningIn}
+                  className="w-full py-3.5 px-4 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 text-gray-800 font-bold shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-3 cursor-pointer disabled:opacity-60 hover:border-[#ECA548]"
                 >
-                  {isLoggingIn ? (
-                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  {isGoogleSigningIn ? (
+                    <RefreshCw className="w-5 h-5 animate-spin text-[#ECA548]" />
                   ) : (
-                    <Lock className="w-4 h-4" />
+                    <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                    </svg>
                   )}
-                  <span>Unlock Admin Console</span>
+                  <span>Sign in with Google (Google দিয়ে প্রবেশ)</span>
                 </button>
-              </form>
+
+                {/* Security Access Notice */}
+                <div className="p-3.5 bg-amber-50/90 border border-amber-200/80 rounded-xl text-[11px] text-amber-900 flex items-start gap-2.5">
+                  <Shield className="w-4 h-4 text-[#ECA548] shrink-0 mt-0.5" />
+                  <span className="leading-relaxed">
+                    অ্যাডমিন কনসোল শুধুমাত্র <strong>jahidulislamyahoo01@gmail.com</strong> এবং তার অনুমোদিত গুগল অ্যাকাউন্টের জন্য সংরক্ষিত।
+                  </span>
+                </div>
+
+                {/* Collapsible Alternative Password Login Form */}
+                <div className="pt-2 text-center">
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordFallback(!showPasswordFallback)}
+                    className="text-xs text-gray-500 hover:text-gray-800 underline transition-colors cursor-pointer"
+                  >
+                    {showPasswordFallback ? 'বিকল্প পাসওয়ার্ড ফর্ম লুকান' : '🔑 বিকল্প পাসওয়ার্ড দিয়ে লগইন'}
+                  </button>
+                </div>
+
+                {showPasswordFallback && (
+                  <form onSubmit={handleLogin} className="space-y-4 pt-3 border-t border-gray-100">
+                    <div>
+                      <label className="block text-xs font-semibold text-[#262626] mb-1">
+                        Username or Staff Email
+                      </label>
+                      <input
+                        type="text"
+                        value={loginUsername}
+                        onChange={(e) => setLoginUsername(e.target.value)}
+                        required
+                        className="w-full text-sm bg-gray-50 border border-[#ECECEC] rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#ECA548] focus:bg-white text-[#262626]"
+                        placeholder="admin or authorized email"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-[#262626] mb-1">
+                        Password
+                      </label>
+                      <input
+                        type="password"
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
+                        required
+                        className="w-full text-sm bg-gray-50 border border-[#ECECEC] rounded-xl px-4 py-2.5 focus:outline-none focus:border-[#ECA548] focus:bg-white text-[#262626]"
+                        placeholder="Enter password"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isLoggingIn}
+                      className="w-full py-3 rounded-xl font-bold text-white shadow-xs transition-all flex items-center justify-center gap-2 disabled:opacity-60"
+                      style={{ backgroundColor: '#262626' }}
+                    >
+                      {isLoggingIn ? (
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Lock className="w-4 h-4" />
+                      )}
+                      <span>Password Login</span>
+                    </button>
+                  </form>
+                )}
+              </div>
             </>
           )}
 

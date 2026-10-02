@@ -59,6 +59,7 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
   }
 
   // New User Form State
+  const [authMethod, setAuthMethod] = useState<'google' | 'password'>('google');
   const [newEmail, setNewEmail] = useState('');
   const [newName, setNewName] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -80,14 +81,19 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
   const [permKnowledge, setPermKnowledge] = useState(false);
 
   const handleRoleChange = (role: UserRole) => {
-    const safeRole: UserRole = role === 'support' ? 'support' : 'moderator';
-    setNewRole(safeRole);
-    if (safeRole === 'support') {
+    setNewRole(role);
+    if (role === 'support') {
       setPermOrders(true);
       setPermChat(true);
       setPermProducts(false);
       setPermKnowledge(false);
+    } else if (role === 'moderator') {
+      setPermOrders(true);
+      setPermChat(true);
+      setPermProducts(true);
+      setPermKnowledge(true);
     } else {
+      // superadmin
       setPermOrders(true);
       setPermChat(true);
       setPermProducts(true);
@@ -100,13 +106,13 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
     setErrorMsg('');
     setSuccessMsg('');
 
-    if (!newEmail.trim() || !newPassword.trim()) {
-      setErrorMsg('Please enter both a Gmail/Email and a Password.');
+    if (!newEmail.trim()) {
+      setErrorMsg('অনুগ্রহ করে অনুমোদিত Gmail / Email দিন।');
       return;
     }
 
-    if (newPassword.trim().length < 4) {
-      setErrorMsg('Password must be at least 4 characters long.');
+    if (authMethod === 'password' && newPassword.trim().length < 4) {
+      setErrorMsg('পাসওয়ার্ড ন্যূনতম ৪ অক্ষরের হতে হবে।');
       return;
     }
 
@@ -121,23 +127,24 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
         body: JSON.stringify({
           name: newName.trim() || newEmail.split('@')[0],
           email: newEmail.trim().toLowerCase(),
-          password: newPassword.trim(),
-          role: newRole === 'support' ? 'support' : 'moderator',
+          password: authMethod === 'password' ? newPassword.trim() : undefined,
+          authProvider: authMethod,
+          role: newRole,
           permissions: {
             canManageOrders: permOrders,
             canChat: permChat,
-            canManageProducts: newRole === 'moderator' ? permProducts : false,
-            canManageKnowledge: newRole === 'moderator' ? permKnowledge : false,
-            canManageSettings: false, // never allow staff
-            canManageTeam: false,     // never allow staff
+            canManageProducts: newRole === 'support' ? false : permProducts,
+            canManageKnowledge: newRole === 'support' ? false : permKnowledge,
+            canManageSettings: newRole === 'superadmin',
+            canManageTeam: newRole === 'superadmin',
           },
         }),
       });
 
       const data = await res.json();
       if (res.ok && data.success) {
-        setSuccessMsg(`Team member ${data.member.name} (${data.member.email}) added successfully!`);
-        showToast(`Team member added: ${data.member.email}`);
+        setSuccessMsg(`টিম মেম্বার ${data.member.name} (${data.member.email}) সফলভাবে অনুমোদিত হয়েছে!`);
+        showToast(`অ্যাক্সেস প্রদান করা হয়েছে: ${data.member.email}`);
         setNewEmail('');
         setNewName('');
         setNewPassword('');
@@ -145,10 +152,10 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
         handleRoleChange('moderator');
         onRefreshTeam();
       } else {
-        setErrorMsg(data.error || 'Failed to add team member');
+        setErrorMsg(data.error || 'টিম মেম্বার যুক্ত করতে ব্যর্থ হয়েছে');
       }
     } catch (err) {
-      setErrorMsg('Connection error while adding team member');
+      setErrorMsg('সার্ভারে যোগাযোগ করতে সমস্যা হয়েছে');
     } finally {
       setIsSubmitting(false);
     }
@@ -296,22 +303,61 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
           )}
 
           <form onSubmit={handleAddMember} className="space-y-4 text-xs">
+            {/* Auth Method Selector */}
+            <div>
+              <label className="block font-semibold text-gray-700 mb-1.5">
+                লগইন অথেন্টিকেশন মাধ্যম
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setAuthMethod('google')}
+                  className={`p-2.5 rounded-xl border text-center transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                    authMethod === 'google'
+                      ? 'bg-blue-50/80 border-blue-400 text-blue-800 font-bold shadow-xs'
+                      : 'border-[#ECECEC] text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                  </svg>
+                  <span>Google Auth (1-Click)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setAuthMethod('password')}
+                  className={`p-2.5 rounded-xl border text-center transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    authMethod === 'password'
+                      ? 'bg-amber-50/80 border-[#ECA548] text-amber-800 font-bold shadow-xs'
+                      : 'border-[#ECECEC] text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  <span>Password Login</span>
+                </button>
+              </div>
+            </div>
+
             <div>
               <label className="block font-semibold text-gray-700 mb-1">
-                Member Full Name
+                সদস্যের পুরো নাম
               </label>
               <input
                 type="text"
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
-                placeholder="e.g. Tanvir Ahmed (Support Agent)"
+                placeholder="যেমন: তানভীর আহমেদ (অ্যাসিস্ট্যান্ট)"
                 className="w-full bg-gray-50 border border-[#ECECEC] rounded-xl px-3.5 py-2.5 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white"
               />
             </div>
 
             <div>
               <label className="block font-semibold text-gray-700 mb-1">
-                Gmail / Email Address <span className="text-rose-500">*</span>
+                অনুমোদিত Gmail / Email Address <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
@@ -326,59 +372,78 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
               </div>
             </div>
 
-            <div>
-              <label className="block font-semibold text-gray-700 mb-1">
-                Login Password <span className="text-rose-500">*</span>
-              </label>
-              <div className="relative">
-                <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                  placeholder="Set password (min 4 characters)"
-                  className="w-full bg-gray-50 border border-[#ECECEC] rounded-xl pl-10 pr-10 py-2.5 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
+            {authMethod === 'google' ? (
+              <div className="p-3 bg-blue-50/60 border border-blue-200/80 rounded-xl text-[11px] text-blue-900 leading-relaxed">
+                💡 <strong>পাসওয়ার্ড প্রয়োজন নেই:</strong> অনুমোদিত এই জিমেইল দিয়ে তিনি সরাসরি <em>'Sign in with Google'</em> বাটনে চাপ দিয়ে ১-ক্লিকে অ্যাডমিনে ঢুকতে পারবেন।
               </div>
-            </div>
+            ) : (
+              <div>
+                <label className="block font-semibold text-gray-700 mb-1">
+                  Login Password <span className="text-rose-500">*</span>
+                </label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    placeholder="পাসওয়ার্ড নির্ধারণ করুন (কমপক্ষে ৪ অক্ষর)"
+                    className="w-full bg-gray-50 border border-[#ECECEC] rounded-xl pl-10 pr-10 py-2.5 text-[#262626] focus:outline-none focus:border-[#ECA548] focus:bg-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div>
               <label className="block font-semibold text-gray-700 mb-1.5">
-                Staff Role & Access Level
+                অ্যাকাউন্টের ভূমিকা (Role & Access Level)
               </label>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 <button
                   type="button"
                   onClick={() => handleRoleChange('support')}
-                  className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center gap-1 ${
+                  className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
                     newRole === 'support'
                       ? 'bg-[#FDF7EE] border-[#ECA548] text-[#ECA548] font-bold shadow-xs'
                       : 'border-[#ECECEC] text-gray-600 hover:bg-gray-50'
                   }`}
                 >
-                  <span className="font-semibold text-xs">Customer Support</span>
-                  <span className="text-[10px] text-gray-400 font-normal">Orders & Live Chat only</span>
+                  <span className="font-semibold text-[11px]">Support Staff</span>
+                  <span className="text-[9px] text-gray-400 font-normal">অর্ডার ও চ্যাট</span>
                 </button>
 
                 <button
                   type="button"
                   onClick={() => handleRoleChange('moderator')}
-                  className={`p-3 rounded-xl border text-center transition-all flex flex-col items-center gap-1 ${
+                  className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
                     newRole === 'moderator'
                       ? 'bg-[#FDF7EE] border-[#ECA548] text-[#ECA548] font-bold shadow-xs'
                       : 'border-[#ECECEC] text-gray-600 hover:bg-gray-50'
                   }`}
                 >
-                  <span className="font-semibold text-xs">Moderator</span>
-                  <span className="text-[10px] text-gray-400 font-normal">Chat, Orders, Products & AI</span>
+                  <span className="font-semibold text-[11px]">Moderator</span>
+                  <span className="text-[9px] text-gray-400 font-normal">প্রোডাক্ট ও চ্যাট</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleRoleChange('superadmin')}
+                  className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
+                    newRole === 'superadmin'
+                      ? 'bg-amber-100/80 border-amber-500 text-amber-900 font-bold shadow-xs'
+                      : 'border-[#ECECEC] text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className="font-semibold text-[11px]">Co-Superadmin</span>
+                  <span className="text-[9px] text-gray-400 font-normal">সম্পূর্ণ এক্সেস</span>
                 </button>
               </div>
             </div>
@@ -386,7 +451,7 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
             {/* Granular Permission Checkboxes */}
             <div className="p-3.5 bg-gray-50 rounded-xl border border-[#ECECEC] space-y-2">
               <span className="text-[11px] font-bold text-gray-700 block">
-                Allowed Permissions:
+                অনুমোদিত পারমিশনসমূহ:
               </span>
               <div className="grid grid-cols-2 gap-2 text-[11px]">
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -396,7 +461,7 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
                     onChange={(e) => setPermOrders(e.target.checked)}
                     className="rounded text-[#ECA548] focus:ring-[#ECA548]"
                   />
-                  <span>Manage Orders</span>
+                  <span>অর্ডার ও কুরিয়ার</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -405,7 +470,7 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
                     onChange={(e) => setPermChat(e.target.checked)}
                     className="rounded text-[#ECA548] focus:ring-[#ECA548]"
                   />
-                  <span>Live Chat Reply</span>
+                  <span>লাইভ চ্যাট ইনবক্স</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -415,7 +480,7 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
                     disabled={newRole === 'support'}
                     className="rounded text-[#ECA548] focus:ring-[#ECA548] disabled:opacity-40"
                   />
-                  <span className={newRole === 'support' ? 'text-gray-400' : ''}>Product Catalog</span>
+                  <span className={newRole === 'support' ? 'text-gray-400' : ''}>প্রোডাক্ট ক্যাটালগ</span>
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -425,22 +490,19 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
                     disabled={newRole === 'support'}
                     className="rounded text-[#ECA548] focus:ring-[#ECA548] disabled:opacity-40"
                   />
-                  <span className={newRole === 'support' ? 'text-gray-400' : ''}>Knowledge / AI</span>
+                  <span className={newRole === 'support' ? 'text-gray-400' : ''}>এআই নলেজ বেস</span>
                 </label>
               </div>
-              <p className="text-[10px] text-gray-500 italic mt-1">
-                🔒 Note: Staff accounts never have access to master settings, API integrations, or team user management.
-              </p>
             </div>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-2.5 rounded-xl font-bold text-white shadow-sm flex items-center justify-center gap-1.5 transition-all hover:opacity-95 disabled:opacity-50"
+              className="w-full py-3 rounded-xl font-bold text-white shadow-sm flex items-center justify-center gap-2 transition-all hover:opacity-95 disabled:opacity-50 cursor-pointer"
               style={{ backgroundColor: '#ECA548' }}
             >
               <UserPlus className="w-4 h-4" />
-              <span>{isSubmitting ? 'Creating User...' : 'Add Team Member'}</span>
+              <span>{isSubmitting ? 'প্রসেসিং হচ্ছে...' : 'অ্যাকাউন্টে এক্সেস প্রদান করুন'}</span>
             </button>
           </form>
         </div>
@@ -448,27 +510,29 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
         {/* Right Column: Existing Team Members List */}
         <div className="lg:col-span-7 space-y-4">
           {/* Master Admin Card */}
-          <div className="bg-white rounded-2xl border border-[#ECECEC] p-4 shadow-xs flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-[#ECA548] font-bold">
-                <ShieldCheck className="w-5 h-5" />
+          <div className="bg-white rounded-2xl border border-amber-300/80 p-4.5 shadow-xs flex items-center justify-between bg-gradient-to-r from-amber-50/50 to-white">
+            <div className="flex items-center gap-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-center text-[#ECA548] font-bold shadow-xs">
+                <ShieldCheck className="w-6 h-6 text-amber-700" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-bold text-xs text-[#262626]">Master Store Admin</h4>
-                  <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-100 text-amber-800">
-                    SUPERADMIN (OWNER)
+                  <h4 className="font-bold text-sm text-[#262626]">Jahidul Islam (Master Owner)</h4>
+                  <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-500 text-white shadow-xs">
+                    👑 প্রধান অ্যাডমিন
                   </span>
                 </div>
-                <p className="text-[11px] text-gray-500 font-mono mt-0.5">
-                  admin • Full System Control • Cloud Firestore Synced
+                <p className="text-[11px] text-gray-600 font-mono mt-0.5 flex items-center gap-1.5">
+                  <span className="text-amber-800 font-semibold">jahidulislamyahoo01@gmail.com</span>
+                  <span>•</span>
+                  <span>Google OAuth লকড</span>
                 </p>
               </div>
             </div>
 
             <div className="text-right">
-              <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                Primary Master Key
+              <span className="px-3 py-1 rounded-xl text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                স্থায়ী সুপার অ্যাডমিন
               </span>
             </div>
           </div>
@@ -518,19 +582,42 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
                           {member.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <span className="font-bold text-xs text-[#262626]">{member.name}</span>
-                            <span
-                              className={`text-[9px] font-bold px-2 py-0.2 rounded-full uppercase ${
-                                member.role === 'superadmin'
-                                  ? 'bg-amber-100 text-amber-800'
-                                  : member.role === 'moderator'
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-emerald-100 text-emerald-800'
-                              }`}
-                            >
-                              {member.role}
-                            </span>
+                            {member.isOwner || member.email.toLowerCase() === 'jahidulislamyahoo01@gmail.com' ? (
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-white shadow-xs">
+                                👑 OWNER
+                              </span>
+                            ) : (
+                              <span
+                                className={`text-[9px] font-bold px-2 py-0.2 rounded-full uppercase ${
+                                  member.role === 'superadmin'
+                                    ? 'bg-amber-100 text-amber-800'
+                                    : member.role === 'moderator'
+                                    ? 'bg-blue-100 text-blue-800'
+                                    : 'bg-emerald-100 text-emerald-800'
+                                }`}
+                              >
+                                {member.role}
+                              </span>
+                            )}
+
+                            {member.authProvider === 'google' || !member.authProvider ? (
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 flex items-center gap-1">
+                                <svg className="w-2.5 h-2.5" viewBox="0 0 24 24">
+                                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+                                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+                                </svg>
+                                Google Auth
+                              </span>
+                            ) : (
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 flex items-center gap-1">
+                                <Lock className="w-2.5 h-2.5" /> Password
+                              </span>
+                            )}
+
                             {member.status === 'suspended' && (
                               <span className="text-[9px] font-bold px-2 py-0.2 rounded-full bg-rose-100 text-rose-700">
                                 SUSPENDED
@@ -545,42 +632,48 @@ export const AdminTeamView: React.FC<AdminTeamViewProps> = ({
                         </div>
                       </div>
 
-                      {/* Action buttons */}
-                      <div className="flex items-center gap-1.5 self-end sm:self-center">
-                        {/* Toggle Status (Active / Suspended) */}
-                        <button
-                          onClick={() => handleToggleStatus(member)}
-                          title={member.status === 'active' ? 'Suspend Access' : 'Activate Access'}
-                          className={`p-1.5 rounded-lg text-xs font-semibold border transition-all ${
-                            member.status === 'active'
-                              ? 'bg-white border-[#ECECEC] text-gray-600 hover:text-amber-600 hover:bg-amber-50'
-                              : 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                          }`}
-                        >
-                          {member.status === 'active' ? <UserX className="w-3.5 h-3.5" /> : <UserCheck className="w-3.5 h-3.5" />}
-                        </button>
+                      {/* Action buttons (Protected for Primary Owner) */}
+                      {!(member.isOwner || member.email.toLowerCase() === 'jahidulislamyahoo01@gmail.com') ? (
+                        <div className="flex items-center gap-1.5 self-end sm:self-center">
+                          {/* Toggle Status (Active / Suspended) */}
+                          <button
+                            onClick={() => handleToggleStatus(member)}
+                            title={member.status === 'active' ? 'অ্যাকাউন্ট স্থগিত করুন' : 'অ্যাকাউন্ট সক্রিয় করুন'}
+                            className={`p-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                              member.status === 'active'
+                                ? 'bg-white border-[#ECECEC] text-gray-600 hover:text-amber-600 hover:bg-amber-50'
+                                : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+                            }`}
+                          >
+                            {member.status === 'active' ? <UserX className="w-3.5 h-3.5" /> : <UserCheck className="w-3.5 h-3.5" />}
+                          </button>
 
-                        {/* Edit Permissions / Password */}
-                        <button
-                          onClick={() => {
-                            setEditingMember(member);
-                            setEditPassword('');
-                          }}
-                          title="Edit Permissions & Password"
-                          className="p-1.5 rounded-lg bg-white border border-[#ECECEC] text-gray-600 hover:text-[#ECA548] hover:bg-[#FDF7EE] transition-all"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
+                          {/* Edit Permissions */}
+                          <button
+                            onClick={() => {
+                              setEditingMember(member);
+                              setEditPassword('');
+                            }}
+                            title="পারমিশন এডিট করুন"
+                            className="p-1.5 rounded-lg bg-white border border-[#ECECEC] text-gray-600 hover:text-[#ECA548] hover:bg-[#FDF7EE] transition-all cursor-pointer"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
 
-                        {/* Delete User */}
-                        <button
-                          onClick={() => handleDeleteMember(member.id, member.name)}
-                          title="Permanently Delete Access"
-                          className="p-1.5 rounded-lg bg-white border border-[#ECECEC] text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-all"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
+                          {/* Delete User */}
+                          <button
+                            onClick={() => handleDeleteMember(member.id, member.name)}
+                            title="এক্সেস চিরতরে বাতিল করুন"
+                            className="p-1.5 rounded-lg bg-white border border-[#ECECEC] text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-all cursor-pointer"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg">
+                          👑 মূল মালিক (Protected)
+                        </span>
+                      )}
                     </div>
 
                     {/* Permissions Badges */}

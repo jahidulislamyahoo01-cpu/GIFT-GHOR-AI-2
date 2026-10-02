@@ -278,7 +278,8 @@ interface SystemDB {
     id: string;
     name: string;
     email: string;
-    passwordHash: string;
+    passwordHash?: string;
+    authProvider?: 'google' | 'password';
     role: 'superadmin' | 'moderator' | 'support';
     createdAt: string;
     lastLoginAt?: string;
@@ -581,6 +582,46 @@ const DEFAULT_DB: SystemDB = {
   trainingVersion: 1,
 };
 
+export const MASTER_SUPERADMIN_EMAIL = 'jahidulislamyahoo01@gmail.com';
+
+export function ensureMasterAdminInDB(db: SystemDB) {
+  if (!db.teamMembers) db.teamMembers = [];
+  const normalizedMaster = MASTER_SUPERADMIN_EMAIL.toLowerCase();
+  let master = db.teamMembers.find((m) => m.email.toLowerCase() === normalizedMaster);
+  if (!master) {
+    db.teamMembers.unshift({
+      id: 'owner-jahidul-superadmin',
+      name: 'Jahidul Islam (Owner)',
+      email: MASTER_SUPERADMIN_EMAIL,
+      passwordHash: '',
+      authProvider: 'google',
+      role: 'superadmin',
+      createdAt: new Date().toISOString(),
+      status: 'active',
+      permissions: {
+        canManageOrders: true,
+        canChat: true,
+        canManageProducts: true,
+        canManageKnowledge: true,
+        canManageSettings: true,
+        canManageTeam: true,
+      },
+    });
+  } else {
+    master.role = 'superadmin';
+    master.status = 'active';
+    master.authProvider = master.authProvider || 'google';
+    master.permissions = {
+      canManageOrders: true,
+      canChat: true,
+      canManageProducts: true,
+      canManageKnowledge: true,
+      canManageSettings: true,
+      canManageTeam: true,
+    };
+  }
+}
+
 const DB_BACKUP_FILE = path.join(process.cwd(), 'data_storage.backup.json');
 
 function saveDB(db: SystemDB) {
@@ -639,6 +680,7 @@ function loadDB(): SystemDB {
             };
           }
           if (!parsed.whatsappLogs) parsed.whatsappLogs = [];
+          ensureMasterAdminInDB(parsed);
           return parsed;
         }
       }
@@ -658,6 +700,7 @@ function loadDB(): SystemDB {
           if (!parsedBackup.orders) parsedBackup.orders = {};
           if (!parsedBackup.adminSettings) parsedBackup.adminSettings = { twoFactorEnabled: false, twoFactorEmail: 'giftghor6525@gmail.com' };
           if (!parsedBackup.teamMembers) parsedBackup.teamMembers = [];
+          ensureMasterAdminInDB(parsedBackup);
           saveDB(parsedBackup);
           return parsedBackup;
         }
@@ -669,12 +712,14 @@ function loadDB(): SystemDB {
 
   // 3. Fallback only if no DB or backup exists
   console.log('[Storage Engine] Initializing database with DEFAULT_DB');
+  ensureMasterAdminInDB(DEFAULT_DB);
   saveDB(DEFAULT_DB);
   return DEFAULT_DB;
 }
 
 // Global DB in memory synced to disk and Firestore
 export let DB: SystemDB = loadDB();
+ensureMasterAdminInDB(DB);
 
 /**
  * Hydrates in-memory DB and local disk cache from Cloud Firestore on server startup.
@@ -1050,6 +1095,8 @@ export interface AuthUser {
   name: string;
   email: string;
   role: 'superadmin' | 'moderator' | 'support';
+  photoUrl?: string;
+  isOwner?: boolean;
   permissions: {
     canManageOrders: boolean;
     canChat: boolean;
@@ -1074,9 +1121,10 @@ function adminAuthMiddleware(req: express.Request, res: express.Response, next: 
   if (token === DB.adminPasswordHash || token === `session_token_${DB.adminPasswordHash}`) {
     (req as any).user = {
       id: 'main-superadmin',
-      name: 'Super Admin',
-      email: 'admin@giftghor.world',
+      name: 'Jahidul Islam (Owner)',
+      email: MASTER_SUPERADMIN_EMAIL,
       role: 'superadmin',
+      isOwner: true,
       permissions: {
         canManageOrders: true,
         canChat: true,
@@ -1092,8 +1140,14 @@ function adminAuthMiddleware(req: express.Request, res: express.Response, next: 
   // Check user session
   const session = userSessions[token];
   if (session && session.expiresAt > Date.now()) {
+    // If master owner, always allow
+    if (session.user?.email?.toLowerCase() === MASTER_SUPERADMIN_EMAIL.toLowerCase()) {
+      (req as any).user = session.user;
+      return next();
+    }
+
     // Check if team member still exists and active in DB
-    const member = (DB.teamMembers || []).find((m) => m.id === session.user.id);
+    const member = (DB.teamMembers || []).find((m) => m.id === session.user.id || m.email.toLowerCase() === session.user.email?.toLowerCase());
     if (!member || member.status === 'suspended') {
       delete userSessions[token];
       return res.status(403).json({ error: 'Account suspended or deleted. Access revoked.' });
@@ -2195,6 +2249,88 @@ app.post('/api/chat', async (req, res) => {
 
 const activeOtps: Record<string, { code: string; expiresAt: number; username: string }> = {};
 
+// 1. Google OAuth / Firebase Auth Sign-In for Admin & Authorized Staff
+app.post('/api/admin/auth/google', async (req, res) => {
+  const { email, name, photoUrl } = req.body;
+  if (!email || typeof email !== 'string') {
+    return res.status(400).json({ error: 'Valid Google email is required' });
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+  const isMasterOwner = normalizedEmail === MASTER_SUPERADMIN_EMAIL.toLowerCase();
+
+  ensureMasterAdminInDB(DB);
+
+  let member = DB.teamMembers?.find((m) => m.email.toLowerCase() === normalizedEmail);
+
+  // If not master owner and not found in authorized team members
+  if (!member && !isMasterOwner) {
+    console.warn(`[Admin Auth] Unauthorized Google login attempt from: ${normalizedEmail}`);
+    return res.status(403).json({
+      success: false,
+      error: `❌ এক্সেস অস্বীকৃত! '${normalizedEmail}' অ্যাডমিন প্যানেলে অনুমোদিত নয়। প্রধান অ্যাডমিন (${MASTER_SUPERADMIN_EMAIL})-এর অনুমতি প্রয়োজন।`,
+      unauthorizedEmail: normalizedEmail,
+    });
+  }
+
+  // Check if account suspended
+  if (member && member.status === 'suspended') {
+    return res.status(403).json({
+      success: false,
+      error: '❌ আপনার অ্যাকাউন্টটি সাময়িকভাবে স্থগিত (Suspended) করা হয়েছে। প্রধান অ্যাডমিনের সাথে যোগাযোগ করুন।',
+    });
+  }
+
+  if (member) {
+    if (name && (!member.name || member.name === 'Admin' || member.name.includes('@'))) {
+      member.name = name;
+    }
+    member.lastLoginAt = new Date().toISOString();
+    saveDB(DB);
+  }
+
+  const userObj: AuthUser = {
+    id: member?.id || 'owner-superadmin',
+    name: member?.name || name || (isMasterOwner ? 'Jahidul Islam (Owner)' : 'Staff Admin'),
+    email: member?.email || normalizedEmail,
+    role: member?.role || 'superadmin',
+    isOwner: isMasterOwner,
+    photoUrl,
+    permissions: member?.permissions || {
+      canManageOrders: true,
+      canChat: true,
+      canManageProducts: true,
+      canManageKnowledge: true,
+      canManageSettings: true,
+      canManageTeam: true,
+    },
+  };
+
+  const token = `google_session_${userObj.id}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  userSessions[token] = {
+    user: userObj,
+    expiresAt: Date.now() + 14 * 24 * 60 * 60 * 1000, // 14 days session
+  };
+
+  console.log(`[Admin Auth] Authorized Google login successful: ${normalizedEmail} as ${userObj.role} (isOwner: ${isMasterOwner})`);
+
+  return res.json({
+    success: true,
+    token,
+    user: userObj,
+    message: `স্বাগতম ${userObj.name}! Google Auth দিয়ে সফলভাবে লগইন হয়েছে।`,
+  });
+});
+
+// 2. Validate current session and get user info
+app.get('/api/admin/auth/me', adminAuthMiddleware, (req, res) => {
+  const user = (req as any).user as AuthUser;
+  res.json({
+    success: true,
+    user,
+  });
+});
+
 // Admin and Team Member Login (supports 2-Step OTP Verification and multi-user access)
 app.post('/api/admin/login', async (req, res) => {
   const { username, password } = req.body;
@@ -2412,6 +2548,7 @@ app.get('/api/admin/state', adminAuthMiddleware, (req, res) => {
   const currentUser = (req as any).user;
   const isSuperAdmin = currentUser?.role === 'superadmin';
 
+  ensureMasterAdminInDB(DB);
   // Sanitize team members: only superadmin can see the full team list!
   const sanitizedTeam = isSuperAdmin
     ? (DB.teamMembers || []).map((m) => ({
@@ -2419,6 +2556,8 @@ app.get('/api/admin/state', adminAuthMiddleware, (req, res) => {
         name: m.name,
         email: m.email,
         role: m.role,
+        authProvider: m.authProvider || (m.passwordHash ? 'password' : 'google'),
+        isOwner: m.email.toLowerCase() === MASTER_SUPERADMIN_EMAIL.toLowerCase(),
         createdAt: m.createdAt,
         lastLoginAt: m.lastLoginAt,
         status: m.status,
@@ -2463,12 +2602,14 @@ app.get('/api/admin/team', adminAuthMiddleware, (req, res) => {
     return res.status(403).json({ error: 'Permission denied: Only Super Admin can view team management.' });
   }
 
-  if (!DB.teamMembers) DB.teamMembers = [];
+  ensureMasterAdminInDB(DB);
   const sanitizedTeam = DB.teamMembers.map((m) => ({
     id: m.id,
     name: m.name,
     email: m.email,
     role: m.role,
+    authProvider: m.authProvider || (m.passwordHash ? 'password' : 'google'),
+    isOwner: m.email.toLowerCase() === MASTER_SUPERADMIN_EMAIL.toLowerCase(),
     createdAt: m.createdAt,
     lastLoginAt: m.lastLoginAt,
     status: m.status,
@@ -2477,43 +2618,44 @@ app.get('/api/admin/team', adminAuthMiddleware, (req, res) => {
   res.json(sanitizedTeam);
 });
 
-// 2. Add new team member (Gmail & Password with role-based limited access) - Super Admin Only
+// 2. Add new team member (Google Auth or Password with role-based access) - Super Admin Only
 app.post('/api/admin/team', adminAuthMiddleware, (req, res) => {
   const user = (req as any).user as AuthUser;
   if (user.role !== 'superadmin') {
     return res.status(403).json({ error: 'Permission denied: Only Super Admin can invite team members.' });
   }
 
-  const { name, email, password, role = 'moderator', permissions } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Both Gmail/Email and Password are required' });
+  const { name, email, password, role = 'moderator', permissions, authProvider = 'google' } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: 'Gmail/Email is required' });
   }
 
   const cleanEmail = String(email).trim().toLowerCase();
-  const cleanPassword = String(password).trim();
+  const cleanPassword = password ? String(password).trim() : '';
   const cleanName = String(name || cleanEmail.split('@')[0] || 'Team Member').trim();
 
-  if (cleanPassword.length < 4) {
+  if (authProvider === 'password' && cleanPassword.length < 4) {
     return res.status(400).json({ error: 'Password must be at least 4 characters long' });
   }
 
-  if (!DB.teamMembers) DB.teamMembers = [];
+  ensureMasterAdminInDB(DB);
 
   // Check duplicate
   const exists = DB.teamMembers.some((m) => m.email.toLowerCase() === cleanEmail);
-  if (exists || cleanEmail === 'admin@giftghor.world') {
-    return res.status(400).json({ error: 'A team member with this email already exists' });
+  if (exists) {
+    return res.status(400).json({ error: 'A team member or admin with this Gmail already exists' });
   }
 
-  // Staff members can ONLY be 'support' or 'moderator'
-  const assignedRole: 'support' | 'moderator' = role === 'support' ? 'support' : 'moderator';
+  const assignedRole: 'superadmin' | 'moderator' | 'support' =
+    role === 'superadmin' ? 'superadmin' : (role === 'support' ? 'support' : 'moderator');
+
   const staffPermissions = {
     canManageOrders: permissions?.canManageOrders ?? true,
     canChat: permissions?.canChat ?? true,
-    canManageProducts: assignedRole === 'moderator' ? Boolean(permissions?.canManageProducts ?? true) : false,
-    canManageKnowledge: assignedRole === 'moderator' ? Boolean(permissions?.canManageKnowledge ?? true) : false,
-    canManageSettings: false, // strictly forbidden for staff
-    canManageTeam: false,     // strictly forbidden for staff: staff can NEVER add/delete/manage members
+    canManageProducts: assignedRole === 'support' ? false : Boolean(permissions?.canManageProducts ?? true),
+    canManageKnowledge: assignedRole === 'support' ? false : Boolean(permissions?.canManageKnowledge ?? true),
+    canManageSettings: assignedRole === 'superadmin',
+    canManageTeam: assignedRole === 'superadmin',
   };
 
   const newMember = {
@@ -2521,6 +2663,7 @@ app.post('/api/admin/team', adminAuthMiddleware, (req, res) => {
     name: cleanName,
     email: cleanEmail,
     passwordHash: cleanPassword,
+    authProvider: (authProvider === 'password' ? 'password' : 'google') as 'google' | 'password',
     role: assignedRole,
     createdAt: new Date().toISOString(),
     status: 'active' as const,
@@ -2530,7 +2673,7 @@ app.post('/api/admin/team', adminAuthMiddleware, (req, res) => {
   DB.teamMembers.push(newMember);
   saveDB(DB);
 
-  console.log(`[Team Access] Super Admin added staff member: ${cleanEmail} (${assignedRole})`);
+  console.log(`[Team Access] Super Admin granted access to: ${cleanEmail} (${assignedRole}, provider: ${newMember.authProvider})`);
 
   res.json({
     success: true,
@@ -2540,6 +2683,8 @@ app.post('/api/admin/team', adminAuthMiddleware, (req, res) => {
       name: newMember.name,
       email: newMember.email,
       role: newMember.role,
+      authProvider: newMember.authProvider,
+      isOwner: false,
       createdAt: newMember.createdAt,
       status: newMember.status,
       permissions: newMember.permissions,
@@ -2557,24 +2702,29 @@ app.put('/api/admin/team/:id', adminAuthMiddleware, (req, res) => {
   const { id } = req.params;
   const { name, role, permissions, password, status } = req.body;
 
-  if (!DB.teamMembers) DB.teamMembers = [];
+  ensureMasterAdminInDB(DB);
   const member = DB.teamMembers.find((m) => m.id === id);
   if (!member) {
     return res.status(404).json({ error: 'Team member not found' });
   }
 
+  // Prevent modifying the master owner
+  if (member.email.toLowerCase() === MASTER_SUPERADMIN_EMAIL.toLowerCase()) {
+    return res.status(403).json({ error: 'The primary owner (jahidulislamyahoo01@gmail.com) cannot be modified or suspended.' });
+  }
+
   if (name) member.name = String(name).trim();
-  if (role && (role === 'support' || role === 'moderator')) {
+  if (role && (role === 'superadmin' || role === 'support' || role === 'moderator')) {
     member.role = role;
   }
   if (permissions) {
     member.permissions = {
       canManageOrders: Boolean(permissions.canManageOrders),
       canChat: Boolean(permissions.canChat),
-      canManageProducts: member.role === 'moderator' ? Boolean(permissions.canManageProducts) : false,
-      canManageKnowledge: member.role === 'moderator' ? Boolean(permissions.canManageKnowledge) : false,
-      canManageSettings: false, // strictly forbidden for staff
-      canManageTeam: false,     // strictly forbidden for staff
+      canManageProducts: member.role === 'support' ? false : Boolean(permissions.canManageProducts),
+      canManageKnowledge: member.role === 'support' ? false : Boolean(permissions.canManageKnowledge),
+      canManageSettings: member.role === 'superadmin',
+      canManageTeam: member.role === 'superadmin',
     };
   }
   if (status && (status === 'active' || status === 'suspended')) {
@@ -2594,6 +2744,8 @@ app.put('/api/admin/team/:id', adminAuthMiddleware, (req, res) => {
       name: member.name,
       email: member.email,
       role: member.role,
+      authProvider: member.authProvider || (member.passwordHash ? 'password' : 'google'),
+      isOwner: false,
       createdAt: member.createdAt,
       status: member.status,
       permissions: member.permissions,
@@ -2609,23 +2761,30 @@ app.delete('/api/admin/team/:id', adminAuthMiddleware, (req, res) => {
   }
 
   const { id } = req.params;
-  if (!DB.teamMembers) DB.teamMembers = [];
-  const initialLength = DB.teamMembers.length;
-  DB.teamMembers = DB.teamMembers.filter((m) => m.id !== id);
-
-  if (DB.teamMembers.length === initialLength) {
+  ensureMasterAdminInDB(DB);
+  const targetMember = DB.teamMembers.find((m) => m.id === id);
+  if (!targetMember) {
     return res.status(404).json({ error: 'Team member not found' });
   }
 
+  // Prevent deleting the master owner
+  if (targetMember.email.toLowerCase() === MASTER_SUPERADMIN_EMAIL.toLowerCase()) {
+    return res.status(403).json({ error: 'The primary owner (jahidulislamyahoo01@gmail.com) cannot be deleted.' });
+  }
+
+  DB.teamMembers = DB.teamMembers.filter((m) => m.id !== id);
+
   // Invalidate any active sessions for this member
-  for (const [token, sess] of Object.entries(userSessions)) {
-    if (sess.user.id === id) {
-      delete userSessions[token];
+  for (const t in userSessions) {
+    if (userSessions[t].user.id === id || userSessions[t].user.email.toLowerCase() === targetMember.email.toLowerCase()) {
+      delete userSessions[t];
     }
   }
 
   saveDB(DB);
-  res.json({ success: true, message: 'Team member removed successfully.' });
+
+  console.log(`[Team Access] Super Admin deleted team member: ${targetMember.email}`);
+  res.json({ success: true, message: `Team member ${targetMember.name} deleted successfully.` });
 });
 
 // -------------------------------------------------------------

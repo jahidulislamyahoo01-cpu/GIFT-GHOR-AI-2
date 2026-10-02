@@ -157,6 +157,9 @@ export interface TeamMember {
   name: string;
   email: string;
   role: UserRole;
+  authProvider?: 'google' | 'password';
+  isOwner?: boolean;
+  photoUrl?: string;
   createdAt: string;
   lastLoginAt?: string;
   status: 'active' | 'suspended';
