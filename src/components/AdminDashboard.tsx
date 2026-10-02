@@ -1836,6 +1836,54 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                     </div>
                   </div>
 
+                  {/* Live Customer Location & Device Detection Banner */}
+                  {currentSession.locationInfo && (
+                    <div className="bg-gradient-to-r from-[#FDF7EE] via-amber-50/50 to-[#FDF7EE] border-b border-amber-200 px-4 py-2 text-xs text-[#262626] flex flex-wrap items-center justify-between gap-2 shadow-2xs">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="px-2 py-0.5 rounded-full bg-[#ECA548] text-white text-[10px] font-bold flex items-center gap-1 shadow-2xs">
+                          📍 লাইভ লোকেশন
+                        </span>
+                        <span className="font-extrabold text-xs text-[#262626]">
+                          🇧🇩 {currentSession.locationInfo.city || 'Dhaka'}, {currentSession.locationInfo.region || 'Bangladesh'}
+                        </span>
+                        <span className="text-gray-400">•</span>
+                        <span className="font-mono text-[10.5px] text-gray-700 bg-white px-2 py-0.5 rounded border border-gray-200">
+                          🌐 IP: {currentSession.locationInfo.ip || 'Local Network'}
+                        </span>
+                        {currentSession.locationInfo.isp && (
+                          <span className="text-[10.5px] text-gray-700 font-medium bg-amber-100/70 text-amber-900 px-2 py-0.5 rounded border border-amber-200">
+                            🏢 {currentSession.locationInfo.isp}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                          currentSession.locationInfo.isInsideDhaka
+                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                            : 'bg-indigo-100 text-indigo-800 border border-indigo-300'
+                        }`}>
+                          🚚 {currentSession.locationInfo.isInsideDhaka ? 'ঢাকার ভেতরে (৳৭০)' : 'ঢাকার বাইরে (৳১৩০)'}
+                        </span>
+
+                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-gray-100 text-gray-700 border border-gray-200">
+                          📱 {currentSession.locationInfo.device || 'Mobile'} ({currentSession.locationInfo.browser || 'Browser'})
+                        </span>
+
+                        {currentSession.locationInfo.latitude && currentSession.locationInfo.longitude && (
+                          <a
+                            href={`https://www.google.com/maps?q=${currentSession.locationInfo.latitude},${currentSession.locationInfo.longitude}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2 py-0.5 rounded bg-black hover:bg-gray-800 text-white text-[10px] font-bold transition flex items-center gap-1 shadow-2xs"
+                          >
+                            <span>🗺️ ম্যাপে দেখুন</span>
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Attention Alert Banner if customer asked about order issues or live contact */}
                   {currentSession.needsAttention && (
                     <div className="bg-amber-50 px-4 py-2.5 border-b border-amber-200 flex items-center justify-between text-xs text-amber-900">

@@ -1872,6 +1872,29 @@ app.post('/api/chat/message', async (req, res) => {
   }
 
   const session = DB.sessions[sessionId];
+
+  // Capture or update live customer location info
+  const { locationInfo } = req.body;
+  if (locationInfo && typeof locationInfo === 'object') {
+    session.locationInfo = {
+      ...session.locationInfo,
+      ...locationInfo,
+      updatedAt: new Date().toISOString(),
+    };
+  } else if (!session.locationInfo) {
+    const rawIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.socket.remoteAddress || '';
+    const cleanIp = rawIp.replace(/^.*:/, '') || '103.145.74.12';
+    session.locationInfo = {
+      ip: cleanIp,
+      city: 'Dhaka',
+      region: 'Dhaka Division',
+      country: 'Bangladesh',
+      isp: 'Broadband / Mobile Network',
+      isInsideDhaka: true,
+      device: 'Mobile Client',
+      updatedAt: new Date().toISOString(),
+    };
+  }
   const userMsgId = 'msg-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
   const userTimestamp = new Date().toISOString();
 

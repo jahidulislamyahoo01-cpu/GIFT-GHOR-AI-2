@@ -100,6 +100,52 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
   const [autoDetectedReason, setAutoDetectedReason] = useState<string>('');
   const [invoiceModalOrder, setInvoiceModalOrder] = useState<InvoiceOrderData | null>(null);
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [locationInfo, setLocationInfo] = useState<any>(null);
+
+  // Auto detect user live location & IP on mount
+  useEffect(() => {
+    fetch('https://ipwho.is/')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && data.success) {
+          const isDhaka = /dhaka/i.test(data.city || '') || /dhaka/i.test(data.region || '');
+          setLocationInfo({
+            ip: data.ip,
+            city: data.city || 'Dhaka',
+            region: data.region || 'Dhaka Division',
+            country: data.country || 'Bangladesh',
+            latitude: data.latitude,
+            longitude: data.longitude,
+            isp: data.connection?.isp || data.org || 'ISP Network',
+            isInsideDhaka: isDhaka,
+            device: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
+            browser: navigator.userAgent.includes('Chrome') ? 'Chrome' : navigator.userAgent.includes('Safari') ? 'Safari' : 'Browser',
+          });
+        }
+      })
+      .catch(() => {
+        fetch('https://ipapi.co/json/')
+          .then((r) => r.json())
+          .then((d) => {
+            if (d && d.ip) {
+              const isDhaka = /dhaka/i.test(d.city || '') || /dhaka/i.test(d.region || '');
+              setLocationInfo({
+                ip: d.ip,
+                city: d.city || 'Dhaka',
+                region: d.region || 'Dhaka Division',
+                country: d.country_name || 'Bangladesh',
+                latitude: d.latitude,
+                longitude: d.longitude,
+                isp: d.org || 'ISP Network',
+                isInsideDhaka: isDhaka,
+                device: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
+                browser: navigator.userAgent.includes('Chrome') ? 'Chrome' : 'Safari',
+              });
+            }
+          })
+          .catch(() => {});
+      });
+  }, []);
 
   // Smart auto-detect delivery location based on address
   const handleAddressChange = (val: string) => {
@@ -331,6 +377,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
           text: messageText,
           imageBase64: imageToSend,
           sender: 'user',
+          locationInfo,
           pageContext: {
             url: window.location.href,
             title: document.title,
