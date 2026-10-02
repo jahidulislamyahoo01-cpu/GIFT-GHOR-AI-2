@@ -66,6 +66,8 @@ import {
   upsertProductInCloudSql,
 } from './server/cloudSqlService.ts';
 
+import { products as defaultCatalog } from './src/db/scraped_products.ts';
+
 
 dotenv.config();
 
@@ -130,6 +132,12 @@ interface SystemDB {
     lowStockThreshold?: number;
     colors?: string[];
     colorVariants?: Record<string, number>;
+    variants?: Array<{
+      name: string;
+      label: string;
+      colorCode?: string;
+      imageUrl: string;
+    }>;
     description: string;
     imageUrl: string;
     url?: string;
@@ -716,7 +724,15 @@ async function syncDatabaseWithCloud() {
       const sqlData = await loadDataFromCloudSql();
       if (sqlData.products && sqlData.products.length > 0) {
         console.log(`[CloudSQL] Loaded ${sqlData.products.length} products from Cloud SQL.`);
-        DB.products = sqlData.products as any;
+        const enriched = (defaultCatalog as any[]) || [];
+        DB.products = (sqlData.products as any[]).map((sp) => {
+          const match = enriched.find((ep) => ep.id === sp.id || ep.title === sp.title);
+          return {
+            ...sp,
+            imageUrl: match?.imageUrl || sp.imageUrl,
+            variants: match?.variants || sp.variants || [],
+          };
+        });
       }
       if (sqlData.orders && sqlData.orders.length > 0) {
         console.log(`[CloudSQL] Merged ${sqlData.orders.length} orders from Cloud SQL.`);
@@ -829,7 +845,9 @@ function buildSystemKnowledgeContext(db: SystemDB): string {
         const qty = typeof p.stockQuantity === 'number' ? p.stockQuantity : 25;
         const threshold = typeof p.lowStockThreshold === 'number' ? p.lowStockThreshold : 3;
         let colorVariantDesc = '';
-        if (p.colorVariants && Object.keys(p.colorVariants).length > 0) {
+        if (p.variants && p.variants.length > 0) {
+          colorVariantDesc = ' | Available Color Variants: ' + p.variants.map((v: any) => `${v.label || v.name} (Picture: ${v.imageUrl})`).join(', ');
+        } else if (p.colorVariants && Object.keys(p.colorVariants).length > 0) {
           colorVariantDesc = ' | Colors/Variants: ' + Object.entries(p.colorVariants).map(([col, cQty]) => `${col}: ${cQty} pcs`).join(', ');
         }
         const stockDesc = qty === 0 || p.stockStatus === 'out_of_stock'
@@ -3264,12 +3282,17 @@ app.post('/api/orders/quick-create', async (req, res) => {
       productPrice,
       deliveryLocation,
       quantity = 1,
+      variant,
+      variantName,
       sessionId,
     } = req.body;
 
     if (!customerPhone || !customerAddress || !productName) {
       return res.status(400).json({ error: 'নাম, মোবাইল নম্বর ও ঠিকানা আবশ্যক।' });
     }
+
+    const chosenVariant = variant || variantName || '';
+    const finalProductName = chosenVariant ? `${productName} (${chosenVariant})` : productName;
 
     const isInsideDhaka = deliveryLocation === 'inside_dhaka' || deliveryLocation === 'dhaka';
     const deliveryCharge = isInsideDhaka
@@ -3292,7 +3315,7 @@ app.post('/api/orders/quick-create', async (req, res) => {
       customerName: customerName || 'Valued Customer',
       customerPhone,
       customerAddress,
-      productName,
+      productName: finalProductName,
       quantity: qtyNum,
       codAmount,
       deliveryLocation: isInsideDhaka ? ('inside_dhaka' as const) : ('outside_dhaka' as const),
@@ -3300,7 +3323,7 @@ app.post('/api/orders/quick-create', async (req, res) => {
       totalAmount,
       status: 'pending' as const,
       source: 'chat' as const,
-      notes: 'Quick order via Gift Ghor Chat Card',
+      notes: chosenVariant ? `Variant: ${chosenVariant}` : 'Quick order via Gift Ghor Chat Card',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

@@ -66,12 +66,29 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
   const [isSelectingProduct, setIsSelectingProduct] = useState(false);
   const [productSearch, setProductSearch] = useState('');
   const [orderQuantity, setOrderQuantity] = useState(1);
-  const [orderProduct, setOrderProduct] = useState<{ id?: string; title: string; price: number; imageUrl?: string }>({
+  const [orderProduct, setOrderProduct] = useState<{
+    id?: string;
+    title: string;
+    price: number;
+    imageUrl?: string;
+    variants?: Array<{ name: string; label: string; colorCode?: string; imageUrl: string }>;
+  }>({
     id: defaultCatalog[0]?.id || '1333107',
     title: defaultCatalog[0]?.title || 'Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet',
     price: defaultCatalog[0]?.price || 350,
     imageUrl: defaultCatalog[0]?.imageUrl || 'https://assets.zatiqeasy.com/easy/uploads/166014/inventories/be/80/1000015315-5963012600247387/original.jpg',
+    variants: defaultCatalog[0]?.variants || [],
   });
+  const [selectedVariant, setSelectedVariant] = useState<{
+    name: string;
+    label: string;
+    colorCode?: string;
+    imageUrl: string;
+  } | null>(
+    (defaultCatalog[0]?.variants && defaultCatalog[0]?.variants.length > 0)
+      ? defaultCatalog[0].variants[0]
+      : null
+  );
   const [custName, setCustName] = useState('');
   const [custPhone, setCustPhone] = useState('');
   const [custAddress, setCustAddress] = useState('');
@@ -336,7 +353,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
     setShowQuickMenu(false);
   };
 
-  const handleOpenOrderModal = (productTitle = '', price = 0, imageUrl = '') => {
+  const handleOpenOrderModal = (productTitle = '', price = 0, imageUrl = '', variantName = '') => {
     let chosen = catalogProducts.find(
       (p) =>
         (productTitle && p.title.toLowerCase().includes(productTitle.toLowerCase())) ||
@@ -346,18 +363,32 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
       chosen = catalogProducts[0];
     }
     if (chosen) {
+      const vars = chosen.variants || [];
+      let defaultVar = vars.length > 0 ? vars[0] : null;
+      if (variantName && vars.length > 0) {
+        const found = vars.find(
+          (v: any) =>
+            v.name.toLowerCase() === variantName.toLowerCase() ||
+            v.label.toLowerCase().includes(variantName.toLowerCase())
+        );
+        if (found) defaultVar = found;
+      }
       setOrderProduct({
         id: chosen.id,
         title: chosen.title,
         price: price || chosen.price,
-        imageUrl: imageUrl || chosen.imageUrl,
+        imageUrl: defaultVar?.imageUrl || imageUrl || chosen.imageUrl,
+        variants: vars,
       });
+      setSelectedVariant(defaultVar);
     } else {
       setOrderProduct({
         title: productTitle || defaultCatalog[0]?.title || 'Cute Daisy Flower 3D Patch Mini Folding Ladies Wallet',
         price: price || defaultCatalog[0]?.price || 350,
         imageUrl: imageUrl || defaultCatalog[0]?.imageUrl,
+        variants: defaultCatalog[0]?.variants || [],
       });
+      setSelectedVariant(defaultCatalog[0]?.variants?.[0] || null);
     }
     setOrderQuantity(1);
     setIsSelectingProduct(false);
@@ -373,6 +404,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
     const qty = Math.max(1, Number(orderQuantity) || 1);
     const deliveryCharge = custLocation === 'inside_dhaka' ? 70 : 130;
     const totalAmount = (orderProduct.price * qty) + deliveryCharge;
+    const chosenVariantLabel = selectedVariant ? (selectedVariant.label || selectedVariant.name) : '';
 
     try {
       const res = await fetch('/api/orders/quick-create', {
@@ -386,6 +418,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
           productPrice: orderProduct.price,
           deliveryLocation: custLocation,
           quantity: qty,
+          variant: chosenVariantLabel,
           sessionId,
         }),
       });
@@ -398,7 +431,9 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
 
         const confirmText = `✅ **অর্ডার সফলভাবে কনফার্ম হয়েছে!**\n\n` +
           `🆔 **অর্ডার আইডি:** #${orderNum}\n` +
-          `🛍️ **প্রোডাক্ট:** ${orderProduct.title} (পরিমাণ: ${qty}টি)\n` +
+          `🛍️ **প্রোডাক্ট:** ${orderProduct.title}\n` +
+          (chosenVariantLabel ? `🎨 **কালার / ভ্যারিয়েন্ট:** ${chosenVariantLabel}\n` : '') +
+          `🔢 **পরিমাণ:** ${qty}টি\n` +
           `👤 **নাম:** ${custName || 'সম্মানিত ক্রেতা'}\n` +
           `📞 **মোবাইল:** ${custPhone}\n` +
           `📍 **ঠিকানা:** ${custAddress}\n` +
@@ -1054,16 +1089,21 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                           .filter((p) => !productSearch.trim() || p.title.toLowerCase().includes(productSearch.toLowerCase()))
                           .map((prod) => {
                             const isSelected = orderProduct.title === prod.title || orderProduct.id === prod.id;
+                            const prodVars = prod.variants || [];
                             return (
                               <div
                                 key={prod.id || prod.title}
                                 onClick={() => {
+                                  const vars = prod.variants || [];
+                                  const defaultVar = vars.length > 0 ? vars[0] : null;
                                   setOrderProduct({
                                     id: prod.id,
                                     title: prod.title,
                                     price: prod.price,
-                                    imageUrl: prod.imageUrl,
+                                    imageUrl: defaultVar?.imageUrl || prod.imageUrl,
+                                    variants: vars,
                                   });
+                                  setSelectedVariant(defaultVar);
                                   setIsSelectingProduct(false);
                                 }}
                                 className={`p-2.5 rounded-2xl border transition-all cursor-pointer flex items-center gap-3 active:scale-[0.98] ${
@@ -1094,6 +1134,23 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                                   <h4 className="font-semibold text-xs text-[#262626] line-clamp-2 leading-tight">
                                     {prod.title}
                                   </h4>
+                                  {prodVars.length > 0 && (
+                                    <div className="flex items-center gap-1.5 mt-1">
+                                      <div className="flex items-center -space-x-1">
+                                        {prodVars.slice(0, 4).map((vr: any, vIdx: number) => (
+                                          <img
+                                            key={vIdx}
+                                            src={vr.imageUrl}
+                                            alt={vr.name}
+                                            className="w-3.5 h-3.5 rounded-full border border-white object-cover"
+                                          />
+                                        ))}
+                                      </div>
+                                      <span className="text-[10px] text-gray-500 font-medium">
+                                        🎨 {prodVars.length}টি কালার ভ্যারিয়েন্ট
+                                      </span>
+                                    </div>
+                                  )}
                                   <div className="flex items-center justify-between mt-1.5">
                                     <span className="font-extrabold text-xs text-[#ECA548]">
                                       ৳{prod.price} BDT
@@ -1117,7 +1174,7 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                   ) : (
                     /* ORDER FORM WITH VISUAL PRODUCT PREVIEW */
                     <form onSubmit={handleSubmitQuickOrder} className="p-4 space-y-3 overflow-y-auto">
-                      {/* Selected Product Card with Image */}
+                      {/* Selected Product Card with Image & Variant Picker */}
                       <div className="bg-[#FDF7EE] p-3 rounded-2xl border border-[#ECA548]/40 shadow-2xs">
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-[11px] font-bold text-gray-600 flex items-center gap-1">
@@ -1137,13 +1194,18 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                         <div className="flex gap-3 items-center">
                           <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-amber-200/80 bg-white shrink-0 shadow-2xs">
                             <img
-                              src={orderProduct.imageUrl || defaultCatalog[0]?.imageUrl}
+                              src={selectedVariant?.imageUrl || orderProduct.imageUrl || defaultCatalog[0]?.imageUrl}
                               alt={orderProduct.title}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover transition-all duration-200"
                               onError={(e) => {
                                 (e.currentTarget as HTMLImageElement).src = defaultCatalog[0]?.imageUrl || 'https://giftghor.world/assets/logo.png';
                               }}
                             />
+                            {selectedVariant && (
+                              <div className="absolute bottom-0 inset-x-0 bg-black/60 text-[9px] text-white text-center font-bold py-0.5 truncate px-1">
+                                {selectedVariant.name}
+                              </div>
+                            )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="font-bold text-xs text-[#262626] line-clamp-2 leading-tight">
@@ -1177,6 +1239,78 @@ export const GiftGhorChatWidget: React.FC<WidgetProps> = ({
                             </div>
                           </div>
                         </div>
+
+                        {/* Interactive Color / Variant Picker with Real Pictures */}
+                        {orderProduct.variants && orderProduct.variants.length > 0 && (
+                          <div className="mt-3 pt-2.5 border-t border-[#ECA548]/20">
+                            <div className="flex items-center justify-between mb-1.5">
+                              <span className="text-[11px] font-bold text-gray-700 flex items-center gap-1.5">
+                                <span className="w-2 h-2 rounded-full bg-[#ECA548]" />
+                                <span>কালার / ভ্যারিয়েন্ট:</span>
+                                {selectedVariant && (
+                                  <span className="text-[#ECA548] font-bold">
+                                    {selectedVariant.label || selectedVariant.name}
+                                  </span>
+                                )}
+                              </span>
+                              <span className="text-[10px] text-gray-400">
+                                {orderProduct.variants.length}টি কালার উপলব্ধ
+                              </span>
+                            </div>
+
+                            {/* Variant cards grid */}
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5 max-h-[140px] overflow-y-auto pr-0.5">
+                              {orderProduct.variants.map((v) => {
+                                const isVarSelected = selectedVariant?.name === v.name || selectedVariant?.imageUrl === v.imageUrl;
+                                return (
+                                  <button
+                                    key={v.name}
+                                    type="button"
+                                    onClick={() => setSelectedVariant(v)}
+                                    className={`flex items-center gap-2 p-1.5 rounded-xl border text-left transition-all active:scale-95 ${
+                                      isVarSelected
+                                        ? 'bg-white border-[#ECA548] ring-2 ring-[#ECA548]/30 shadow-xs'
+                                        : 'bg-white/80 hover:bg-white border-gray-200/90 text-gray-700'
+                                    }`}
+                                  >
+                                    {/* Variant Picture Thumbnail */}
+                                    <div className="relative w-8 h-8 rounded-lg overflow-hidden shrink-0 border border-gray-150 bg-gray-50">
+                                      <img
+                                        src={v.imageUrl}
+                                        alt={v.name}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                          (e.currentTarget as HTMLImageElement).src = orderProduct.imageUrl || 'https://giftghor.world/assets/logo.png';
+                                        }}
+                                      />
+                                      {isVarSelected && (
+                                        <div className="absolute inset-0 bg-[#ECA548]/30 flex items-center justify-center">
+                                          <Check className="w-3 h-3 text-white stroke-[3]" />
+                                        </div>
+                                      )}
+                                    </div>
+
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-1">
+                                        {v.colorCode && (
+                                          <span
+                                            className="w-2 h-2 rounded-full shrink-0 border border-black/10"
+                                            style={{ backgroundColor: v.colorCode }}
+                                          />
+                                        )}
+                                        <span className={`text-[10.5px] truncate block leading-tight ${
+                                          isVarSelected ? 'font-bold text-[#ECA548]' : 'text-gray-700 font-medium'
+                                        }`}>
+                                          {v.label || v.name}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
                       </div>
 
                       <div>
