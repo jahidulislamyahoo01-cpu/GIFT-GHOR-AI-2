@@ -382,7 +382,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
       setIsGoogleSigningIn(false);
     } catch (err: any) {
       console.error('Google Sign-In Error:', err);
-      if (err.code === 'auth/popup-closed-by-user') {
+      if (err.code === 'auth/unauthorized-domain' || err.message?.includes('unauthorized-domain')) {
+        const domain = window.location.hostname;
+        setLoginError(
+          `Render ডোমেইন (${domain}) Firebase Authorized Domains-এ যুক্ত করা নেই। নিচের বিকল্প পাসওয়ার্ড দিয়ে এখনই লগইন করতে পারবেন, অথবা Firebase Console-এ ডোমেইনটি যুক্ত করুন।`
+        );
+        setShowPasswordFallback(true);
+      } else if (err.code === 'auth/popup-closed-by-user') {
         setLoginError('লগইন উইন্ডো বন্ধ করা হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।');
       } else if (err.code === 'auth/popup-blocked') {
         setLoginError('ব্রাউজার গুগল পপআপ ব্লক করেছে! ব্রাউজার সেটিংসে পপআপ Allow করুন।');
@@ -1251,9 +1257,24 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
             /* Google OAuth Locked Admin Login View */
             <>
               {loginError && (
-                <div className="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5 leading-relaxed shadow-xs">
-                  <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
-                  <span className="font-semibold">{loginError}</span>
+                <div className="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex flex-col gap-2 leading-relaxed shadow-xs">
+                  <div className="flex items-start gap-2.5">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-600 mt-0.5" />
+                    <span className="font-semibold">{loginError}</span>
+                  </div>
+                  {loginError.includes('Authorized Domains') && (
+                    <div className="mt-1 pt-2 border-t border-rose-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-[11px]">
+                      <a
+                        href="https://console.firebase.google.com/project/watchful-balm-dtgzl/authentication/settings"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-700 hover:underline font-bold inline-flex items-center gap-1"
+                      >
+                        🔗 Firebase Console-এ ডোমেইন যুক্ত করুন <ExternalLink className="w-3 h-3" />
+                      </a>
+                      <span className="text-gray-500 font-mono text-[10px]">({window.location.hostname})</span>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -1277,14 +1298,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onGoToStorefront
                   )}
                   <span>Sign in with Google (Google দিয়ে প্রবেশ)</span>
                 </button>
-
-                {/* Security Access Notice */}
-                <div className="p-3.5 bg-amber-50/90 border border-amber-200/80 rounded-xl text-[11px] text-amber-900 flex items-start gap-2.5">
-                  <Shield className="w-4 h-4 text-[#ECA548] shrink-0 mt-0.5" />
-                  <span className="leading-relaxed">
-                    অ্যাডমিন কনসোল শুধুমাত্র <strong>jahidulislamyahoo01@gmail.com</strong> এবং তার অনুমোদিত গুগল অ্যাকাউন্টের জন্য সংরক্ষিত।
-                  </span>
-                </div>
 
                 {/* Collapsible Alternative Password Login Form */}
                 <div className="pt-2 text-center">
