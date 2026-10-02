@@ -918,14 +918,15 @@ ${faqsList}
 ${crawledSummary ? `STORE POLICIES:\n${crawledSummary}\n` : ''}
 
 ORDER PROTOCOL:
-When a customer wants to order:
-1. Confirm product choice & color.
-2. Ask for order details in this simple format:
-   - Full Name (নাম):
-   - Phone Number (মোবাইল নম্বর):
-   - Full Address (পূর্ণ ঠিকানা - জেলা ও থানা সহ):
-3. Location detection: If address is within Dhaka city, delivery charge is ৳${db.deliveryPolicy.insideDhakaCost}. Outside Dhaka city, delivery charge is ৳${db.deliveryPolicy.outsideDhakaCost}. Calculate total bill clearly.
-4. Mention Cash on Delivery (COD) is available.
+When a customer expresses intent to order (e.g. "order korte chacchi", "order korbo", "order dite chai", "kivabe order korbo", "order korte chai"):
+1. Welcome them warmly: "জি আপু/ভাইয়া! আপনি খুব সহজেই অর্ডার করতে পারবেন।"
+2. Let them know they can click the "🛍️ ১-ক্লিক ইনস্ট্যান্ট অর্ডার" button right below to easily pick their favorite product, select color/variant with pictures, and confirm delivery address with Cash on Delivery (COD).
+3. OR they can simply type their details here in the chat:
+   - পছন্দের প্রোডাক্ট ও কালার:
+   - আপনার নাম:
+   - মোবাইল নম্বর:
+   - ডেলিভারি ঠিকানা (জেলা ও থানা সহ):
+4. Mention that Cash on Delivery (COD) is available nationwide with zero advance. Delivery charge: ঢাকার ভেতরে ৳${db.deliveryPolicy.insideDhakaCost}, ঢাকার বাইরে ৳${db.deliveryPolicy.outsideDhakaCost}.
 
 STEADFAST LIVE ORDER TRACKING PROTOCOL:
 - When a customer asks about order status, delivery update, asks "আমার অর্ডার কোথায়", or provides their Mobile Number (e.g. 017xxxxxxxx), Invoice / Order Number (#1001), or Steadfast Consignment ID:
@@ -1295,11 +1296,20 @@ export async function lookupOrderAndSteadfastTracking(
   const trkMatch = rawText.match(/(?:tracking(?:\s*code)?|trk)\s*[:#-]?\s*([a-zA-Z0-9_\-]+)/i);
   const detectedTrk = trkMatch ? trkMatch[1] : null;
 
-  // Invoice / Order number (e.g. #1001, order 1001, invoice 1001, GG-1001, GHOR-1001)
-  const invMatch = rawText.match(/(?:invoice|order(?:\s*no|\s*id)?|মেমো|ইনভয়েস|অর্ডার(?:\s*নং)?)\s*[:#-]?\s*([a-zA-Z0-9_\-]+)/i) ||
-    rawText.match(/#(?:ghor-|gg-|inv-)?(\d+)/i) ||
-    rawText.match(/\b(gg-\d+|ghor-\d+|inv-\d+)\b/i);
-  const detectedInv = invMatch ? invMatch[1] : null;
+  // Invoice / Order number (MUST contain digits - e.g. #1001, order no 1001, invoice 1001, GG-1001, GHOR-1001)
+  // NEVER treat conversational words like "korte", "korbo", "chacchi" as an invoice number!
+  let detectedInv: string | null = null;
+  const explicitPrefixMatch = rawText.match(/(?:invoice|order\s*(?:no|id|number|code)|মেমো|ইনভয়েস(?:\s*নং|\s*আইডি)?|অর্ডার\s*(?:নং|আইডি|কোড))\s*[:#-]?\s*([a-zA-Z]{0,4}[-_]?\d{3,12})\b/i);
+  const hashOrderMatch = rawText.match(/#(?:ghor-|gg-|inv-)?(\d{3,12})\b/i);
+  const codeMatch = rawText.match(/\b(gg[-_ ]?\d{3,12}|ghor[-_ ]?\d{3,12}|inv[-_ ]?\d{3,12})\b/i);
+
+  if (codeMatch) {
+    detectedInv = codeMatch[1].replace(/\s+/g, '-').toUpperCase();
+  } else if (hashOrderMatch) {
+    detectedInv = hashOrderMatch[1];
+  } else if (explicitPrefixMatch) {
+    detectedInv = explicitPrefixMatch[1];
+  }
 
   // Clean alphanumeric query for direct search
   const cleanQ = rawText.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -1583,7 +1593,7 @@ export async function lookupOrderAndSteadfastTracking(
     };
   }
 
-  if (detectedInv) {
+  if (detectedInv && /\d/.test(detectedInv)) {
     return {
       found: false,
       reply: `🔍 দুঃখিত, ইনভয়েস/অর্ডার নং \`${detectedInv}\`-এর কোনো তথ্য পাওয়া যায়নি। অনুগ্রহ করে সঠিক অর্ডার নম্বর বা মোবাইল নম্বর দিন।`,
@@ -2039,7 +2049,16 @@ app.post('/api/chat/message', async (req, res) => {
     let botReplyText: string | null = null;
     let needsAttention = false;
 
-    if (directTrackingResult && directTrackingResult.reply) {
+    const cleanDigits = text.replace(/[^0-9]/g, '');
+    const isExplicitTrackingIntent =
+      /(?:track|ট্র্যাক|status|স্ট্যাটাস|কবে পাব|পার্সেল কোথায়|parcel|ইনভয়েস নং|অর্ডার নম্বর)/i.test(text) ||
+      (cleanDigits.length >= 11 && cleanDigits.startsWith('01') && text.trim().length <= 20) ||
+      /^#?(?:gg-|ghor-|inv-)?\d{4,12}$/i.test(text.trim());
+
+    if (directTrackingResult && directTrackingResult.found) {
+      botReplyText = directTrackingResult.reply;
+      needsAttention = false;
+    } else if (directTrackingResult && directTrackingResult.reply && isExplicitTrackingIntent) {
       botReplyText = directTrackingResult.reply;
       needsAttention = directTrackingResult.statusType === 'not_found' || directTrackingResult.statusType === 'cancelled';
     } else {
@@ -2143,7 +2162,15 @@ app.post('/api/chat', async (req, res) => {
 
   try {
     const directTrackingResult = await lookupOrderAndSteadfastTracking(String(message), DB);
-    if (directTrackingResult && directTrackingResult.reply) {
+    const cleanDigits = String(message).replace(/[^0-9]/g, '');
+    const isExplicitTrackingIntent =
+      /(?:track|ট্র্যাক|status|স্ট্যাটাস|কবে পাব|পার্সেল কোথায়|parcel|ইনভয়েস নং|অর্ডার নম্বর)/i.test(String(message)) ||
+      (cleanDigits.length >= 11 && cleanDigits.startsWith('01') && String(message).trim().length <= 20) ||
+      /^#?(?:gg-|ghor-|inv-)?\d{4,12}$/i.test(String(message).trim());
+
+    if (directTrackingResult && directTrackingResult.found) {
+      return res.json({ reply: directTrackingResult.reply, tracking: directTrackingResult });
+    } else if (directTrackingResult && directTrackingResult.reply && isExplicitTrackingIntent) {
       return res.json({ reply: directTrackingResult.reply, tracking: directTrackingResult });
     }
 
